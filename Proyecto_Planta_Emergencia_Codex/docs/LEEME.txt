@@ -1,0 +1,27 @@
+G-01 · SIMULADOR D34
+
+ABRIR
+Extrae el ZIP y abre ABRIR_SIMULADOR_D34.html con Edge o Chrome. Los modelos están incluidos en el HTML. El simulador inicia en el cuarto de la planta de emergencia.
+
+MOVIMIENTO
+WASD: caminar. Arrastra con el ratón para mirar. Flechas del teclado o botones ↶ / ↷: girar. Mantén presionados los botones de giro. C o Agacharse: alternar de pie/agachado.
+La altura visual es de 1.65 m sobre el piso de cada zona; al agacharse baja a 1.00 m. Los límites del grupo electrógeno se ajustaron para permitir mayor aproximación manteniendo colisiones con los equipos.
+En vistas generales, arrastrar gira la cámara; Shift o botón derecho permiten desplazarla.
+
+ZONAS
+Abre Zonas para cambiar de vista. Subestación y CCM entran en recorrido a pie; puedes girar, caminar y agacharte dentro de esos recintos. Emergencia y Retomar mantenimiento vuelven al trabajo y a tu posición anterior. General y las vistas de fábrica conservan sus cámaras de inspección.
+El menú inicia plegado y las indicaciones quedan pequeñas en los bordes. Q abre el cuaderno de las prácticas. El mensaje central permanente se eliminó.
+
+CCM CON PUERTAS
+Zonas > CCM. Avanza hasta la puerta que quieras inspeccionar, mírala y pulsa E o haz clic sobre ella. También puedes usar Puerta cercana en la esquina superior. Repite la acción para cerrar. Cerrar puertas cierra todas.
+El modelo tiene 26 puertas: principal, 21 unidades de motor y cuatro reservas. Las puertas giran sobre bisagras; al abrirlas puedes observar contactores, relevadores térmicos, terminales, canaletas, conductores, rieles y placas de montaje. Una unidad incluye representación de variador. El principal incluye barras tras una cubierta de protección. Las reservas tienen espacio para crecimiento.
+La vista del CCM es una inspección didáctica sin tensión; no representa una autorización o un procedimiento real de apertura. Los equipos son genéricos y no se han seleccionado calibres ni ajustes.
+
+SUBESTACIÓN
+La vista a pie permite apreciar los transformadores de cerca. Se conservan radiadores, tanque conservador, aisladores, tuberías, válvulas, pernos, equipos de maniobra, apartarrayos y mástiles de captación. Se ajustaron los acabados del metal pintado para reducir el aspecto granulado exagerado. La cobertura contra descargas atmosféricas sigue siendo ilustrativa, no calculada.
+
+PRÁCTICAS DE LA PLANTA
+B cerca de la bolsa del piso: abrir. Haz clic en una herramienta 3D para tomarla. H: manos libres. E / clic: usar. Z: inspección ampliada. Q: tareas. Las doce actividades se conservan.
+
+RENDIMIENTO
+Se mantienen la agrupación de piezas estáticas y el modo Fluido de la entrega anterior. Las puertas permanecen como conjuntos móviles independientes y se agrupa la geometría estática del gabinete. Puedes elegir Detalle en Zonas.

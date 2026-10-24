@@ -1,0 +1,20 @@
+PROTECCIONES DE LA SUBESTACIÓN · D33
+
+APARTARRAYOS
+La versión anterior ya tenía tres equipos. Se rediseñaron en su misma zona de llegada, con envolvente aleteada, bridas, pernos, terminales y soportes. Cada equipo tiene una conexión de fase y una conexión a la malla de tierra. Son limitadores de sobretensiones; no se animan como un circuito de alimentación normal de la carga. No se han seleccionado tensión nominal, MCOV, corriente de descarga ni nivel de protección.
+
+PARARRAYOS / CAPTACIÓN DIRECTA
+Se agregaron cuatro mástiles perimetrales, puntas captadoras, hilo de guarda, abrazaderas, bases ancladas y bajantes. Las bajantes se unen a las líneas existentes de la malla: cota del eje 5.875 m, bajo la superficie terminada 6.65 m. No se representan electrodos independientes aislados de la malla. No se ha validado cobertura por esfera rodante, ángulo de protección ni evaluación de riesgo. La cantidad, altura y posición representadas son ilustrativas.
+
+REFERENCIAS
+NOM-001-SEDE-2012, artículo 280: apartarrayos de más de 1000 V; selección, instalación y conexiones. Artículo 250: puesta a tierra y unión.
+Texto oficial disponible en el portal de Gobierno de México:
+https://www.gob.mx/cms/uploads/attachment/file/512096/NOM-001-SEDE-2012.pdf
+
+INEEL, Protección contra descargas atmosféricas: distingue pararrayos y supresores de sobretensiones transitorias (apartarrayos). Referencia de formación técnica:
+https://cecse.ineel.mx/cursos/ProteccionDescargasA.html
+
+PROY-NOM-018-CRE-2022, referencia técnica informativa para el concepto de blindaje mediante puntas e hilos de guarda y coordinación de aislamiento. El documento consultado es un PROYECTO; no se presenta como norma definitiva ni como obligación aplicable a todo este modelo industrial:
+https://diariooficial.gob.mx/normasOficiales/9316/cre_1_C/cre_1_C.html
+
+Este simulador es una representación didáctica. La integración visual de componentes no equivale a un diseño ejecutivo verificado.

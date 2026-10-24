@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "search.exclude": {
+      "build/**": true,
+      "dist/**": true,
+      "reference/**": true
+    },
+    "files.watcherExclude": {
+      "**/build/**": true
+    }
+  }
+}

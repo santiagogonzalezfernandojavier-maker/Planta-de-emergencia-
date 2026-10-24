@@ -1,0 +1,35 @@
+{
+  "base": "D34",
+  "threeRevision": "169",
+  "operators": 4,
+  "serializedGeometries": 103,
+  "serializedMaterials": 37,
+  "extractedPersonnelTextures": [
+    "0f79bf73ccbcdc2c.png",
+    "1de51f639fb79a54.png",
+    "c279ef64c487f1e0.png",
+    "dd058b1cc4acdc4f.png",
+    "4bccc2e9fbf29b19.png"
+  ],
+  "proceduralAssets": [
+    "planta de emergencia",
+    "subestación",
+    "transformadores",
+    "interruptores",
+    "TC/TP",
+    "apartarrayos/pararrayos",
+    "fábrica",
+    "máquinas",
+    "carretera",
+    "vehículos",
+    "CCM con 26 puertas",
+    "herramientas y bolsa",
+    "materiales y paisaje"
+  ],
+  "editableBlend": "assets/blender/Operarios_Anatomicos_D26.blend",
+  "notes": [
+    "El GLB y Blender son fuentes auxiliares D26. El visor D34 utiliza scene-data.json.gz; no sustituir uno por otro sin regenerar el paquete.",
+    "No hay un .blend original de toda la instalación: su geometría es procedural.",
+    "Se preservan las referencias técnicas antiguas como documentación; no certifican conformidad."
+  ]
+}

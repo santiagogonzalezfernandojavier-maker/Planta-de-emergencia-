@@ -1,0 +1,12 @@
+node_modules/
+playwright-report/
+test-results/
+*.blend1
+.env
+*.log
+
+# Archivos generados o duplicados del ZIP original
+build/
+dist/
+index.html
+reference/

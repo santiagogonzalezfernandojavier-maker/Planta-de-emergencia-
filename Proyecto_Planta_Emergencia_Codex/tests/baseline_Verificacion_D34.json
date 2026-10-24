@@ -1,0 +1,56 @@
+{
+  "standing": 1.5799999999999998,
+  "crouching": 0.9299999999999999,
+  "yard": {
+    "active": true,
+    "position": [
+      14,
+      8.3,
+      5.4
+    ],
+    "yaw": 1.0121970114513341,
+    "pitch": -0.1230417157089456,
+    "bag": false,
+    "journal": false,
+    "crouch": false,
+    "zone": "yard"
+  },
+  "ccm": {
+    "active": true,
+    "position": [
+      103,
+      4.15,
+      7.7
+    ],
+    "yaw": 0,
+    "pitch": -0.11527612597095221,
+    "bag": false,
+    "journal": false,
+    "crouch": false,
+    "zone": "ccm"
+  },
+  "doorCount": 26,
+  "opened": [
+    {
+      "name": "U-5-2",
+      "open": true,
+      "angle": -1.758465309121572
+    }
+  ],
+  "lowCCM": 3.5,
+  "restored": {
+    "active": true,
+    "position": [
+      1.8,
+      1.5799999999999998,
+      4.1
+    ],
+    "yaw": 1.0336892132788633,
+    "pitch": -0.1335651825626007,
+    "bag": false,
+    "journal": false,
+    "crouch": false,
+    "zone": "plant"
+  },
+  "errors": []
+}
