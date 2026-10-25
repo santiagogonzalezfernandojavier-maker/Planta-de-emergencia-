@@ -6,6 +6,11 @@ const Personnel=(()=>{
  const geos=data.geometries.map(o=>{const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(new Float32Array(decode(o.p)),3));g.setAttribute('normal',new T.BufferAttribute(new Float32Array(decode(o.n)),3));g.setAttribute('uv',new T.BufferAttribute(new Float32Array(decode(o.uv)),2));g.setIndex(new T.BufferAttribute(new Uint32Array(decode(o.i)),1));if(o.c)g.setAttribute('color',new T.BufferAttribute(new Float32Array(decode(o.c)),3));g.computeBoundingSphere();return g;});
  const maps=new Map(),mats=data.materials.map(d=>{const m=new T.MeshStandardMaterial({color:new T.Color(...d.color),roughness:d.roughness,metalness:d.metalness,transparent:d.transparent,opacity:d.opacity,depthWrite:!d.transparent});m.name=d.name;m.userData.human22=true;if(d.map){if(!maps.has(d.map)){const t=new T.TextureLoader().load(d.map,()=>renderer.shadowMap.needsUpdate=true);t.colorSpace=T.SRGBColorSpace;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());maps.set(d.map,t);}m.map=maps.get(d.map);}return m;});
  // Keep the anatomical eyes/glasses only: the delivery also included older overlapping pairs.
+ // Fine weave relief is shared across uniforms; original color textures remain intact.
+ const weaveCanvas=document.createElement('canvas');weaveCanvas.width=weaveCanvas.height=128;const weaveContext=weaveCanvas.getContext('2d'),weaveImage=weaveContext.createImageData(128,128);
+ for(let y=0;y<128;y++)for(let x=0;x<128;x++){const i=(y*128+x)*4;weaveImage.data[i]=128+Math.sin(x*Math.PI/2)*16;weaveImage.data[i+1]=128+Math.sin(y*Math.PI/2)*16;weaveImage.data[i+2]=252;weaveImage.data[i+3]=255;}weaveContext.putImageData(weaveImage,0,0);
+ const weave=new T.CanvasTexture(weaveCanvas);weave.wrapS=weave.wrapT=T.RepeatWrapping;weave.repeat.set(12,12);weave.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ for(const m of mats){if(/Tejido|Chaleco/.test(m.name)){m.normalMap=weave;m.normalScale.set(.16,.16);m.roughness=.94;m.metalness=0;}if(/Herraje_[34]$/.test(m.name)){m.roughness=.80;m.metalness=0;}}
  const legacyFace=new Set([10,11,12,13,14,22,23,27,28,32,33]);
  const helmet=new T.MeshStandardMaterial({color:'#e6b82e',roughness:.42,metalness:0});
  const radioMat=new T.MeshStandardMaterial({color:'#18252c',roughness:.72});

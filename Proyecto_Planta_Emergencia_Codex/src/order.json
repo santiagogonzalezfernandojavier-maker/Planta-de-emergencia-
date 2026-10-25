@@ -1,9 +1,11 @@
 [
+  "00-cabinet-hardware.js",
   "00-site-walk.js",
   "00-core_scene.js",
   "10-personnel.js",
   "20-surfaces_presentation_ui.js",
   "25-work-orders.js",
   "30-maintenance_walk.js",
-  "40-protections_ccm_performance.js"
+  "40-protections_ccm_performance.js",
+  "45-cabinets.js"
 ]

@@ -1,6 +1,16 @@
-# Simulador de planta de emergencia — D37: recorrido por escaleras
+# Simulador de planta de emergencia — D38: llaves, cubiertas y gabinetes
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Esta entrega prepara el proyecto para programación; no cambia intencionadamente la simulación ni añade una nueva revisión funcional.
+
+## Cambios D38 · llaves e inspección de gabinetes
+
+Acércate al llavero junto a la bolsa y pulsa **L** o **Llaves**. Recoge los juegos **G-01**, **SE-01** y **CCM-01** que necesites. No se entregan automáticamente: la recogida requiere proximidad al llavero. Las llaves son de servicio; no sustituyen el candado personal de las prácticas.
+
+Con la llave correspondiente, apunta a una puerta y pulsa **E**. Con la puerta abierta, **V** retira o repone su cubierta interior. Repón la cubierta antes de cerrar. El botón **Instalar cubierta G-01** monta la envolvente acústica del generador; puedes abrir sus seis paneles con la llave o retirar el conjunto. Esta cubierta comienza retirada para conservar el acceso de las prácticas.
+
+Hay puertas articuladas para control y transferencia de la planta, mandos QN/QG/QS, PR-01, DC-01, QF-01 y las 26 puertas del CCM. Los compartimentos del CCM ahora varían: arranque directo, reversa, estrella-triángulo, arrancador suave, variador, alimentador y servicios de control; las reservas siguen vacías. El principal mantiene su protección de barras. Los materiales distinguen pintura, metal, polímeros, cobre y tejido de los uniformes.
+
+Las llaves y los controles se conservan al reconstruir la configuración del generador durante la sesión. Recargar la página inicia una partida nueva. Los interiores son representaciones educativas, sin selección de fabricante ni cableado de ingeniería validado. Los personajes mantienen poses estáticas y las texturas son procedurales. Consulta `docs/GABINETES_D38.md`.
 
 ## Cambios D37 · subir a la subestación caminando
 

@@ -119,7 +119,7 @@ function piece(key,name,explain,offset,create){const p=new T.Group();p.userData=
 function route(points,color,kind){if(['electric','grid','loadfeed','cool','fuel','exhaust'].includes(kind))return;const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)));const line=mesh(root,new T.TubeGeometry(curve,50,.019,6,false),mat(color));paths.push({curve,line,kind});for(let i=0;i<9;i++){const dot=mesh(root,new T.SphereGeometry(.046,8,8),new T.MeshBasicMaterial({color}));particles.push({dot,curve,kind,offset:i/9})}}
 // D24: cabinets built from folded panels, separate doors and service hardware.
 function cabinetSkin20(g,w,h,d,p,m,r=.025){const sh=new T.Shape(),x=-w/2,y=-h/2;r=Math.min(r,w*.15,h*.15);sh.moveTo(x+r,y);sh.lineTo(x+w-r,y);sh.quadraticCurveTo(x+w,y,x+w,y+r);sh.lineTo(x+w,y+h-r);sh.quadraticCurveTo(x+w,y+h,x+w-r,y+h);sh.lineTo(x+r,y+h);sh.quadraticCurveTo(x,y+h,x,y+h-r);sh.lineTo(x,y+r);sh.quadraticCurveTo(x,y,x+r,y);const geo=new T.ExtrudeGeometry(sh,{depth:Math.max(.002,d-.004),bevelEnabled:true,bevelThickness:.002,bevelSize:.002,bevelSegments:2,curveSegments:8});return mesh(g,geo,m,[p[0],p[1],p[2]-d/2+.002]);}
-function cabinetLabel20(g,text,pos,w,h,color='#c7d7d8',background='#20333b'){const c=document.createElement('canvas');c.width=512;c.height=128;const cx=c.getContext('2d');cx.fillStyle=background;cx.fillRect(0,0,512,128);cx.strokeStyle='#799094';cx.lineWidth=3;cx.strokeRect(4,4,504,120);cx.fillStyle=color;cx.font='500 35px Arial';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(text,256,65);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return mesh(g,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t}),pos);}
+function cabinetLabel20(g,text,pos,w,h,color='#c7d7d8',background='#20333b'){const c=document.createElement('canvas');c.width=512;c.height=128;const cx=c.getContext('2d');cx.fillStyle=background;cx.fillRect(0,0,512,128);cx.strokeStyle='#799094';cx.lineWidth=3;cx.strokeRect(4,4,504,120);cx.fillStyle=color;let labelSize=35;cx.font='500 '+labelSize+'px Arial';while(cx.measureText(text).width>480&&labelSize>15)cx.font='500 '+(--labelSize)+'px Arial';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(text,256,65);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return mesh(g,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t}),pos);}
 function cabinetFastener20(g,p){const metal=mat('#aeb8b9',.85);const b=mesh(g,new T.CylinderGeometry(.010,.010,.008,6),metal,p);b.rotation.x=Math.PI/2;box(g,[.012,.002,.003],[p[0],p[1],p[2]+.006],mat('#3c4447',.6));}
 function buildTransferCabinet20(g,live=false){const coat=mat('#819095',.32),door=mat('#a6b0ae',.25),seal=mat('#20292c'),metal=mat('#b9c1be',.8);const x=3.65,y=.9;
  for(const side of [-1,1]){box(g,[.018,1.30,.55],[x+side*.416,y,0],coat);box(g,[.85,.018,.55],[x,y+side*.641,0],coat);}box(g,[.82,1.26,.018],[x,y,-.266],coat);
@@ -132,6 +132,7 @@ function buildTransferCabinet20(g,live=false){const coat=mat('#819095',.32),door
  for(let j=0;j<9;j++)cabinetSkin20(g,.42,.008,.009,[x,.39+j*.019,.310],seal,.003);
  for(const xx of [x-.35,x+.35])for(const yy of [.33,1.47])cabinetFastener20(g,[xx,yy,.311]);
  for(let j=0;j<3;j++){cyl(g,.027,.039,[x-.18+j*.18,.229,.08],seal,'y');cyl(g,.017,.024,[x-.18+j*.18,.202,.08],mat('#5e6c6b',.5),'y');}
+ articulateCabinet38(g,{id:'G01-TRANSFER',key:'plant',x,y,z:.289,w:.797,h:1.232,depth:.55,type:'transfer',front:o=>o.position.z>=.26&&o.position.y>.28});
 }
 function buildControlCabinet20(g){const coat=mat('#c5c9bc',.18),metal=mat('#aeb9b8',.8),seal=mat('#273238');const x=2.47,y=1.02,z=.91;
  for(const side of [-1,1]){box(g,[.017,1.13,.35],[x+side*.301,y,z],coat);box(g,[.62,.017,.35],[x,y+side*.556,z],coat);}box(g,[.59,1.10,.017],[x,y,z-.166],coat);box(g,[.598,1.105,.016],[x,y,1.085],seal);cabinetSkin20(g,.579,1.083,.023,[x,y,1.106],coat,.036);
@@ -143,6 +144,7 @@ function buildControlCabinet20(g){const coat=mat('#c5c9bc',.18),metal=mat('#aeb9
  for(let j=0;j<7;j++)cabinetSkin20(g,.28,.008,.009,[x,.61+j*.022,1.124],seal,.003);
  for(const xx of [2.22,2.72])for(const yy of [.52,1.52])cabinetFastener20(g,[xx,yy,1.126]);
  for(const xx of [2.30,2.62]){box(g,[.06,.04,.20],[xx,.433,.91],metal);cyl(g,.018,.028,[xx,.473,.91],metal);}
+ articulateCabinet38(g,{id:'G01-CONTROL',key:'plant',x:2.47,y:1.02,z:1.106,w:.579,h:1.083,depth:.35,type:'control',front:o=>o.position.z>=1.08&&o.position.y>.46});
 }
 
 function build(){root.traverse(o=>{if(o.isMesh)o.geometry.dispose()});scene.remove(root);root=new T.Group();scene.add(root);groups={};pieces=[];pistons=[];paths=[];particles=[];for(const key in PARTS){groups[key]=new T.Group();root.add(groups[key])}
@@ -204,7 +206,7 @@ piece('enclosure','Gabinete acústico con puertas','Paneles de acceso, juntas, b
 
 function gold(){return mat('#ba914f',.7)}
 function selectPart(key){selection=key;subSelection='';$('part').value=key;$('partTitle').textContent=PARTS[key][0];$('partText').textContent=PARTS[key][1]+(key==='engine'?' '+TYPES[cfg.fuel][1]:'');$('subText').textContent='Selecciona una subpieza para conocer su función.';$('subparts').replaceChildren();pieces.filter(p=>p.userData.key===key).forEach(p=>{const b=document.createElement('button');b.textContent=p.userData.name;b.onclick=()=>{subSelection=p.userData.name;$('subText').textContent=p.userData.explain;for(const c of $('subparts').children)c.classList.toggle('active',c===b);updateView()};$('subparts').append(b)});updateView();openInspector(key)}
-function updateView(){if(!s)return;const x=+$('xray').value/100,e=+$('explode').value/100;$('xval').textContent=Math.round(x*100)+'%';for(const p of pieces){p.visible=(!isolated||p.userData.key===selection)&&(!p.userData.canopy||$('housing').value==='canopy');p.position.set(...p.userData.offset.map(v=>v*e));p.traverse(o=>{if(!o.isMesh)return;if(!o.userData.local){o.userData.local=o.material.clone();o.material=o.userData.local}o.material.transparent=!!(o.material.userData.glass20||p.userData.shell&&x>0);o.material.opacity=o.material.userData.glass20?.14:p.userData.shell?Math.max(.035,1-x):1;o.material.depthWrite=!o.material.transparent;o.material.emissive?.set(p.userData.name===subSelection?'#3e2a08':'#000000')})}for(const p of paths)p.line.visible=$('flows').checked&&!isolated&&e<.1;}
+function updateView(){if(!s)return;const x=+$('xray').value/100,e=+$('explode').value/100;$('xval').textContent=Math.round(x*100)+'%';for(const p of pieces){p.visible=!p.userData.replaced38&&(!isolated||p.userData.key===selection)&&(!p.userData.canopy||$('housing').value==='canopy');p.position.set(...p.userData.offset.map(v=>v*e));p.traverse(o=>{if(!o.isMesh||o.userData.workTarget||o.userData.cover38)return;if(!o.userData.local){o.userData.local=o.material.clone();o.material=o.userData.local}o.material.transparent=!!(o.material.userData.glass20||p.userData.shell&&x>0);o.material.opacity=o.material.userData.glass20?.14:p.userData.shell?Math.max(.035,1-x):1;o.material.depthWrite=!o.material.transparent;o.material.emissive?.set(p.userData.name===subSelection?'#3e2a08':'#000000')})}for(const p of paths)p.line.visible=$('flows').checked&&!isolated&&e<.1;}
 const ray=new T.Raycaster(),mouse=new T.Vector2();let drag=null;
 renderer.domElement.onpointerdown=e=>{campusNav.tour=false;$('tourRoute').textContent='Continuar recorrido';camera.updateMatrixWorld();drag={x:e.clientX,y:e.clientY,a:angle,b:elevation,moved:false,pan:e.shiftKey||e.button===2?panOffset.clone():null,right:new T.Vector3().setFromMatrixColumn(camera.matrixWorld,0).normalize(),up:new T.Vector3().setFromMatrixColumn(camera.matrixWorld,1).normalize()};renderer.domElement.setPointerCapture(e.pointerId);$('stage').classList.add('dragging')};renderer.domElement.onpointermove=e=>{if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.moved=drag.moved||Math.hypot(dx,dy)>5;if(drag.pan){const k=distance*.0016;panOffset.copy(drag.pan).addScaledVector(drag.right,-dx*k).addScaledVector(drag.up,dy*k)}else{angle=drag.a-dx*.0055;elevation=Math.max(-.35,Math.min(1.55,drag.b+dy*.0055))}return}const hit=pick(e);$('tip').textContent=hit&&!document.body.classList.contains('eduoff')?PARTS[hit.userData.part][0]+' · '+hit.userData.piece:''};renderer.domElement.onpointerleave=()=>{$('tip').textContent='';$('stage').classList.remove('dragging')};renderer.domElement.onpointerup=e=>{if(drag&&!drag.moved){const hit=pick(e);if(hit){selectPart(hit.userData.part);subSelection=hit.userData.piece;const p=pieces.find(p=>p.userData.name===subSelection);$('subText').textContent=p?.userData.explain||'';updateView()}}drag=null;$('stage').classList.remove('dragging')};renderer.domElement.onpointercancel=()=>{drag=null;$('stage').classList.remove('dragging')};renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();distance=Math.max(1.2,Math.min(120,distance+e.deltaY*.022))},{passive:false});function visibleTree(o){while(o){if(!o.visible)return false;o=o.parent}return true}function pick(e){const r=renderer.domElement.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);return ray.intersectObjects(pieces,true).find(h=>visibleTree(h.object)&&h.object.material.opacity>.3)?.object}
 function renderUI(){const running=s.rpm>0,genReady=['ready','cool'].includes(s.stage),v=genReady?s.genV:0,power=s.source==='none'?0:cfg.rating*s.load/100,current=power*1000/((cfg.phase===3?Math.sqrt(3)*480:277)*cfg.pf);$('source').textContent={grid:'Red',gen:'Planta',none:'Sin energía'}[s.source];$('rpm').textContent=Math.round(s.rpm)+' rpm';$('volts').textContent=v+' V';$('hz').textContent=(running?(s.rpm/30).toFixed(1):'0')+' Hz';$('kw').textContent=power.toFixed(1)+' kW';$('loadLabel').textContent=s.load+'%';$('reserveLabel').textContent=s.reserve.toFixed(1)+'%';$('grid').textContent=s.grid?'Cortar red':'Restaurar red';$('configLabel').textContent=`${TYPES[cfg.fuel][0]}${cfg.fuel==='bi'?' / '+TYPES[cfg.bi][0]:''} · ${cfg.rating} kW · ${cfg.phase}Φ · ${cfg.freq} Hz`;
@@ -517,6 +519,7 @@ for(const [name,x,z] of [['QG',18.4,1.3],['QN',17.9,-1.6],['QS',20.8,-.9]]){
  for(let k=0;k<6;k++)box(g,[.115,.012,.018],[x+.19,7.12+k*.024,z+.809],dark);
  for(const dx of [-.15,.15]){cyl(g,.032,.055,[x+dx,7.015,z+.60],alloy);line(g,[[x+dx,6.99,z+.6],[x+dx,6.88,z+.6],[x,6.88,z]],.018,black);}
  proPlate(g,'SE-01 / '+name,[x,7.55,z+.808],.27,'#7b8584',.033);
+ articulateCabinet38(g,{id:'SE-'+name,key:'yard',x,y:7.36,z:z+.78,w:.55,h:.56,depth:.33,type:'mechanism',body:o=>o.geometry.type==='BoxGeometry'&&Math.abs(o.geometry.parameters.width-.61)<.001&&Math.abs(o.position.y-7.36)<.001,front:o=>Math.abs(o.position.x-x)<.31&&o.position.y>7.05&&o.position.y<7.67&&o.position.z>z+.765});
  for(const dx of [-.66,.66])for(const dz of [-.49,.49]){
   for(const xx of [-.045,.045])box(g,[.022,.85,.115],[x+dx+xx,7.35,z+dz],alloy);
   box(g,[.18,.18,.024],[x+dx,7.67,z+dz+.067],paint);
@@ -728,6 +731,7 @@ cyl(relay,.023,.013,[20.674,7.29,.86],relaySteel,'z');box(relay,[.012,.095,.022]
 for(let k=0;k<7;k++)box(relay,[.024,.012,.18],[20.774,7.23+k*.032,.58],relaySeal);
 for(const xx of [20.10,20.80])for(const zz of [.35,.85]){cyl(relay,.027,.006,[xx,6.906,zz],relaySteel);cyl(relay,.014,.023,[xx,6.919,zz],relaySteel);}
 cabinetLabel20(relay,'PR-01 / PROTECCIÓN MT',[20.45,7.105,.855],.38,.052);
+articulateCabinet38(relay,{id:'PR-01',key:'yard',x:20.45,y:7.64,z:.834,w:.571,h:1.287,depth:.43,type:'protection',front:o=>o.position.z>=.81&&o.position.y>6.99&&o.position.y<8.30});
 label('07 · PROTECCIÓN Y MANDO',[21.1,8.95,2.19],2.1);relay.position.x+=0.65;relay.position.z+=1.3;
 line(relay,[[20.45,7.0,.6],[20.45,6.83,.6],[20.45,6.83,-1.4],[20.9,6.83,-3.35],[20.9,6.83,-3.8],[20.9,7.4,-3.8]],.02,black);
 // Sistema de puesta a tierra: retícula de cobre enterrada en el suelo natural (bajo la subbase y la grava), con varillas, registros y bajantes propias por equipo.
@@ -1132,6 +1136,8 @@ function enhanceProfessionalPresentation(){
  box(ctrl,[.65,.1,.6],[25.85,6.72,-4.2],concrete);box(ctrl,[.58,1.25,.48],[25.85,7.4,-4.2],paint);
  proPlate(ctrl,'DC / CONTROL',[25.85,7.80,-3.953],.49,'#254b5c',.10);
  for(let k=0;k<8;k++)box(ctrl,[.35,.017,.021],[25.85,6.95+k*.048,-3.947],darkM);
+ cabinetSkin20(ctrl,.54,1.18,.022,[25.85,7.4,-3.96],paint,.015);
+ articulateCabinet38(ctrl,{id:'DC-01',key:'yard',x:25.85,y:7.4,z:-3.96,w:.54,h:1.18,depth:.48,type:'dc',body:o=>o.geometry.type==='BoxGeometry'&&Math.abs(o.geometry.parameters.width-.58)<.001&&Math.abs(o.geometry.parameters.height-1.25)<.001,front:o=>o.position.z>=-3.98&&o.position.y>6.82});
  proPipe(ctrl,[[25.85,6.84,-4.2],[25.85,6.5,-4.2],[24.4,6.5,-4.2],[24.4,6.9,-4.65]],.022,black);
  // Transformer mechanical details: pressure relief, silica-gel breather, inspection flanges and grounding studs.
  for(const [key,x,z] of [['TE',11.6,3.9],['TP',24.4,-.5]]){
@@ -1159,6 +1165,7 @@ function enhanceProfessionalPresentation(){
 }
 
 function batchStaticGeometry(parent){
+ if(parent.userData.noCompact)return;
  const interactive=new Set(substation.flowItems.flatMap(x=>[x.conduit,...x.dots]));
  // Keep meshes with runtime material changes or interactive metadata unmerged.
  for(const g of [...parent.children])if(g.isGroup)batchStaticGeometry(g);
