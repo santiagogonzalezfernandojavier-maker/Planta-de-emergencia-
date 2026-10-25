@@ -20,3 +20,9 @@ test('handrails, stair opening, equipment and floor differences remain solid',()
  assert.equal(site.step({x:9.2,z:0,floor:6.5},11,3.9),null);
  assert.equal(site.step({x:0,z:0,floor:6.5},30,0),null);
 });
+test('radiator access removes only the collider corresponding to its removed service duct',()=>{
+ assert.equal(site.surface(-2.95,-.5,-.07),null);
+ assert.ok(site.surface(-2.95,-.5,-.07,true));
+ assert.equal(site.surface(0,0,-.07,true),null);
+ assert.equal(site.surface(-4.8,-3,-.07,true),null);
+});

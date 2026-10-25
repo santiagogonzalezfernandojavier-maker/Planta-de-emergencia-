@@ -4,6 +4,13 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D43
+
+- Brazos de primera persona con dos segmentos de longitud fija, límites de alcance y herramientas ancladas al agarre. Las acciones continuas mantienen la postura; no reinician el alcance en cada sector. La inspección Z oculta las manos para liberar la vista.
+- Cambiar a una vista de inspección suspende el recorrido; «Volver a mi recorrido» restaura posición, orientación, agachado, herramienta y actividad. La llegada rápida a la subestación usa el pasillo peatonal junto al acceso SE-01.
+- El guiado muestra paso, herramienta, pieza y resultado esperado. El resultado permanece cuatro segundos; E permite continuar. El radiador tiene acceso de servicio y selección de sectores sin completar accidentalmente el adyacente.
+- Pruebas: `npm test`, `npm run test:player`, `npm run test:browser`, `npm run test:technical` y `npm run test:site` (esta última después de `npm run site:build`). Se conservan las limitaciones de geometría procedural y colisiones simplificadas.
+
 ## Base D34
 
 - Recorrido a pie en planta, subestación y CCM; otras vistas de fábrica/general todavía usan cámara de inspección.

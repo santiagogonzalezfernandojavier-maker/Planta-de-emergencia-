@@ -7,7 +7,7 @@ const SiteWalk37=(()=>{
  const yard=[[10,13.2,2.45,5.15],[22.8,26,-1.90,.90],[17,18.8,-2.45,-.75],[17.55,19.25,.45,2.15],[19.9,21.7,-1.75,-.05],[10.35,12.95,-2.95,-1.80],[23.6,25.2,-6.2,-4.6],[12,12.45,-5.1,-4.6],[15.9,16.35,-5.1,-4.6]];
  const insideFlight=(x,z)=>Math.abs(x-stairs.x)<=half&&z>=highEdge&&z<=lowEdge;
  const blocked=(x,z,boxes,r=.18)=>boxes.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);
- function surface(x,z,currentFloor){
+ function surface(x,z,currentFloor,serviceAccess=false){
   if(insideFlight(x,z)){const step=Math.min(stairs.count-1,Math.max(0,Math.floor((lowEdge-z)/stairs.tread)));return{height:(step+1)*stairs.rise,zone:'stairs',step:step+1};}
   // Landing bridges the last tread to the slab beyond the stair opening.
   if(Math.abs(x-stairs.x)<=half&&z<highEdge&&z>=-5.90&&currentFloor>6.20)return{height:6.50,zone:'yard',step:36};
@@ -22,10 +22,10 @@ const SiteWalk37=(()=>{
    return{height:x>=9?6.65:6.50,zone:'yard',step:null};
   }
   if(x< -7.5||x>8.45||z< -5.45||z>5.75)return null;
-  if(x>-.49&&x<.79&&z>2.57&&z<3.53||blocked(x,z,basement))return null;
+  if(x>-.49&&x<.79&&z>2.57&&z<3.53||blocked(x,z,serviceAccess?basement.filter((_,i)=>i!==2):basement))return null;
   return{height:-.07,zone:'plant',step:null};
  }
- function step(from,x,z){const next=surface(x,z,from.floor);if(!next||Math.abs(next.height-from.floor)>maxStep+1e-6)return null;
+ function step(from,x,z,serviceAccess=false){const next=surface(x,z,from.floor,serviceAccess);if(!next||Math.abs(next.height-from.floor)>maxStep+1e-6)return null;
   // Entry/exit through the ends only: the side handrails are solid boundaries.
   if(z>=highEdge&&z<=lowEdge&&from.z>=highEdge&&from.z<=lowEdge&&insideFlight(from.x,from.z)!==insideFlight(x,z))return null;
   return next;

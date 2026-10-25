@@ -74,7 +74,7 @@ const root = path.resolve(__dirname, '..');
     await page.locator('#nav33toggle').click();
     await page.locator('[data-zone33=yard]').click();
     assert.equal(await page.evaluate(()=>Walk31.state().zone),'yard');
-    await page.locator('[data-zone33=ccm]').click();
+    await page.locator('#nav33toggle').click();await page.locator('[data-zone33=ccm]').click();
     await page.evaluate(()=>frame(performance.now()+2000));
     assert.equal(await page.evaluate(()=>CCM34.state().length),26);
     await page.keyboard.down('KeyW');
@@ -86,7 +86,7 @@ const root = path.resolve(__dirname, '..');
     assert.ok(coverCheck.types>=8);assert.equal(coverCheck.restored,true);
     await page.locator('#closeCCM34').click();
     assert.ok((await page.evaluate(()=>CCM34.state())).every(d=>!d.open));
-    await page.locator('[data-zone33=practice]').click();
+    await page.locator('#nav33toggle').click();await page.locator('[data-zone33=practice]').click();
     assert.equal(await page.evaluate(()=>Walk31.state().zone),'plant');
     assert.equal(await page.evaluate(()=>Protection33.masts),4);
     assert.equal(await page.evaluate(()=>Protection33.apartarrayos),3);
@@ -125,7 +125,7 @@ const root = path.resolve(__dirname, '..');
     assert.equal(await page.evaluate(()=>Maintenance.state().done),false);
     await page.evaluate(()=>{for(let i=0;i<6;i++)Walk31.frame(.08)});
     assert.equal(await page.evaluate(()=>Maintenance.state().done),true);
-    await page.waitForTimeout(1700);await page.evaluate(()=>Walk31.frame(0));
+    await page.waitForTimeout(4100);await page.evaluate(()=>Walk31.frame(0));
     assert.equal(await page.evaluate(()=>Maintenance.state().index),1);
     assert.equal(await page.evaluate(()=>Walk31.state().journal),false);
     assert.equal(await page.evaluate(()=>Maintenance.state().tool),'hand');
@@ -158,11 +158,11 @@ const root = path.resolve(__dirname, '..');
       const canvas=renderer.domElement;
       const key=(code,type)=>canvas.dispatchEvent(new KeyboardEvent(type,{code,key:code.startsWith('Key')?code.slice(3).toLowerCase():code,bubbles:true,cancelable:true}));
       function turn(yaw){let difference=Math.atan2(Math.sin(yaw-Walk31.state().yaw),Math.cos(yaw-Walk31.state().yaw));const code=difference>0?'ArrowLeft':'ArrowRight';key(code,'keydown');for(let remaining=Math.abs(difference);remaining>1e-6;){const dt=Math.min(.08,remaining/1.6);Walk31.frame(dt);remaining-=dt*1.6;}key(code,'keyup');}
-      function travel(x,z){
+      function travel(x,z,tolerance=1.15){
         const start=Walk31.state().position,spacing=.24,queue=[[0,0]],seen=new Map([['0,0',null]]);let end=null;
         for(let head=0;head<queue.length&&head<12000;head++){
           const cell=queue[head],px=start[0]+cell[0]*spacing,pz=start[2]+cell[1]*spacing;
-          if(Math.hypot(px-x,pz-z)<1.15){end=cell;break;}
+          if(Math.hypot(px-x,pz-z)<tolerance){end=cell;break;}
           for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){const next=[cell[0]+dx,cell[1]+dz],id=next.join(',');if(!seen.has(id)&&Walk31.canStand(start[0]+next[0]*spacing,start[2]+next[1]*spacing)){seen.set(id,cell);queue.push(next);}}
         }
         if(!end)throw Error('No route to '+x+','+z);
@@ -185,8 +185,8 @@ const root = path.resolve(__dirname, '..');
       take('hand');act('isolate',.6,1.12);advance();
       take('hand');act('dipstick',-.82,.93);take('rag');act('dipstick',-.82,.93);take('hand');act('dipstick',-.82,.93);act('dipstick',-.82,.93);
       if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Oil reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
-      take('light');travel(-3.75,0);const lamp=scene.getObjectByName('Haz de la linterna de inspección'),hands=scene.getObjectByName('Manos enguantadas del jugador');Walk31.frame(0);if(!lamp.visible||lamp.intensity<10||!hands.visible)throw Error('Flashlight or hands inactive');
-      for(let i=0;i<8;i++){const point=[-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48];aim(point);if(!Maintenance.clearSight('dust'+i,true))throw Error('Radiator zone blocked '+i+' '+JSON.stringify(Maintenance.clearSight.blocker));if(i===0){lamp.visible=false;renderer.render(scene,camera);await window.capture41('d41-linterna-apagada');Walk31.frame(0);renderer.render(scene,camera);await window.capture41('d41-linterna');}key('KeyE','keydown');for(let j=0;j<9;j++)Walk31.frame(.08);key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held inspection failed '+i);}
+      take('light');travel(-2.95,0,.12);const lamp=scene.getObjectByName('Haz de la linterna de inspección'),hands=scene.getObjectByName('Manos enguantadas del jugador');Walk31.frame(0);if(!lamp.visible||lamp.intensity<10||!hands.visible)throw Error('Flashlight or hands inactive');
+      for(let i=0;i<8;i++){const point=[-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48];aim(point);if(!Maintenance.clearSight('dust'+i,true))throw Error('Radiator zone blocked '+i+' '+JSON.stringify(Maintenance.clearSight.blocker));if(i===0){lamp.visible=false;renderer.render(scene,camera);await window.capture41('d41-linterna-apagada');Walk31.frame(0);renderer.render(scene,camera);await window.capture41('d41-linterna');}key('KeyE','keydown');for(let j=0;j<9;j++)Walk31.frame(.08);key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held inspection failed '+i+' '+JSON.stringify({state:Maintenance.state(),walk:Walk31.state(),rig:Maintenance.rigState()}));}
       if(Maintenance.state().done)throw Error('Inspection treated as cleaning');take('brush');
       for(let i=0;i<8;i++){aim([-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48]);if(i===0){const p=Maintenance.targetScreen('dust0');await window.holdMouse41(p.x,p.y);}else key('KeyE','keydown');for(let j=0;j<4;j++)Walk31.frame(.08);if(i===0){renderer.render(scene,camera);await window.capture41('d41-cepillado');}for(let j=0;j<9&&!Maintenance.state().done;j++)Walk31.frame(.08);if(i===0)await window.releaseMouse41();else key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held cleaning failed '+i);}if(Maintenance.state().index===4)advance();else if(Maintenance.state().index!==5||Maintenance.state().records.length!==5)throw Error('Unexpected automatic progress after cleaning');
       take('socket');act('boltA',-.65,.65,1);act('boltB',-.65,.65,1);take('hand');act('cap',-.68,.6);take('spare');act('cap',-.68,.6);if(Maintenance.state().done)throw Error('Filter accepted with open cover');take('hand');act('cap',-.68,.6);take('socket');act('boltA',-.65,.65,1);if(Maintenance.state().done)throw Error('Filter accepted with one open fastener');act('boltB',-.65,.65,1);advance();

@@ -16,7 +16,7 @@ const {chromium}=require('playwright');
   await page.goto('http://127.0.0.1:'+server.address().port+'/Planta-de-emergencia-/');
   await page.waitForFunction(()=>document.documentElement.classList.contains('ready32'),{},{timeout:180000,polling:100});
   await page.evaluate(()=>frame(performance.now()+1000));assert.equal(await page.evaluate(()=>Personnel.count()),4);
-  assert.equal(await page.evaluate(()=>Maintenance.state().quality),'D42');
+  assert.equal(await page.evaluate(()=>Maintenance.state().quality),'D43');
   assert.equal(await page.evaluate(()=>Maintenance.state().active),true);
   const before=await page.evaluate(()=>Maintenance.state().index);updated=true;
   await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));

@@ -1,6 +1,16 @@
-# Simulador de planta de emergencia — D42: unifilar NMX y seguridad EPSS
+# Simulador de planta de emergencia — D43: brazos, cámara y recorrido
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D43 · brazos y navegación revisados
+
+Los brazos usan dos segmentos de longitud fija (30 y 27 cm) y un codo calculado; un objeto lejano no alarga las extremidades. Se revisaron el agarre de herramientas, los dedos y las mangas. Las inspecciones con linterna mantienen la herramienta cerca del cuerpo; las acciones continuas sostienen la pose en lugar de reiniciar el alcance repetidamente. Pausar, abrir el cuaderno, abrir la bolsa o cambiar de vista cancela la acción pendiente. Las manos siguen siendo un modelo procedural de primera persona, sin un cuerpo completo ni contacto físico resuelto en toda la instalación.
+
+La entrada directa a **Subestación** lleva al pasillo peatonal de acceso, con identificación enmarcada y guía de piso. Las vistas de inspección liberan el control de la cámara de recorrido. **Volver a mi recorrido** conserva posición, orientación, postura, herramienta, inspección Z y actividad. Se restauran la perspectiva y el plano cercano al salir; Z retira las manos del encuadre para examinar la pieza. El menú de zonas se cierra al seleccionar un destino.
+
+Se corrigió el acceso al radiador durante su mantenimiento: la colisión del tramo retirado ya no bloquea el paso. Las zonas del radiador tienen blancos más pequeños y se seleccionan por alineación al apuntar; un punto completado no redirige automáticamente la acción a un blanco vecino. El marcador, la flecha y la indicación siguen el mismo componente. El panel indica paso/herramienta, distingue errores y conserva el último resultado. El avance automático espera 4 s para permitir leer; E continúa inmediatamente.
+
+`npm run test:player` comprueba longitudes, alcance acotado, agarre, cambio de cámara, recuperación del recorrido y entrada por acceso peatonal. Se mantienen las pruebas del unifilar, seguridad EPSS, doce actividades, gabinetes y escaleras.
 
 ## D42 · unifilar y seguridad EPSS
 
