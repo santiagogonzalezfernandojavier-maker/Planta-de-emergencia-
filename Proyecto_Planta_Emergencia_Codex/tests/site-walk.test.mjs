@@ -6,7 +6,7 @@ const context=vm.createContext({});vm.runInContext(fs.readFileSync(new URL('../s
 const site=context.api;
 function travel(from,x,z){const distance=Math.hypot(x-from.x,z-from.z),count=Math.ceil(distance/.07);for(let i=0;i<count;i++){const nextX=from.x+(x-from.x)/(count-i),nextZ=from.z+(z-from.z)/(count-i),next=site.step(from,nextX,nextZ);assert.ok(next,'Blocked at '+nextX+','+nextZ+' from floor '+from.floor);assert.ok(Math.abs(next.height-from.floor)<=site.maxStep+1e-6);from={x:nextX,z:nextZ,floor:next.height,zone:next.zone};}return from;}
 test('all 36 physical treads join the basement and deck in both directions',()=>{
- let p={x:-5.65,z:5.65,floor:-.07};p=travel(p,-5.65,-5.75);assert.equal(p.floor,6.5);assert.equal(p.zone,'yard');
+ let p={x:-5.65,z:5.65,floor:-.07};p=travel(p,-5.65,-6.4);assert.equal(p.floor,6.5);assert.equal(p.zone,'yard');
  p=travel(p,-5.65,-6.7);p=travel(p,14,-6.7);p=travel(p,14,5.4);assert.equal(p.floor,6.65);
  p=travel(p,14,-6.7);p=travel(p,-5.65,-6.7);p=travel(p,-5.65,5.65);assert.equal(p.floor,-.07);assert.equal(p.zone,'plant');
 });
@@ -25,4 +25,12 @@ test('radiator access removes only the collider corresponding to its removed ser
  assert.ok(site.surface(-2.95,-.5,-.07,true));
  assert.equal(site.surface(0,0,-.07,true),null);
  assert.equal(site.surface(-4.8,-3,-.07,true),null);
+});
+
+test('stair foot leaves at least 1.5 m to turn before the front wall',()=>{
+ assert.ok(5.75-site.lowEdge>=1.5);
+ assert.ok(site.landings.bottom.maxZ-site.landings.bottom.minZ>=1.5);
+ let p={x:-3.7,z:5.3,floor:-.07};p=travel(p,site.stairs.x,5.3);p=travel(p,site.stairs.x,site.lowEdge+.05);p=travel(p,-4.5,site.lowEdge+.05);
+ assert.equal(p.zone,'plant');
+ assert.equal(site.surface(site.opening.minX,0,6.5),null);
 });

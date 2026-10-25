@@ -2,7 +2,7 @@
 (()=>{
  const selector='#viewbar [data-nav],#viewbar [data-view],#resetCamera,#basementView,#siteView,#overallView,#frontView,#yardView,#groundCutView,#undergroundView,#groundSystemView,#focusTE,#focusTP,#focusCells,#factoryFeederView';
  document.addEventListener('click',e=>{const control=e.target.closest(selector);if(!control)return;
-  const nav=control.dataset.nav;if(nav==='emergency'){e.preventDefault();e.stopImmediatePropagation();Maintenance.resume33();return;}
+  const nav=control.dataset.nav;if(nav==='emergency'&&Maintenance.state().active){e.preventDefault();e.stopImmediatePropagation();Maintenance.resume33();return;}
   if(nav==='yard'){e.preventDefault();e.stopImmediatePropagation();Maintenance.suspend33();Walk31.enterZone('yard');const details=control.closest('details');if(details)details.open=false;return;}
   if(Walk31.state().active)Maintenance.suspend33();
  },true);

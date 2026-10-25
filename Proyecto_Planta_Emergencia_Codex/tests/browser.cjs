@@ -31,6 +31,8 @@ const root = path.resolve(__dirname, '..');
     await page.addInitScript(()=>window.requestAnimationFrame=()=>0);
     await page.goto(`http://127.0.0.1:${port}`,{timeout:180000});
     await page.waitForFunction(()=>document.documentElement.classList.contains('ready32'), {}, {polling:100});
+    assert.equal(await page.locator('#gameLaunch').isVisible(),true);
+    await page.locator('#gameMaintenance').click();await page.locator('#wBeginG').click();
     await page.evaluate(()=>frame(performance.now()+1000));
     assert.equal(await page.evaluate(()=>Personnel.count()),4);
     const standing=await page.evaluate(()=>Walk31.state().position[1]);

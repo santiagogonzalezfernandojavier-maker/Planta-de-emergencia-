@@ -4,6 +4,11 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D43.1
+
+- El menú inicial espera una selección; desaparece el arranque forzado. Explorar, misiones eléctricas, anatomía y mantenimiento tienen entradas independientes.
+- La escalera conserva 36 peldaños con el pie desplazado 0.95 m: descanso inferior de 2.10 m de ancho y al menos 1.50 m de profundidad. Hueco, barandales y superficies transitables comparten dimensiones.
+
 ## Actualización D43
 
 - Brazos de primera persona con dos segmentos de longitud fija, límites de alcance y herramientas ancladas al agarre. Las acciones continuas mantienen la postura; no reinician el alcance en cada sector. La inspección Z oculta las manos para liberar la vista.

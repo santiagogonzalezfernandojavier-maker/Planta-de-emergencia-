@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D43
+# Planta de emergencia · simulador D43.1
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -64,3 +64,5 @@ D41 añade manos animadas, haz real de linterna, cepillado progresivo y resultad
 D42 añade **Unifilar técnico** (NMX-J-136-ANCE-2019, símbolos nacionales, datos y SVG) y **Seguridad EPSS** (referencia NFPA 110-2010 aportada). Incluye paro remoto protegido, anunciación, alumbrado autónomo, escenarios de inspección y bitácora. [Alcance y referencias](Proyecto_Planta_Emergencia_Codex/docs/UNIFILAR_Y_SEGURIDAD_D42.md).
 
 D43 corrige brazos extensibles, agarres y reinicios de animación; restaura cámara/postura/herramienta al volver de las vistas. Subestación comienza en el acceso peatonal. Se revisaron blancos e indicaciones del radiador, el paso/herramienta y la lectura de resultados.
+
+D43.1 recupera el menú al abrir: cada modalidad empieza tras elegirla. Amplía el descanso al pie de la escalera separando el primer peldaño de la pared; los 36 peldaños y sus colisiones conservan la conexión entre niveles.

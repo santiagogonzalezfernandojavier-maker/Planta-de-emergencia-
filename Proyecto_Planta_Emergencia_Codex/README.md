@@ -1,6 +1,12 @@
-# Simulador de planta de emergencia — D43: brazos, cámara y recorrido
+# Simulador de planta de emergencia — D43.1: menú de inicio y acceso a la escalera
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D43.1 · elección inicial y espacio de paso
+
+La carga de personajes ya no pulsa Explorar ni inicia el mantenimiento. El menú permanece hasta elegir **Explorar instalación**, **Elegir una misión**, **Anatomía de la planta** o **Mantenimiento práctico**. Esta última abre la selección guiado/evaluación; las otras opciones conservan sus propias funciones. Esc no salta el menú inicial.
+
+El pie de la escalera se desplazó 0.95 m hacia el interior longitudinal del recorrido, manteniendo sus 36 peldaños, huella y altura. El descanso inferior tiene 2.10 m de ancho y más de 1.50 m de profundidad de paso. El hueco de losa, barandales, descanso superior y colisiones usan las mismas dimensiones. Se conserva la ruta a pie de ida y vuelta.
 
 ## D43 · brazos y navegación revisados
 

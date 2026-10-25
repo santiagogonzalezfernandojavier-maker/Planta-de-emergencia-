@@ -941,7 +941,8 @@ function refineTechnicalModel(){
  const concrete=mat('#b3b9bc'),steelM=mat('#89969f',.7),darkM=mat('#343f49',.35),paint=mat('#65737d',.45),white=mat('#e9e9df'),yellow=mat('#efc22d');
  // Replace the slab with a continuous solid slab and a real stair opening.
  substation.decks.clear();const slab=new T.Shape();slab.moveTo(-8.4,-8.85);slab.lineTo(27.5,-8.85);slab.lineTo(27.5,6.25);slab.lineTo(-8.4,6.25);slab.closePath();
- const opening=new T.Path();opening.moveTo(-6.65,-5.25);opening.lineTo(-6.65,5.3);opening.lineTo(-4.65,5.3);opening.lineTo(-4.65,-5.25);opening.closePath();slab.holes.push(opening);
+ const stairDims=SiteWalk37.stairs,stairHole=SiteWalk37.opening,stairLandings=SiteWalk37.landings;
+ const opening=new T.Path();opening.moveTo(stairHole.minX,stairHole.minZ);opening.lineTo(stairHole.minX,stairHole.maxZ);opening.lineTo(stairHole.maxX,stairHole.maxZ);opening.lineTo(stairHole.maxX,stairHole.minZ);opening.closePath();slab.holes.push(opening);
  const slabGeo=new T.ExtrudeGeometry(slab,{depth:.35,bevelEnabled:false});slabGeo.rotateX(Math.PI/2);mesh(substation.decks,slabGeo,concrete,[0,6.5,0]);
  // The opening is longitudinal; extrusion maps shape y to world z.
  box(g,[36.6,.28,.35],[9.5,-.05,6.23],concrete);
@@ -956,17 +957,16 @@ function refineTechnicalModel(){
  proPlate(frontClosure,'CUARTO DE MÁQUINAS / BAJO NIVEL DE PISO',[.4,3.8,6.25],5,'#384b58',.28);
  // Stair from basement to exterior, supported treads and guard rails around the opening.
  const stair=new T.Group();g.add(stair);stair.name='Acceso constructivo al sótano';
- for(let i=0;i<SiteWalk37.stairs.count;i++){const y=(i+1)*SiteWalk37.stairs.rise,z=SiteWalk37.stairs.startZ-i*SiteWalk37.stairs.tread;box(stair,[1.66,.14,.29],[-5.65,y-.07,z],concrete);box(stair,[1.66,.022,.055],[-5.65,y+.012,z+.105],darkM);}
- for(const x of [-6.43,-4.87]){proPipe(stair,[[x,.03,5.18],[x,6.38,-4.98]],.08,steelM);proPipe(stair,[[x,1.13,5.18],[x,7.5,-4.98]],.034,steelM);for(let i=0;i<36;i+=3){const z=5.02-i*.28,y=(i+1)*(6.5/36);cyl(stair,.024,1.06,[x,y+.53,z],steelM);}}
- for(const x of [-6.70,-4.60]){for(let z=-5;z<5.4;z+=1.4)cyl(stair,.032,1.08,[x,7.04,z],steelM);for(const y of [7.04,7.58])proPipe(stair,[[x,y,-5.24],[x,y,5.3]],.028,steelM);}
- // Full-width top and bottom landings join the actual treads to both walking levels.
- box(stair,[1.66,.18,.98],[-5.65,6.41,-5.27],concrete);
- box(stair,[1.66,.14,.60],[-5.65,-.14,5.47],concrete);
- proSign(g,'exit','SALIDA',[-6.35,7.88,-5.8],.66);box(g,[.06,1.65,.06],[-6.35,7.4,-5.85],steelM);
+ for(let i=0;i<stairDims.count;i++){const y=(i+1)*stairDims.rise,z=stairDims.startZ-i*stairDims.tread;box(stair,[stairDims.width,.14,.29],[stairDims.x,y-.07,z],concrete);box(stair,[stairDims.width,.022,.055],[stairDims.x,y+.012,z+.105],darkM);}
+ for(const side of [-1,1]){const x=stairDims.x+side*(stairDims.width/2-.05),lowZ=SiteWalk37.lowEdge+.015,highZ=SiteWalk37.highEdge-.055;proPipe(stair,[[x,.03,lowZ],[x,6.38,highZ]],.08,steelM);proPipe(stair,[[x,1.13,lowZ],[x,7.5,highZ]],.034,steelM);for(let i=0;i<stairDims.count;i+=3){const z=stairDims.startZ-i*stairDims.tread,y=(i+1)*stairDims.rise;cyl(stair,.024,1.06,[x,y+.53,z],steelM);}}
+ for(const x of [stairHole.minX-.05,stairHole.maxX+.05]){for(let z=stairHole.minZ+.24;z<stairHole.maxZ+.1;z+=1.4)cyl(stair,.032,1.08,[x,7.04,z],steelM);for(const y of [7.04,7.58])proPipe(stair,[[x,y,stairHole.minZ+.01],[x,y,stairHole.maxZ]],.028,steelM);}
+ // Landings share dimensions with collision handling. The foot now has >1.5 m of turning room.
+ for(const [key,landing]of Object.entries(stairLandings)){const upper=key==='top',depth=upper?.18:.14,top=upper?6.50:-.07;box(stair,[landing.width,depth,landing.maxZ-landing.minZ],[stairDims.x,top-depth/2,(landing.maxZ+landing.minZ)/2],concrete);}
+ proSign(g,'exit','SALIDA',[-6.85,7.88,-6.70],.66);box(g,[.06,1.65,.06],[-6.85,7.4,-6.75],steelM);
  box(g,[.04,1.30,.04],[-6.80,.58,5.70],steelM);
  proPlate(g,'SUBESTACIÓN · SUBIR',[-6.80,1.20,5.72],1.45,'#315a52',.12);
- box(g,[.04,1.00,.04],[-6.80,7.00,-5.62],steelM);
- proPlate(g,'PLANTA · BAJAR',[-6.80,7.35,-5.60],1.45,'#315a52',.12);
+ box(g,[.04,1.00,.04],[-6.80,7.00,-6.62],steelM);
+ proPlate(g,'PLANTA · BAJAR',[-6.80,7.35,-6.60],1.45,'#315a52',.12);
 
  proPlate(g,'NIVEL DE PISO ±0.00',[5.5,6.31,6.47],2.5,'#546571',.20);
  proPlate(g,'SÓTANO −6.50 m',[.1,-.015,6.43],2.7,'#546571',.15);
@@ -1088,7 +1088,7 @@ function enhanceProfessionalPresentation(){
  scene.background.set('#e6edf2');scene.fog=null;floor.visible=false;camera.far=250;camera.updateProjectionMatrix();
  light.shadow.bias=-.00025;light.shadow.normalBias=.025;light.shadow.camera.far=90;light.shadow.camera.updateProjectionMatrix();renderer.toneMappingExposure=1;
  // Structural beams tie existing columns to the roof slab. Front is a deliberate architectural cut.
- for(const z of [-4.8,4.8])box(g,[15.2,.48,.38],[.45,5.84,z],concrete);
+ for(const z of [-4.8,4.8]){const hole=SiteWalk37.opening,spans=z>hole.minZ&&z<hole.maxZ?[[-7.15,hole.minX-.05],[hole.maxX+.05,8.05]]:[[-7.15,8.05]];for(const [a,b]of spans)box(g,[b-a,.48,.38],[(a+b)/2,5.84,z],concrete);}
  for(const x of [-6.9,7.8])box(g,[.38,.48,10],[x,5.84,0],concrete);
  for(const x of [-3,1,5])for(const dx of [-.7,.7])cyl(g,.012,.88,[x+dx,5.8,1],zinc);
  for(const x of [-6.9,7.8])for(const z of [-4.8,4.8]){

@@ -1,4 +1,4 @@
-body:not(.ready32)>header,body:not(.ready32)>main{visibility:hidden}html{background:#09171d}html::after{content:"Cargando el cuarto de mantenimiento…";position:fixed;inset:0;display:grid;place-items:center;color:#dce9de;background:#09171d;z-index:99999;font:18px system-ui}html.ready32::after{display:none}
+body:not(.ready32)>header,body:not(.ready32)>main{visibility:hidden}html{background:#09171d}html::after{content:"Cargando el simulador…";position:fixed;inset:0;display:grid;place-items:center;color:#dce9de;background:#09171d;z-index:99999;font:18px system-ui}html.ready32::after{display:none}
 
 :root{--bg:#f3f5f4;--panel:#ffffff;--line:#dde4e0;--ink:#1c2b27;--muted:#6b7d76;--brand:#136a56;--brand-dark:#0e5344;--soft:#eaf3ee;--accent:#c9972e;--danger:#b23b3b;--danger-bg:#fbeaea;--r:10px}
 *{box-sizing:border-box}
