@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D36
+# Planta de emergencia · simulador D37
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -49,3 +49,5 @@ Las mejoras de los operarios afectan a su presentación en el simulador. Se cons
 El manifiesto SHA256 incluido describe la entrega D34 original y no la revisión D36. Consulta el README del proyecto para los detalles y sus límites didácticos.
 
 Las órdenes D36 explican dónde ir, qué observar, qué herramienta utilizar y qué evidencia cierra cada actividad. Consulta `Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D36.md`.
+
+D37 permite subir y bajar caminando por la escalera entre la planta y la subestación, conservando la orden de mantenimiento. La escalera interior del CCM continúa separada de este recorrido.

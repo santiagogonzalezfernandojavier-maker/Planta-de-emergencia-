@@ -1,6 +1,12 @@
-# Simulador de planta de emergencia — D36: órdenes de mantenimiento y operarios
+# Simulador de planta de emergencia — D37: recorrido por escaleras
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Esta entrega prepara el proyecto para programación; no cambia intencionadamente la simulación ni añade una nueva revisión funcional.
+
+## Cambios D37 · subir a la subestación caminando
+
+Desde el cuarto de la planta, ve al pie de la escalera al fondo/lado izquierdo, rodea su extremo inferior y sube con WASD. La altura sigue los 36 peldaños. Al salir al descanso superior, sigue el pasillo hasta el paso peatonal de la cerca, abierto para este escenario autorizado; regresa por el mismo camino para bajar. No se requiere salto ni cambiar de zona en el menú. La orden, las herramientas y el avance se conservan.
+
+Los descansos inferior y superior están conectados al piso, los barandales laterales y el hueco de la losa bloquean pasos indebidos y una luminaria se separó de la salida. Las colisiones siguen siendo una representación simplificada, sin física de cuerpo completo. Este cambio conecta planta y subestación; la escalera interior del CCM sigue siendo una navegación aparte.
 
 ## Cambios D36
 

@@ -86,6 +86,22 @@ const root = path.resolve(__dirname, '..');
     assert.equal(await page.evaluate(()=>Protection33.masts),4);
     assert.equal(await page.evaluate(()=>Protection33.apartarrayos),3);
     assert.deepEqual(errors,[]);
+    // Climb the actual staircase and return using movement, without zone-menu teleportation.
+    const stairRoundTrip=await page.evaluate(()=>{
+      Walk31.enterZone('plant');const before=Maintenance.state();
+      const canvas=renderer.domElement,key=(code,type)=>canvas.dispatchEvent(new KeyboardEvent(type,{code,key:code.startsWith('Key')?code.slice(3).toLowerCase():code,bubbles:true,cancelable:true}));
+      function moveTo(x,z){let tries=0;while(Math.hypot(Walk31.state().position[0]-x,Walk31.state().position[2]-z)>.025){if(++tries>1500)throw Error('Walking blocked '+JSON.stringify(Walk31.state())+' toward '+x+','+z);const p=Walk31.state().position,desired=Math.atan2(-(x-p[0]),-(z-p[2])),difference=Math.atan2(Math.sin(desired-Walk31.state().yaw),Math.cos(desired-Walk31.state().yaw));if(Math.abs(difference)>.002){const code=difference>0?'ArrowLeft':'ArrowRight';key(code,'keydown');for(let remaining=Math.abs(difference);remaining>1e-6;){const dt=Math.min(.08,remaining/1.6);Walk31.frame(dt);remaining-=dt*1.6;}key(code,'keyup');}const distance=Math.hypot(x-p[0],z-p[2]);key('KeyW','keydown');Walk31.frame(Math.min(.04,distance/1.65));key('KeyW','keyup');}}
+      moveTo(1.8,5.6);moveTo(-5.65,5.6);moveTo(-5.65,0);const mid=Walk31.state();
+      if(mid.zone!=='stairs'||mid.floor<2||mid.floor>5)throw Error('Stair height did not follow treads');
+      if(Walk31.canStand(-4.8,mid.position[2]))throw Error('Side rail was passable');
+      moveTo(-5.65,-5.75);moveTo(-5.65,-6.7);moveTo(14,-6.7);moveTo(14,5.4);const yard=Walk31.state();
+      if(yard.zone!=='yard'||Math.abs(yard.floor-6.65)>.01)throw Error('Did not reach substation');
+      moveTo(14,-6.7);moveTo(-5.65,-6.7);moveTo(-5.65,5.6);moveTo(1.8,5.6);moveTo(1.8,4.1);const end=Walk31.state(),after=Maintenance.state();
+      if(end.zone!=='plant'||Math.abs(end.floor+.07)>.01)throw Error('Did not return to basement');
+      if(before.index!==after.index||before.records.length!==after.records.length)throw Error('Stair travel reset maintenance');
+      return{up:true,down:true,progressPreserved:true};
+    });
+    assert.deepEqual(stairRoundTrip,{up:true,down:true,progressPreserved:true});
     // Walk the twelve actual work orders through the shipped interaction API.
     await page.evaluate(()=>{Walk31.enterZone('plant');});
     assert.ok(await page.locator('#missionCard').isVisible());
@@ -136,7 +152,7 @@ const root = path.resolve(__dirname, '..');
       for(let i=0;i<1500&&!UnidadVII.state().test?.done;i++)tick(.08);renderUI();if(!Maintenance.state().finished)throw Error('Functional transfer did not complete: '+JSON.stringify(UnidadVII.state()));return{completed:Maintenance.state().records.length,evidence:Maintenance.state().records.every(r=>r.workOrder?.decision),functionalTestCompleted:true};
     });
     assert.equal(results.completed,12);assert.equal(results.evidence,true);assert.equal(results.functionalTestCompleted,true);
-    console.log(JSON.stringify({startup:true,operators:4,crouch:true,mouseLook:true,pointerLock:true,pause:true,journal:true,eyesDeduplicated:true,zones:true,doors:26,doorInteraction:true,returnToPractice:true,workOrders:results,pageErrors:errors}));
+    console.log(JSON.stringify({startup:true,operators:4,crouch:true,mouseLook:true,pointerLock:true,pause:true,journal:true,eyesDeduplicated:true,zones:true,doors:26,doorInteraction:true,returnToPractice:true,workOrders:results,stairs:stairRoundTrip,pageErrors:errors}));
   } finally {
     await browser?.close();server.kill();
   }

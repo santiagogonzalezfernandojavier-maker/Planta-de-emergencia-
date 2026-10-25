@@ -23,7 +23,7 @@ La planta es el tema principal. El usuario pide anatomía, acabados y proporcion
 
 - El usuario ha reportado repetidamente problemas para girar/agacharse. Aunque las pruebas de navegador pasan, hay que comprobar el flujo real con su navegador, foco del teclado, capturas del ratón y escala de pantalla. No considerar el problema aceptado por el usuario solo porque una prueba automática pase.
 - La cámara de fábrica/general es distinta del recorrido de tres zonas; unificar la experiencia sería una mejora posterior.
-- Las colisiones son volúmenes simplificados y límites por zona; no hay física completa del cuerpo ni recorrido continuo por todas las escaleras.
+- D37 conecta físicamente la planta y la subestación por la escalera de 36 peldaños. Las colisiones y alturas siguen siendo simplificadas, sin física completa del cuerpo. La escalera interior del CCM aún no forma parte del recorrido continuo.
 - El detalle visual todavía es procedural. No existe una escena fotogramétrica o un .blend completo de la instalación. Evitar prometer fotorealismo o validación de ingeniería.
 - Las puertas del CCM representan inspección didáctica sin tensión. El texto de interfaz no equivale a una medición simulada completa de ausencia de tensión o a un procedimiento de bloqueo verificado.
 - La arquitectura conserva envoltorios sucesivos sobre funciones globales. Debe refactorizarse por responsabilidades y con regresiones, sin sustituir todo el modelo por un prototipo básico.

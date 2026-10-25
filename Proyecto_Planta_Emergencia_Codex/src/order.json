@@ -1,4 +1,5 @@
 [
+  "00-site-walk.js",
   "00-core_scene.js",
   "10-personnel.js",
   "20-surfaces_presentation_ui.js",

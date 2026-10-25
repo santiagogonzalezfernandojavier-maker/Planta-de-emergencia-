@@ -581,7 +581,13 @@ for(const y of [6.8,8.8])line(fenceSteel,[[21.7,y,4],[24.5,y,4]],.035,zinc);line
 // Cierre del perímetro: paños frontal e izquierdo que faltaban (dejaban el TP y la esquina sin cercar) y paneles laterales del vano de acceso.
 mesh(fenceNet,new T.PlaneGeometry(12.7,2.15),netMat,[15.35,7.8,6]);
 mesh(fenceNet,new T.PlaneGeometry(2.7,2.15),netMat,[25.85,7.8,6]);
-const leftNet=mesh(fenceNet,new T.PlaneGeometry(14.6,2.15),netMat,[9,7.8,-1.3]);leftNet.rotation.y=Math.PI/2;
+// Pedestrian maintenance access aligned with the stair route; gate is parked open in this scenario.
+for(const [length,z]of [[.95,-8.125],[11.75,.125]]){const panel=mesh(fenceNet,new T.PlaneGeometry(length,2.15),netMat,[9,7.8,z]);panel.rotation.y=Math.PI/2;}
+for(const z of [-7.65,-5.75])cyl(fenceSteel,.048,2.5,[9,7.8,z],zinc);
+const maintenanceGate=new T.Group();fenceNet.add(maintenanceGate);maintenanceGate.name='Acceso peatonal de mantenimiento · abierto';maintenanceGate.position.set(9,0,-7.65);
+mesh(maintenanceGate,new T.PlaneGeometry(1.90,2.15),netMat,[.95,7.8,0]);for(const y of [6.75,8.85])line(maintenanceGate,[[0,y,0],[1.90,y,0]],.025,zinc);for(const x of [0,1.90])line(maintenanceGate,[[x,6.75,0],[x,8.85,0]],.025,zinc);
+const accessSign=label('PASO DE MANTENIMIENTO · ACCESO AUTORIZADO',[8.96,9.12,-6.70],2.3,'#315a52');accessSign.rotation.y=-Math.PI/2;
+
 const gateSideA=mesh(fenceNet,new T.PlaneGeometry(2,2.15),netMat,[21.7,7.8,5]);gateSideA.rotation.y=Math.PI/2;
 const gateSideB=mesh(fenceNet,new T.PlaneGeometry(2,2.15),netMat,[24.5,7.8,5]);gateSideB.rotation.y=Math.PI/2;
 // Cerrojo y candado visibles en el poste derecho de la puerta de acceso (control de acceso NOM-001-SEDE/NOM-029-STPS).
@@ -589,10 +595,10 @@ box(fenceNet,[.16,.32,.05],[24.38,7.55,4.06],zinc);
 box(fenceNet,[.15,.11,.06],[24.38,7.42,4.09],dark);
 mesh(fenceNet,new T.TorusGeometry(.05,.015,8,20),zinc,[24.38,7.51,4.10]);
 label('CIERRE CON CANDADO',[23.55,7.26,4.18],1.6,'#3b4f49');
-for(const y of [6.8,7.4,8,8.7]){line(fenceSteel,[[9,y,6],[21.7,y,6]],.018,steel);line(fenceSteel,[[24.5,y,6],[27.2,y,6]],.018,steel);line(fenceSteel,[[9,y,-8.6],[9,y,6]],.018,steel)}
+for(const y of [6.8,7.4,8,8.7]){line(fenceSteel,[[9,y,6],[21.7,y,6]],.018,steel);line(fenceSteel,[[24.5,y,6],[27.2,y,6]],.018,steel);line(fenceSteel,[[9,y,-8.6],[9,y,-7.65]],.018,steel);line(fenceSteel,[[9,y,-5.75],[9,y,6]],.018,steel)}
 for(let x=9;x<21.7;x+=.45)line(fenceSteel,[[x,6.7,6],[x,8.7,6]],.009,steel);
 for(let x=24.5;x<27.2;x+=.45)line(fenceSteel,[[x,6.7,6],[x,8.7,6]],.009,steel);
-for(let z=-8.6;z<6;z+=.45)line(fenceSteel,[[9,6.7,z],[9,8.7,z]],.009,steel);
+for(let z=-8.6;z<6;z+=.45)if(z<=-7.65||z>=-5.75)line(fenceSteel,[[9,6.7,z],[9,8.7,z]],.009,steel);
 
 
 // Bahía exterior de llegada, inspirada en la referencia del usuario.
@@ -946,10 +952,18 @@ function refineTechnicalModel(){
  proPlate(frontClosure,'CUARTO DE MÁQUINAS / BAJO NIVEL DE PISO',[.4,3.8,6.25],5,'#384b58',.28);
  // Stair from basement to exterior, supported treads and guard rails around the opening.
  const stair=new T.Group();g.add(stair);stair.name='Acceso constructivo al sótano';
- for(let i=0;i<36;i++){const y=(i+1)*(6.5/36),z=5.02-i*.28;box(stair,[1.66,.14,.29],[-5.65,y-.07,z],concrete);box(stair,[1.66,.022,.055],[-5.65,y+.012,z+.105],darkM);}
+ for(let i=0;i<SiteWalk37.stairs.count;i++){const y=(i+1)*SiteWalk37.stairs.rise,z=SiteWalk37.stairs.startZ-i*SiteWalk37.stairs.tread;box(stair,[1.66,.14,.29],[-5.65,y-.07,z],concrete);box(stair,[1.66,.022,.055],[-5.65,y+.012,z+.105],darkM);}
  for(const x of [-6.43,-4.87]){proPipe(stair,[[x,.03,5.18],[x,6.38,-4.98]],.08,steelM);proPipe(stair,[[x,1.13,5.18],[x,7.5,-4.98]],.034,steelM);for(let i=0;i<36;i+=3){const z=5.02-i*.28,y=(i+1)*(6.5/36);cyl(stair,.024,1.06,[x,y+.53,z],steelM);}}
  for(const x of [-6.70,-4.60]){for(let z=-5;z<5.4;z+=1.4)cyl(stair,.032,1.08,[x,7.04,z],steelM);for(const y of [7.04,7.58])proPipe(stair,[[x,y,-5.24],[x,y,5.3]],.028,steelM);}
- proSign(g,'exit','SALIDA',[-5.65,7.88,-5.6],.66);box(g,[.06,1.65,.06],[-5.65,7.4,-5.65],steelM);
+ // Full-width top and bottom landings join the actual treads to both walking levels.
+ box(stair,[1.66,.18,.98],[-5.65,6.41,-5.27],concrete);
+ box(stair,[1.66,.14,.60],[-5.65,-.14,5.47],concrete);
+ proSign(g,'exit','SALIDA',[-6.35,7.88,-5.8],.66);box(g,[.06,1.65,.06],[-6.35,7.4,-5.85],steelM);
+ box(g,[.04,1.30,.04],[-6.80,.58,5.70],steelM);
+ proPlate(g,'SUBESTACIÓN · SUBIR',[-6.80,1.20,5.72],1.45,'#315a52',.12);
+ box(g,[.04,1.00,.04],[-6.80,7.00,-5.62],steelM);
+ proPlate(g,'PLANTA · BAJAR',[-6.80,7.35,-5.60],1.45,'#315a52',.12);
+
  proPlate(g,'NIVEL DE PISO ±0.00',[5.5,6.31,6.47],2.5,'#546571',.20);
  proPlate(g,'SÓTANO −6.50 m',[.1,-.015,6.43],2.7,'#546571',.15);
  // Support the physical emergency button at the access, and put pictograms on the column.
@@ -1994,7 +2008,7 @@ function nightFixture(x,y,z,ground,size=7){box(nightLighting,[.75,.14,.42],[x,y,
 // The basement access fixture belongs on the solid slab, never inside the stair opening.
 const siteLuminaireMounts=[];
 for(const nominalX of [-6,2,11,18,25])for(const z of [-6,4]){
- const x=nominalX===-6&&z===4?-7.45:nominalX,grade=x<9?6.50:6.65,baseTop=grade+.24,poleBottom=baseTop+.025;
+ const x=nominalX===-6?-7.45:nominalX,grade=x<9?6.50:6.65,baseTop=grade+.24,poleBottom=baseTop+.025;
  const mount=new T.Group();mount.name='Base_luminaria_'+x+'_'+z;nightLighting.add(mount);
  box(mount,[.46,.24,.46],[x,grade+.12,z],fc);box(mount,[.31,.025,.31],[x,baseTop+.0125,z],steel);
  for(const dx of [-.105,.105])for(const dz of [-.105,.105]){cyl(mount,.013,.055,[x+dx,baseTop+.0375,z+dz],steel);cyl(mount,.022,.018,[x+dx,baseTop+.036,z+dz],steel);}
