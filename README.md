@@ -2,6 +2,23 @@
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
+## Inicio y actualizaciones automáticas en Codespaces
+
+La configuración `.devcontainer` inicia el simulador al arrancar Codespaces, reenvía el puerto 4173 y solicita abrirlo en el navegador. El supervisor consulta la rama actual de GitHub cada 30 segundos y aplica únicamente avances directos con el checkout limpio. Conserva cambios locales, archivos nuevos y commits divergentes, sin resetear, guardar en stash ni cambiar de rama. En esos casos la actualización queda pendiente en el registro.
+
+El servidor reconstruye los archivos de ejecución al detectar fuentes nuevas. Al regresar a la pestaña se recarga si no hay una práctica en curso; durante una práctica aparece un aviso con botón para actualizar. Las sesiones del simulador no se guardan al recargar. Codespaces debe estar encendido y tener acceso a GitHub.
+
+Para activar esta función en un Codespace que ya estaba abierto, detén una vez el servidor anterior con Ctrl+C y ejecuta desde la raíz del repositorio:
+
+```bash
+git pull --ff-only origin codex/simulador-d35
+bash .devcontainer/start.sh
+```
+
+Después ejecuta **Codespaces: Rebuild Container** desde la paleta de comandos de VS Code para que GitHub cargue la nueva configuración de inicio y puerto en los próximos arranques. Las actualizaciones dentro de la sesión actual ya funcionan con `start.sh`.
+
+El registro queda en `Proyecto_Planta_Emergencia_Codex/.runtime/codespaces.log`. La carpeta está ignorada por Git. La imagen incluye Node 22; las pruebas de navegador requieren instalar Chromium aparte cuando se quieran ejecutar en ese Codespace. La publicación de un sitio web independiente es una configuración distinta.
+
 ## Ejecutar en Codespaces
 
 Se requiere Node.js 20 o superior.
