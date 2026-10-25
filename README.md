@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D41
+# Planta de emergencia · simulador D42
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -60,3 +60,5 @@ D37 permite subir y bajar caminando por la escalera entre la planta y la subesta
 D38 añade llaves de servicio (L), puertas articuladas (E), cubiertas interiores desmontables (V) y compartimentos diferenciados del CCM. Las llaves se recogen junto a la bolsa del piso.
 
 D41 añade manos animadas, haz real de linterna, cepillado progresivo y resultados visibles. Retira las llaves de gabinetes; se mantienen E para puertas y V para cubiertas. El modo guiado conserva: recogida única de equipo, herramienta automática por paso, pieza identificada, E para actuar y guardar lecturas, avance automático entre actividades. Q amplía la explicación. Evaluación conserva sus comprobaciones.
+
+D42 añade **Unifilar técnico** (NMX-J-136-ANCE-2019, símbolos nacionales, datos y SVG) y **Seguridad EPSS** (referencia NFPA 110-2010 aportada). Incluye paro remoto protegido, anunciación, alumbrado autónomo, escenarios de inspección y bitácora. [Alcance y referencias](Proyecto_Planta_Emergencia_Codex/docs/UNIFILAR_Y_SEGURIDAD_D42.md).

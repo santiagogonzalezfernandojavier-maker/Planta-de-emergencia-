@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D41: manos, iluminación e interacción visible
+# Simulador de planta de emergencia — D42: unifilar NMX y seguridad EPSS
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D42 · unifilar y seguridad EPSS
+
+**Unifilar técnico**, junto a Zonas/Seguridad, abre la lámina DU-01: símbolos nacionales cotejados con NMX-J-136-ANCE-2019, figuras y abreviaturas en fichas, números de función, estados en vivo, magnitudes con FP, cuadro de alimentadores, zoom, SVG e impresión. Los datos de marco, disparo, capacidad interruptiva, conductores y transformadores se distinguen como pendientes de proyecto.
+
+**Seguridad EPSS** añade una revisión basada en la NFPA 110-2010 compartida: paro remoto protegido en el descanso exterior, anunciador con reconocimiento, prueba de lámparas, alumbrado autónomo y condiciones simuladas de ventilación, escape, combustible, cargador y agua. Se ofrece un perfil temporal de referencia de 300 s para retorno/enfriamiento y una bitácora exportable. Nivel, tipo y clase están por definir. Una demostración abreviada no acredita el ejercicio mensual real.
+
+Consulta [análisis y referencias por apartado](docs/UNIFILAR_Y_SEGURIDAD_D42.md). Los PDF completos del usuario no se publican con la aplicación.
 
 ## D41.1 · publicación y arranque estable
 

@@ -7,5 +7,9 @@
   "25-work-orders.js",
   "30-maintenance_walk.js",
   "40-protections_ccm_performance.js",
-  "45-cabinets.js"
+  "45-cabinets.js",
+  "48-unifilar-model.js",
+  "50-unifilar.js",
+  "52-safety-rules.js",
+  "55-epss-safety.js"
 ]
