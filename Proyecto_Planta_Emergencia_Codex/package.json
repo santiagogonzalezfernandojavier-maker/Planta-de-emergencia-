@@ -1,7 +1,7 @@
 {
   "name": "planta-emergencia-simulador",
   "private": true,
-  "version": "0.40.0",
+  "version": "0.41.0",
   "description": "Simulador 3D de planta, subestación y fábrica. Migración D34.",
   "type": "module",
   "engines": {

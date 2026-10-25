@@ -69,10 +69,8 @@ const root = path.resolve(__dirname, '..');
     // Anatomical eyes replace the duplicate legacy pairs in all four people.
     assert.ok(await page.evaluate(()=>Personnel.group.children.every(g=>g.children.filter(o=>o.material?.name.startsWith('Esclerótica')).length===2)));
     assert.equal(await page.evaluate(()=>CCM34.toggle(0)),false);
-    await page.keyboard.press('KeyL');
-    for(const key of ['plant','yard','ccm'])await page.locator('[data-key38="'+key+'"]').click();
-    assert.equal(await page.evaluate(()=>Cabinets38.state().keys.length),3);
-    await page.locator('#walkFreeCursor').click();
+    assert.equal(await page.locator('#cabinetKeysButton').count(),0);
+    assert.equal(await page.locator('[data-key38]').count(),0);
     await page.locator('#nav33toggle').click();
     await page.locator('[data-zone33=yard]').click();
     assert.equal(await page.evaluate(()=>Walk31.state().zone),'yard');
@@ -124,8 +122,10 @@ const root = path.resolve(__dirname, '..');
     assert.equal(await page.evaluate(()=>Maintenance.state().kit),true);
     await page.evaluate(()=>{const c=renderer.domElement;c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW',key:'w',bubbles:true}));for(let i=0;i<3;i++)Walk31.frame(.08);c.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW',key:'w',bubbles:true}));const entry=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let target;entry.leaf.traverse(o=>{if(o.userData.workTarget==='control')target=o;});camera.lookAt(target.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);});
     await page.keyboard.press('KeyE');
+    assert.equal(await page.evaluate(()=>Maintenance.state().done),false);
+    await page.evaluate(()=>{for(let i=0;i<6;i++)Walk31.frame(.08)});
     assert.equal(await page.evaluate(()=>Maintenance.state().done),true);
-    await page.waitForTimeout(1000);await page.evaluate(()=>Walk31.frame(0));
+    await page.waitForTimeout(1700);await page.evaluate(()=>Walk31.frame(0));
     assert.equal(await page.evaluate(()=>Maintenance.state().index),1);
     assert.equal(await page.evaluate(()=>Walk31.state().journal),false);
     assert.equal(await page.evaluate(()=>Maintenance.state().tool),'hand');
@@ -150,7 +150,10 @@ const root = path.resolve(__dirname, '..');
     await page.keyboard.press('KeyQ');
     await page.evaluate(()=>{Maintenance.close();Maintenance.open();Maintenance.begin('guided');});
     console.log('Flow: complete twelve activities');
-    const results=await page.evaluate(()=>{
+    await page.exposeFunction('capture41',name=>page.screenshot({path:path.join(require('node:os').tmpdir(),name+'.png')}));
+    await page.exposeFunction('holdMouse41',async(x,y)=>{await page.mouse.move(x,y);await page.mouse.down();});
+    await page.exposeFunction('releaseMouse41',()=>page.mouse.up());
+    const results=await page.evaluate(async()=>{
 
       const canvas=renderer.domElement;
       const key=(code,type)=>canvas.dispatchEvent(new KeyboardEvent(type,{code,key:code.startsWith('Key')?code.slice(3).toLowerCase():code,bubbles:true,cancelable:true}));
@@ -166,6 +169,7 @@ const root = path.resolve(__dirname, '..');
         const route=[];for(let cell=end;cell;cell=seen.get(cell.join(',')))route.unshift(cell);
         for(const cell of route.slice(1)){const p=Walk31.state().position,dx=start[0]+cell[0]*spacing-p[0],dz=start[2]+cell[1]*spacing-p[2];turn(Math.atan2(-dx,-dz));key('KeyW','keydown');for(let remaining=Math.hypot(dx,dz);remaining>1e-5;){const dt=Math.min(.08,remaining/1.65);Walk31.frame(dt);remaining-=dt*1.65;}key('KeyW','keyup');}
       }
+      function aim(point){const p=Walk31.state().position,d=new T.Vector3(...point).sub(new T.Vector3(...p));turn(Math.atan2(-d.x,-d.z));const pitch=Math.atan2(d.y,Math.hypot(d.x,d.z)),delta=pitch-Walk31.state().pitch,code=delta>0?'ArrowUp':'ArrowDown';key(code,'keydown');for(let left=Math.abs(delta);left>1e-6;){const dt=Math.min(.08,left);Walk31.frame(dt);left-=dt;}key(code,'keyup');Walk31.frame(0);}
       function take(tool){if(!Maintenance.state().kit){travel(.15,3.05);if(!Walk31.bag(true)||!Maintenance.takeKit())throw Error('Equipment pickup failed');}Maintenance.select(tool);}
       function act(id,x,z,amount=0){travel(x,z);if(!Maintenance.act(id,amount))throw Error('Action rejected: '+id+' order '+Maintenance.state().index);}
       function prepare(){if(Maintenance.state().mode==='guided'){if(!Maintenance.state().workOrder.ready)throw Error('Guided activity was gated');return;}throw Error('Unexpected assessment mode');}
@@ -181,7 +185,10 @@ const root = path.resolve(__dirname, '..');
       take('hand');act('isolate',.6,1.12);advance();
       take('hand');act('dipstick',-.82,.93);take('rag');act('dipstick',-.82,.93);take('hand');act('dipstick',-.82,.93);act('dipstick',-.82,.93);
       if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Oil reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
-      take('light');for(let i=0;i<8;i++)act('dust'+i,-2.38,i%2?.36:-.36);if(Maintenance.state().done)throw Error('Inspection treated as cleaning');take('brush');for(let i=0;i<8;i++)act('dust'+i,-2.38,i%2?.36:-.36);advance();
+      take('light');travel(-3.75,0);const lamp=scene.getObjectByName('Haz de la linterna de inspección'),hands=scene.getObjectByName('Manos enguantadas del jugador');Walk31.frame(0);if(!lamp.visible||lamp.intensity<10||!hands.visible)throw Error('Flashlight or hands inactive');
+      for(let i=0;i<8;i++){const point=[-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48];aim(point);if(!Maintenance.clearSight('dust'+i,true))throw Error('Radiator zone blocked '+i+' '+JSON.stringify(Maintenance.clearSight.blocker));if(i===0){lamp.visible=false;renderer.render(scene,camera);await window.capture41('d41-linterna-apagada');Walk31.frame(0);renderer.render(scene,camera);await window.capture41('d41-linterna');}key('KeyE','keydown');for(let j=0;j<9;j++)Walk31.frame(.08);key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held inspection failed '+i);}
+      if(Maintenance.state().done)throw Error('Inspection treated as cleaning');take('brush');
+      for(let i=0;i<8;i++){aim([-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48]);if(i===0){const p=Maintenance.targetScreen('dust0');await window.holdMouse41(p.x,p.y);}else key('KeyE','keydown');for(let j=0;j<4;j++)Walk31.frame(.08);if(i===0){renderer.render(scene,camera);await window.capture41('d41-cepillado');}for(let j=0;j<9&&!Maintenance.state().done;j++)Walk31.frame(.08);if(i===0)await window.releaseMouse41();else key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held cleaning failed '+i);}if(Maintenance.state().index===4)advance();else if(Maintenance.state().index!==5||Maintenance.state().records.length!==5)throw Error('Unexpected automatic progress after cleaning');
       take('socket');act('boltA',-.65,.65,1);act('boltB',-.65,.65,1);take('hand');act('cap',-.68,.6);take('spare');act('cap',-.68,.6);if(Maintenance.state().done)throw Error('Filter accepted with open cover');take('hand');act('cap',-.68,.6);take('socket');act('boltA',-.65,.65,1);if(Maintenance.state().done)throw Error('Filter accepted with one open fastener');act('boltB',-.65,.65,1);advance();
       take('brush');travel(.25,.85);if(Maintenance.act('positive'))throw Error('Energized battery brushing allowed');take('light');act('positive',0,.85);act('negative',.5,.85);if(!Maintenance.state().done||!Maintenance.state().records.at(-1).result.includes('Se guardó una nota'))throw Error('Battery review did not explain its automatic record');advance();
       take('meter');act('positive',0,.85);act('negative',.5,.85);if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Battery reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
@@ -201,7 +208,7 @@ const root = path.resolve(__dirname, '..');
       }
       const completed=Maintenance.state().records.length,evidence=Maintenance.state().records.every(r=>r.workOrder?.source==='scenario-briefing'&&r.workOrder.checks.length===0);
       Maintenance.close();build();Walk31.enterZone('plant');
-      const rebuilt=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let mounted=false;rebuilt.leaf.traverse(o=>{if(o.userData.workTarget==='control')mounted=true;});if(!mounted||!Cabinets38.has('plant'))throw Error('Configuration rebuild lost cabinet controls or keys');
+      const rebuilt=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let mounted=false;rebuilt.leaf.traverse(o=>{if(o.userData.workTarget==='control')mounted=true;});if(!mounted)throw Error('Configuration rebuild lost cabinet controls');
       return{completed,evidence,functionalTestCompleted:true,controllerDoor:true,removableCover:true,canopy:true,exterior,rebuild:true};
     });
     assert.equal(results.completed,12);assert.equal(results.evidence,true);assert.equal(results.functionalTestCompleted,true);

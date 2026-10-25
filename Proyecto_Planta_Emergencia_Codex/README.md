@@ -1,6 +1,16 @@
-# Simulador de planta de emergencia — D40: recorrido guiado continuo
+# Simulador de planta de emergencia — D41: manos, iluminación e interacción visible
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## Cambios D41 · manos y resultados visibles
+
+La linterna tiene un haz real dirigido hacia la superficie y una lente emisiva. Se apaga al cambiar de herramienta, abrir el cuaderno, pausar o salir del recorrido. Usa una sola luz sin sombras adicionales y el ciclo de animación existente.
+
+Se ven manos enguantadas con antebrazos. En acciones puntuales alcanzan la pieza antes de ejecutar el cambio; la varilla, la tapa y los mandos interpolan su movimiento. Al inspeccionar, cepillar o girar sujetadores, mantén **E** o **clic izquierdo**; el progreso aparece en pantalla. El polvo se reduce en su propio sector mientras cepillas. Los círculos del radiador pasan de ámbar a azul al revisar y a verde al limpiar. Las zonas se sitúan en la rejilla exterior accesible, debajo del posenfriador. El modo guiado explica en cada paso **qué debes ver** y conserva el resultado visible antes de continuar.
+
+Se retiraron el llavero, el inventario de llaves, la tecla L y el requisito de llave de todas las puertas. **E** abre/cierra gabinetes próximos y **V** retira/repone su cubierta interior. El candado personal de bloqueo de arranque sigue siendo parte de la práctica; las cubiertas se reponen antes de cerrar.
+
+Las manos son una animación procedural de primera persona. No representan fuerza de apriete, contacto háptico ni mediciones reales. Las doce prácticas, evaluación, escaleras, puertas e interiores se conservan.
 
 ## Cambios D40 · jugar sin abrir el cuaderno en cada paso
 

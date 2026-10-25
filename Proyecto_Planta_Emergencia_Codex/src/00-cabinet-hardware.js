@@ -1,9 +1,7 @@
 // Door access is an inventory rule, not a claim of electrical isolation.
 const CabinetAccess38=(()=>{
- const keys=new Set(),names={plant:'G-01 · planta',yard:'SE-01 · subestación',ccm:'CCM-01'};
- function collect(key){if(!(key in names))return false;keys.add(key);return true;}
- function check(key,distance=0){if(!keys.has(key))return{ok:false,message:'Necesitas la llave '+names[key]+'. Recógela junto a la bolsa de herramientas (L).'};if(distance>2.8)return{ok:false,message:'Acércate al gabinete para usar la llave.'};return{ok:true,message:''};}
- return{names,collect,has:key=>keys.has(key),list:()=>[...keys],check};
+ function check(_key,distance=0){return distance>2.8?{ok:false,message:'Acércate al gabinete para abrirlo.'}:{ok:true,message:''};}
+ return{check};
 })();
 const CabinetParts38=[];
 function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',body,front}){
