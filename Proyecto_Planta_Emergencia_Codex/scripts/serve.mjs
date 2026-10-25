@@ -26,8 +26,9 @@ http.createServer((req,res)=>{
  let decoded;
  try{decoded=decodeURIComponent(new URL(req.url,'http://localhost').pathname);}catch{res.writeHead(400).end();return;}
  if(decoded==='/'||decoded==='/index.html'||decoded==='/__dev/version')refresh();
+ if(decoded==='/__dev/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify({service:'planta-emergencia',pid:process.pid,version,buildError}));return;}
  if(decoded==='/__dev/version'){
-  res.writeHead(buildError?503:200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify({version}));return;
+  res.writeHead(!version?503:200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify({version}));return;
  }
  const relative=decoded==='/'?'/index.html':decoded;
  const dest=path.resolve(root,'.'+relative);
@@ -36,7 +37,7 @@ http.createServer((req,res)=>{
   if(err||!stat.isFile()){res.writeHead(404).end('Not found');return;}
   // Do not allow symlinks to expose files outside the project.
   let real;try{real=fs.realpathSync(dest);}catch{res.writeHead(404).end();return;}if(!real.startsWith(root+path.sep)){res.writeHead(403).end();return;}
-  if(buildError&&(decoded==='/'||decoded==='/index.html')){res.writeHead(503).end('No se pudo construir la nueva versión. Revisa la terminal.');return;}
+  if(buildError&&!fs.existsSync(path.join(root,'index.html'))&&(decoded==='/'||decoded==='/index.html')){res.writeHead(503).end('No se pudo construir la nueva versión. Revisa la terminal.');return;}
   res.writeHead(200,{'Content-Type':types[path.extname(dest)]||'application/octet-stream','Cache-Control':'no-store'});
   if(dest===path.join(root,'index.html')){res.end(fs.readFileSync(dest,'utf8').replace('</body>',client()+'</body>'));return;}
   fs.createReadStream(dest).pipe(res);

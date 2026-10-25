@@ -2,6 +2,12 @@
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
 
+## D41.1 · publicación y arranque estable
+
+`npm run site:build` genera `dist/site` para GitHub Pages; `npm run test:site` comprueba su arranque y el aviso de actualización con Chromium. El workflow del repositorio valida y despliega automáticamente los cambios de `codex/simulador-d35` cuando Pages está configurado con Source = GitHub Actions. Consulta el README de la raíz para la activación inicial.
+
+El supervisor de Codespaces sirve inmediatamente, sincroniza Git fuera del proceso HTTP y reinicia el servidor si este termina. No instala dependencias de pruebas al arrancar ni reinicia el puerto por cada actualización. El servidor conserva la última compilación válida ante errores de sintaxis. La suspensión de Codespaces sigue apagando ese enlace; el sitio de Pages es independiente.
+
 ## Cambios D41 · manos y resultados visibles
 
 La linterna tiene un haz real dirigido hacia la superficie y una lente emisiva. Se apaga al cambiar de herramienta, abrir el cuaderno, pausar o salir del recorrido. Usa una sola luz sin sombras adicionales y el ciclo de animación existente.

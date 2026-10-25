@@ -2,22 +2,27 @@
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
-## Inicio y actualizaciones automáticas en Codespaces
+## Sitio estable y publicación automática (D41.1)
 
-La configuración `.devcontainer` inicia el simulador al arrancar Codespaces, reenvía el puerto 4173 y solicita abrirlo en el navegador. El supervisor consulta la rama actual de GitHub cada 30 segundos y aplica únicamente avances directos con el checkout limpio. Conserva cambios locales, archivos nuevos y commits divergentes, sin resetear, guardar en stash ni cambiar de rama. En esos casos la actualización queda pendiente en el registro.
+Para jugar sin depender de un Codespace encendido, usa GitHub Pages. Una vez activado, el sitio previsto es:
 
-El servidor reconstruye los archivos de ejecución al detectar fuentes nuevas. Al regresar a la pestaña se recarga si no hay una práctica en curso; durante una práctica aparece un aviso con botón para actualizar. Las sesiones del simulador no se guardan al recargar. Codespaces debe estar encendido y tener acceso a GitHub.
+https://santiagogonzalezfernandojavier-maker.github.io/Planta-de-emergencia-/
 
-Para activar esta función en un Codespace que ya estaba abierto, detén una vez el servidor anterior con Ctrl+C y ejecuta desde la raíz del repositorio:
+**Configuración inicial, una sola vez:** abre Settings → Pages → Build and deployment → Source → GitHub Actions. En Actions abre la ejecución más reciente de **Publicar simulador estable** de la rama `codex/simulador-d35`; si ya falló porque Pages estaba desactivado, pulsa **Re-run all jobs**. El enlace funciona cuando el despliegue termina correctamente; no se considera publicado solo por existir este archivo.
 
-```bash
-git pull --ff-only origin codex/simulador-d35
-bash .devcontainer/start.sh
-```
+El workflow se ejecuta automáticamente con cada push a `codex/simulador-d35`: construye, ejecuta las pruebas, comprueba en Chromium la página estática bajo la ruta del repositorio y publica. Si falla una comprobación, no despliega esa revisión. El sitio es independiente de Codespaces. Comprueba nuevas versiones al regresar a la pestaña y cada 30 segundos: ofrece actualizar si hay una práctica activa, conservándola hasta que el usuario decida recargar. La caché de GitHub Pages puede retrasar brevemente la disponibilidad de una publicación.
 
-Después ejecuta **Codespaces: Rebuild Container** desde la paleta de comandos de VS Code para que GitHub cargue la nueva configuración de inicio y puerto en los próximos arranques. Las actualizaciones dentro de la sesión actual ya funcionan con `start.sh`.
+El artefacto contiene solo la aplicación ejecutable y un identificador de versión, no el ZIP, archivos Blender ni el repositorio. Se genera con `npm run site:build` en `Proyecto_Planta_Emergencia_Codex/dist/site/`.
 
-El registro queda en `Proyecto_Planta_Emergencia_Codex/.runtime/codespaces.log`. La carpeta está ignorada por Git. La imagen incluye Node 22; las pruebas de navegador requieren instalar Chromium aparte cuando se quieran ejecutar en ese Codespace. La publicación de un sitio web independiente es una configuración distinta.
+## Inicio y actualizaciones en Codespaces
+
+El puerto 4173 sirve para desarrollo y requiere un Codespace encendido. No puede atender peticiones cuando GitHub suspende el entorno.
+
+El supervisor arranca el servidor inmediatamente, sin `npm ci` y sin esperar a la red. Git consulta la rama actual cada 30 segundos en un proceso separado; solo avanza un checkout limpio, conservando cambios locales y commits divergentes. Las actualizaciones de fuentes se reconstruyen sin detener el servidor. Una compilación inválida conserva la última versión válida y queda registrada. Si el proceso HTTP se cierra, el supervisor lo reinicia. También puede adoptar un `npm start` que ya ocupe el puerto, sin iniciar servidores rivales.
+
+Para incorporar esta configuración a un Codespace anterior, actualiza la rama y ejecuta `.devcontainer/start.sh`; después **Codespaces: Rebuild Container** aplica el arranque automático de los siguientes inicios. No es necesario repetirlo después de cada cambio. Un checkout con modificaciones locales requiere revisión antes de actualizarse: no se fuerza ni se sobrescribe.
+
+El registro queda en `Proyecto_Planta_Emergencia_Codex/.runtime/codespaces.log`; `/__dev/health` informa del proceso y estado de compilación. Pages es la opción para evitar esta dependencia del entorno de desarrollo.
 
 ## Ejecutar en Codespaces
 

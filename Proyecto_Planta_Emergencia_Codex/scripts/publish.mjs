@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {execFileSync,spawnSync} from 'node:child_process';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+execFileSync(process.execPath,['scripts/build.mjs'],{cwd:root,stdio:'inherit'});
+const site=path.join(root,'dist/site'),html=fs.readFileSync(path.join(root,'dist/ABRIR_SIMULADOR.html'),'utf8');
+const version=crypto.createHash('sha256').update(html).digest('hex'),release=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
+const git=spawnSync('git',['rev-parse','--short','HEAD'],{cwd:root,encoding:'utf8'}),commit=git.status===0?git.stdout.trim():'';
+const client=`<script>(()=>{const initial=${JSON.stringify(version)};let busy=false;async function check(){if(busy||document.hidden)return;busy=true;try{const r=await fetch('./version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const data=await r.json();if(data.version===initial)return;const active=window.Maintenance?.state()?.active;if(!active){location.reload();return;}if(!document.getElementById('site-update')){const b=document.createElement('button');b.id='site-update';b.textContent='Versión '+data.release+' disponible · actualizar (reinicia la práctica)';b.style='position:fixed;bottom:75px;left:50%;transform:translateX(-50%);z-index:999999;background:#e4bb70;color:#17242b;border:1px solid #fff;padding:12px 18px;border-radius:6px;cursor:pointer';b.onclick=()=>location.reload();document.body.append(b);}}catch{}finally{busy=false;}}setInterval(check,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();</script>`;
+fs.mkdirSync(site,{recursive:true});
+fs.writeFileSync(path.join(site,'index.html'),html.replace('</body>',client+'</body>'));
+fs.writeFileSync(path.join(site,'version.json'),JSON.stringify({version,release,commit}));
+fs.writeFileSync(path.join(site,'.nojekyll'),'');
+console.log('Sitio estático listo: dist/site · '+release+' · '+commit);
