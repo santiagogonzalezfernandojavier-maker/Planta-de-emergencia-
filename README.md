@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D39
+# Planta de emergencia · simulador D40
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -54,4 +54,4 @@ D37 permite subir y bajar caminando por la escalera entre la planta y la subesta
 
 D38 añade llaves de servicio (L), puertas articuladas (E), cubiertas interiores desmontables (V) y compartimentos diferenciados del CCM. Las llaves se recogen junto a la bolsa del piso.
 
-D39 muestra instrucciones con acción, herramienta y resultado visible. La revisión de los dos terminales de batería guarda su observación automáticamente; las lecturas de aceite y voltaje se registran con un botón explícito en Q.
+D40 hace continuo el modo guiado: recogida única de equipo, herramienta automática por paso, pieza identificada, E para actuar y guardar lecturas, avance automático entre actividades. Q amplía la explicación. Evaluación conserva sus comprobaciones.

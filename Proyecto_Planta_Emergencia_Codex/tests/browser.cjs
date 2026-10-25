@@ -25,7 +25,7 @@ const root = path.resolve(__dirname, '..');
       ...(process.env.CHROMIUM_ARGS_JSON ? { args:JSON.parse(process.env.CHROMIUM_ARGS_JSON) } : {})
     });
     const page = await browser.newPage({ viewport:{width:1400,height:900} });
-    page.setDefaultTimeout(180000);
+    page.setDefaultTimeout(30000);
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     await page.addInitScript(()=>window.requestAnimationFrame=()=>0);
@@ -112,6 +112,26 @@ const root = path.resolve(__dirname, '..');
     // Walk the twelve actual work orders through the shipped interaction API.
     await page.evaluate(()=>{Walk31.enterZone('plant');});
     assert.ok(await page.locator('#missionCard').isVisible());
+    assert.equal(await page.evaluate(()=>Maintenance.state().workOrder.ready),true);
+    assert.equal(await page.locator('#wPrepareOrder').count(),0);
+    console.log('Flow: equipment and automatic progression');
+    // Pick up the complete equipment once, perform a real E action, then let the next activity start itself.
+    await page.evaluate(()=>{const c=renderer.domElement;c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW',key:'w',bubbles:true}));for(let i=0;i<8;i++)Walk31.frame(.08);c.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW',key:'w',bubbles:true}));if(!Walk31.bag(true))throw Error('Initial bag route failed');});
+    await page.evaluate(()=>{CCM34.frame(0);Walk31.frame(0);renderer.render(scene,camera);});
+    await page.screenshot({path:path.join(require('node:os').tmpdir(),'d40-equipo.png')});
+    await page.locator('#takeKit40').click();
+    await page.evaluate(()=>{if(document.pointerLockElement)document.exitPointerLock();});await page.waitForTimeout(100);await page.evaluate(()=>Walk31.pause(false));
+    assert.equal(await page.evaluate(()=>Maintenance.state().kit),true);
+    await page.evaluate(()=>{const c=renderer.domElement;c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW',key:'w',bubbles:true}));for(let i=0;i<3;i++)Walk31.frame(.08);c.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW',key:'w',bubbles:true}));const entry=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let target;entry.leaf.traverse(o=>{if(o.userData.workTarget==='control')target=o;});camera.lookAt(target.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);});
+    await page.keyboard.press('KeyE');
+    assert.equal(await page.evaluate(()=>Maintenance.state().done),true);
+    await page.waitForTimeout(1000);await page.evaluate(()=>Walk31.frame(0));
+    assert.equal(await page.evaluate(()=>Maintenance.state().index),1);
+    assert.equal(await page.evaluate(()=>Walk31.state().journal),false);
+    assert.equal(await page.evaluate(()=>Maintenance.state().tool),'hand');
+    await page.evaluate(()=>{CCM34.frame(0);renderer.render(scene,camera);});await page.screenshot({path:path.join(require('node:os').tmpdir(),'d40-guiado.png')});
+    console.log('Flow: assessment checks');
+    await page.evaluate(()=>{Maintenance.close();Maintenance.open();Maintenance.begin('eval');});
     await page.keyboard.press('KeyQ');
     await page.locator('[name=orderCheck]').first().check();
     await page.keyboard.press('KeyQ');assert.equal(await page.locator('#work26 .w-side').isVisible(),false);
@@ -128,7 +148,10 @@ const root = path.resolve(__dirname, '..');
     assert.match(await page.locator('.job-next').innerText(),/pantalla.*pulsa E/);
     assert.ok(await page.locator('#wResumeJob').isVisible());
     await page.keyboard.press('KeyQ');
+    await page.evaluate(()=>{Maintenance.close();Maintenance.open();Maintenance.begin('guided');});
+    console.log('Flow: complete twelve activities');
     const results=await page.evaluate(()=>{
+
       const canvas=renderer.domElement;
       const key=(code,type)=>canvas.dispatchEvent(new KeyboardEvent(type,{code,key:code.startsWith('Key')?code.slice(3).toLowerCase():code,bubbles:true,cancelable:true}));
       function turn(yaw){let difference=Math.atan2(Math.sin(yaw-Walk31.state().yaw),Math.cos(yaw-Walk31.state().yaw));const code=difference>0?'ArrowLeft':'ArrowRight';key(code,'keydown');for(let remaining=Math.abs(difference);remaining>1e-6;){const dt=Math.min(.08,remaining/1.6);Walk31.frame(dt);remaining-=dt*1.6;}key(code,'keyup');}
@@ -143,10 +166,10 @@ const root = path.resolve(__dirname, '..');
         const route=[];for(let cell=end;cell;cell=seen.get(cell.join(',')))route.unshift(cell);
         for(const cell of route.slice(1)){const p=Walk31.state().position,dx=start[0]+cell[0]*spacing-p[0],dz=start[2]+cell[1]*spacing-p[2];turn(Math.atan2(-dx,-dz));key('KeyW','keydown');for(let remaining=Math.hypot(dx,dz);remaining>1e-5;){const dt=Math.min(.08,remaining/1.65);Walk31.frame(dt);remaining-=dt*1.65;}key('KeyW','keyup');}
       }
-      function take(tool){if(tool==='hand'){Maintenance.select('hand');return;}travel(.15,3.05);if(!Walk31.bag(true))throw Error('Bag unreachable '+JSON.stringify(Walk31.state()));Maintenance.select(tool);}
+      function take(tool){if(!Maintenance.state().kit){travel(.15,3.05);if(!Walk31.bag(true)||!Maintenance.takeKit())throw Error('Equipment pickup failed');}Maintenance.select(tool);}
       function act(id,x,z,amount=0){travel(x,z);if(!Maintenance.act(id,amount))throw Error('Action rejected: '+id+' order '+Maintenance.state().index);}
-      function prepare(){document.querySelector('#fpJournal').click();document.querySelectorAll('[name=orderCheck]').forEach(el=>el.click());const i=Maintenance.state().index;document.querySelector('[name=orderDecision][value="'+WorkOrders36.orders[i].answer+'"]').click();document.querySelector('#wPrepareOrder').click();if(!Maintenance.state().workOrder.ready)throw Error('Order not prepared');document.querySelector('#fpJournal').click();}
-      function advance(){if(!Maintenance.state().done)throw Error('Order not complete '+Maintenance.state().index);Maintenance.next();prepare();}
+      function prepare(){if(Maintenance.state().mode==='guided'){if(!Maintenance.state().workOrder.ready)throw Error('Guided activity was gated');return;}throw Error('Unexpected assessment mode');}
+      function advance(){if(!Maintenance.state().done)throw Error('Order not complete '+Maintenance.state().index);const before=Maintenance.state().index;key('KeyE','keydown');key('KeyE','keyup');if(Maintenance.state().index!==before+1)throw Error('E did not continue without journal');prepare();}
       // The controller keeps its controls and progress when its real door moves.
       travel(2.47,1.7);if(!Cabinets38.toggle('G01-CONTROL'))throw Error('G01 key did not open controller');for(let i=0;i<40;i++)CCM34.frame(.033);
       const controller=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');updateView();if(controller.coverHit.material.opacity!==0)throw Error('Invisible interaction proxy became opaque');camera.lookAt(controller.coverHit.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);
@@ -157,16 +180,16 @@ const root = path.resolve(__dirname, '..');
       take('hand');act('control',2.47,1.17);if(Maintenance.state().done)throw Error('Lock completed before personal padlock');take('lock');act('control',2.47,1.17);advance();
       take('hand');act('isolate',.6,1.12);advance();
       take('hand');act('dipstick',-.82,.93);take('rag');act('dipstick',-.82,.93);take('hand');act('dipstick',-.82,.93);act('dipstick',-.82,.93);
-      document.querySelector('#fpJournal').click();document.querySelector('#wOilReading').value='63';document.querySelector('#wReading').click();document.querySelector('#fpJournal').click();advance();
+      if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Oil reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
       take('light');for(let i=0;i<8;i++)act('dust'+i,-2.38,i%2?.36:-.36);if(Maintenance.state().done)throw Error('Inspection treated as cleaning');take('brush');for(let i=0;i<8;i++)act('dust'+i,-2.38,i%2?.36:-.36);advance();
       take('socket');act('boltA',-.65,.65,1);act('boltB',-.65,.65,1);take('hand');act('cap',-.68,.6);take('spare');act('cap',-.68,.6);if(Maintenance.state().done)throw Error('Filter accepted with open cover');take('hand');act('cap',-.68,.6);take('socket');act('boltA',-.65,.65,1);if(Maintenance.state().done)throw Error('Filter accepted with one open fastener');act('boltB',-.65,.65,1);advance();
       take('brush');travel(.25,.85);if(Maintenance.act('positive'))throw Error('Energized battery brushing allowed');take('light');act('positive',0,.85);act('negative',.5,.85);if(!Maintenance.state().done||!Maintenance.state().records.at(-1).result.includes('Se guardó una nota'))throw Error('Battery review did not explain its automatic record');advance();
-      take('meter');act('positive',0,.85);act('negative',.5,.85);document.querySelector('#fpJournal').click();document.querySelector('#wReading').click();document.querySelector('#fpJournal').click();advance();
+      take('meter');act('positive',0,.85);act('negative',.5,.85);if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Battery reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
       take('light');for(const [id,x]of [['earthA',1.2],['earthB',1.5],['earthC',1.8]])act(id,x,1.15);advance();
       take('hand');act('ragFloor',-.35,3);act('wrenchFloor',.65,3);advance();
       take('hand');act('isolate',.6,1.12);if(!Maintenance.state().locked)throw Error('Unlock before personal padlock removal');take('lock');act('control',2.47,1.17);advance();
       if(Maintenance.state().index!==11)throw Error('Final order missing');
-      Maintenance.runTest();if(!Maintenance.state().testing)throw Error('Authorized functional test did not start');
+      key('KeyE','keydown');key('KeyE','keyup');if(!Maintenance.state().testing)throw Error('Authorized functional test did not start');
       for(let i=0;i<1500&&!UnidadVII.state().test?.done;i++)tick(.08);renderUI();if(!Maintenance.state().finished)throw Error('Functional transfer did not complete: '+JSON.stringify(UnidadVII.state()));
       Maintenance.suspend33();Walk31.enterZone('yard');
       const exterior=[];
@@ -176,7 +199,7 @@ const root = path.resolve(__dirname, '..');
         if(!Cabinets38.cover()||entry.covered)throw Error('Cover did not detach '+name);if(!Cabinets38.cover()||!entry.covered)throw Error('Cover did not return '+name);
         if(!Cabinets38.use()||entry.open)throw Error('Door did not close '+name);for(let i=0;i<40;i++)CCM34.frame(.033);exterior.push(name);
       }
-      const completed=Maintenance.state().records.length,evidence=Maintenance.state().records.every(r=>r.workOrder?.decision);
+      const completed=Maintenance.state().records.length,evidence=Maintenance.state().records.every(r=>r.workOrder?.source==='scenario-briefing'&&r.workOrder.checks.length===0);
       Maintenance.close();build();Walk31.enterZone('plant');
       const rebuilt=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let mounted=false;rebuilt.leaf.traverse(o=>{if(o.userData.workTarget==='control')mounted=true;});if(!mounted||!Cabinets38.has('plant'))throw Error('Configuration rebuild lost cabinet controls or keys');
       return{completed,evidence,functionalTestCompleted:true,controllerDoor:true,removableCover:true,canopy:true,exterior,rebuild:true};

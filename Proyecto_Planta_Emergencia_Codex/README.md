@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D39: pasos de mantenimiento claros
+# Simulador de planta de emergencia — D40: recorrido guiado continuo
 
-Base funcional: D34, recuperada el 24 de octubre de 2026. Esta entrega prepara el proyecto para programación; no cambia intencionadamente la simulación ni añade una nueva revisión funcional.
+Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## Cambios D40 · jugar sin abrir el cuaderno en cada paso
+
+En modo **Guiado**, acércate a la bolsa, pulsa **B** y **Tomar equipo de mantenimiento**. Lo recoges una sola vez; la herramienta se prepara al cambiar de paso. Sigue el nombre de la pieza resaltada y pulsa **E**. Para los sujetadores mantén E; para revisar varios puntos puedes mantener E mientras apuntas a cada uno. El indicador muestra cuántos faltan.
+
+Las lecturas de aceite y batería aparecen sobre el recorrido y **E** las guarda. E inicia también la prueba final. Al terminar una actividad, la siguiente comienza automáticamente tras una pausa breve; E permite continuar inmediatamente. **Q** queda disponible para ampliar los pasos, consultar términos y revisar resultados. El menú de zonas se oculta al abrir la bolsa para no tapar su botón.
+
+El modo **Evaluación** conserva preguntas, selección de herramientas y confirmación de condiciones. El guiado registra los datos iniciales como información del escenario, sin atribuir al jugador confirmaciones que no realizó. Las mediciones siguen siendo valores simulados. No se suprimen los desplazamientos, las acciones físicas ni las doce actividades.
 
 ## Cambios D39 · qué hacer en cada actividad
 
