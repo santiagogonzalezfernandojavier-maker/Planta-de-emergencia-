@@ -18,7 +18,16 @@ test('all twelve orders block unconfirmed conditions and unsuitable decisions',(
 });
 test('battery corrosion order explicitly preserves the energized inspection boundary',()=>{
  const order=orders[6];
- assert.match(order.options[order.answer],/Inspeccionar.*correctiva/);
+ assert.match(order.options[order.answer],/Inspeccionar.*limpieza queda pendiente/);
  assert.match(order.criterion,/corrosión queda visible/);
- assert.match(orders[7].criterion,/limitación/);
+ assert.match(orders[7].criterion,/no prueba la capacidad/);
+});
+
+test('every activity provides an executable action, tool and visible completion result',()=>{
+ for(const order of orders){
+  assert.ok(order.steps.length>0);
+  for(const step of order.steps){assert.match(step.action,/\b(E|Q)\b/);assert.ok(step.tool.length>0);assert.ok(step.result.length>15);}
+ }
+ assert.match(orders[6].steps[0].result,/guarda una nota/);
+ assert.match(orders[6].criterion,/automáticamente/);
 });

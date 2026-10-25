@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D38
+# Planta de emergencia · simulador D39
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -53,3 +53,5 @@ Las órdenes D36 explican dónde ir, qué observar, qué herramienta utilizar y 
 D37 permite subir y bajar caminando por la escalera entre la planta y la subestación, conservando la orden de mantenimiento. La escalera interior del CCM continúa separada de este recorrido.
 
 D38 añade llaves de servicio (L), puertas articuladas (E), cubiertas interiores desmontables (V) y compartimentos diferenciados del CCM. Las llaves se recogen junto a la bolsa del piso.
+
+D39 muestra instrucciones con acción, herramienta y resultado visible. La revisión de los dos terminales de batería guarda su observación automáticamente; las lecturas de aceite y voltaje se registran con un botón explícito en Q.

@@ -2,197 +2,351 @@
 const WorkOrders36=(()=>{
  const orders=[
  {
-  "title": "Recibir la orden de trabajo",
+  "title": "Comenzar el trabajo en G-01",
   "location": "Gabinete de control G-01",
-  "finding": "Revisión preventiva programada. La red alimenta la instalación; G-01 está detenido y frío. No hay una emergencia activa.",
+  "finding": "G-01 es el generador. En este ejercicio está detenido y frío, y la red alimenta la instalación. Vas a dejar anotado el inicio del trabajo.",
   "checks": [
-   "Identifiqué el equipo G-01 y el alcance de la orden",
-   "Revisé el estado detenido/frío indicado en la orden",
-   "Coordiné la indisponibilidad temporal con operación"
+   "Leí que G-01 está detenido y frío en este ejercicio",
+   "Entiendo que se avisa a operación antes de trabajar"
   ],
-  "question": "¿Cómo inicias esta intervención?",
+  "question": "¿Cómo empezarás este trabajo?",
   "options": [
-   "Avisar a operación y registrar la orden antes de intervenir",
-   "Arrancar el motor y empezar con la inspección mecánica"
+   "Anotar el inicio con la carpeta antes de tocar el equipo",
+   "Comenzar con el motor en marcha"
   ],
   "answer": 0,
-  "criterion": "Orden registrada y alcance acordado; todavía no autoriza tocar partes energizadas."
+  "criterion": "Termina al pulsar E en la pantalla con la carpeta. El juego guarda el inicio automáticamente.",
+  "steps": [
+   {
+    "tool": "Carpeta",
+    "action": "Apunta a la pantalla del gabinete G-01 y pulsa E.",
+    "result": "El juego guarda que comenzaste el trabajo."
+   }
+  ],
+  "completed": "Se guardó el inicio del trabajo en G-01."
  },
  {
-  "title": "Impedir el arranque automático",
+  "title": "Poner el control en FUERA y colocar tu candado",
   "location": "Selector del gabinete de control",
-  "finding": "G-01 puede recibir una orden automática de arranque. El selector aún no está fuera de servicio.",
+  "finding": "El selector es el mando pequeño debajo de la pantalla. Primero lo pondrás en FUERA y después colocarás tu candado para impedir que se cambie por error.",
   "checks": [
-   "Revisé el punto de control indicado por la orden"
+   "Identifiqué el selector pequeño debajo de la pantalla"
   ],
-  "question": "¿Qué secuencia corresponde a este punto de bloqueo?",
+  "question": "¿Qué harás primero en el selector?",
   "options": [
-   "Poner fuera de servicio, después colocar candado y etiqueta personales",
-   "Colocar una etiqueta dejando el selector en automático"
+   "Primero ponerlo en FUERA y después colocar mi candado",
+   "Dejarlo en AUTO y poner solo una etiqueta"
   ],
   "answer": 0,
-  "criterion": "Selector fuera de servicio y bloqueo personal visible. Este punto no aísla todas las fuentes de energía."
+  "criterion": "Termina cuando el selector esté en FUERA y aparezca tu candado con su etiqueta.",
+  "steps": [
+   {
+    "tool": "Manos libres · H",
+    "action": "Apunta al selector pequeño debajo de la pantalla y pulsa E.",
+    "result": "El selector gira a FUERA."
+   },
+   {
+    "tool": "Candado",
+    "action": "En el mismo selector, pulsa E con el candado en la mano.",
+    "result": "Aparecen el candado y la etiqueta."
+   }
+  ],
+  "completed": "Pusiste el selector en FUERA y colocaste tu candado con etiqueta."
  },
  {
-  "title": "Separar el circuito de arranque",
+  "title": "Abrir el interruptor de arranque",
   "location": "Seccionador junto a la batería",
-  "finding": "El control está bloqueado. La batería conserva energía; el seccionador representado solo separa el circuito de arranque.",
+  "finding": "Este interruptor está al lado de la batería. Abrirlo corta el paso hacia el motor de arranque; no descarga la batería.",
   "checks": [
-   "Identifiqué el seccionador del circuito de arranque"
+   "Entiendo que abrir este interruptor no descarga la batería"
   ],
-  "question": "¿Qué sigue energizado al abrir este seccionador?",
+  "question": "¿Qué pasa después de abrir el interruptor de arranque?",
   "options": [
-   "Nada: todos los bornes quedan sin tensión",
-   "La batería y sus bornes; no se autoriza desmontar conexiones"
+   "La batería se descarga por completo",
+   "La batería y sus terminales siguen teniendo energía"
   ],
   "answer": 1,
-  "criterion": "Seccionador abierto y energía almacenada reconocida. El resto de las fuentes requiere su procedimiento específico."
+  "criterion": "Termina cuando abras el interruptor. Los terminales de la batería siguen con tensión.",
+  "steps": [
+   {
+    "tool": "Manos libres · H",
+    "action": "Apunta al interruptor pequeño que está junto a la batería y pulsa E.",
+    "result": "El interruptor queda abierto. La batería sigue teniendo energía."
+   }
+  ],
+  "completed": "Abriste el interruptor del arranque. La batería sigue teniendo energía."
  },
  {
-  "title": "Inspeccionar el nivel de aceite",
+  "title": "Revisar el nivel de aceite",
   "location": "Argolla amarilla en el costado del motor",
-  "finding": "Motor frío y detenido. La varilla muestra un nivel estable entre MIN y MAX después de limpiarla y reinsertarla.",
+  "finding": "La varilla tiene una argolla amarilla. Para leerla debes sacarla, limpiarla, meterla completamente y sacarla otra vez.",
   "checks": [
-   "El motor está detenido y el aceite asentado",
-   "Tengo un paño limpio y sin pelusa"
+   "Leí que el motor está detenido y el aceite ya se asentó",
+   "Voy a usar un paño limpio"
   ],
-  "question": "¿Qué harás si el nivel queda entre las marcas?",
+  "question": "¿Qué harás si el aceite queda entre MIN y MAX?",
   "options": [
-   "Agregar aceite de todas formas",
-   "Registrar el nivel sin rellenar innecesariamente"
+   "Agregar aceite aunque el nivel ya esté entre las marcas",
+   "Guardar la lectura sin agregar aceite innecesariamente"
   ],
   "answer": 1,
-  "criterion": "Segunda extracción leída, nivel registrado y varilla reinstalada."
+  "criterion": "Termina al pulsar Registrar nivel leído en Q. La varilla vuelve a su lugar.",
+  "steps": [
+   {
+    "tool": "Manos libres · H",
+    "action": "Apunta a la argolla amarilla del motor y pulsa E para sacar la varilla.",
+    "result": "La varilla queda levantada."
+   },
+   {
+    "tool": "Paño",
+    "action": "Apunta a la varilla levantada y pulsa E con el paño.",
+    "result": "Se limpia la zona de lectura."
+   },
+   {
+    "tool": "Manos libres · H",
+    "action": "Pulsa E en la varilla para meterla hasta el fondo.",
+    "result": "La varilla vuelve a su tubo."
+   },
+   {
+    "tool": "Manos libres · H",
+    "action": "Pulsa E otra vez para sacarla y leerla.",
+    "result": "Ya puedes comparar el nivel con las marcas."
+   },
+   {
+    "tool": "Cuaderno · Q",
+    "action": "Abre Q. Mueve la escala hasta el nivel mostrado y pulsa Registrar nivel leído.",
+    "result": "El juego guarda la lectura y vuelve a colocar la varilla."
+   }
+  ],
+  "completed": null
  },
  {
-  "title": "Inspeccionar y limpiar la entrada de aire",
+  "title": "Revisar y limpiar las manchas del radiador",
   "location": "Cara del radiador, extremo izquierdo del grupo",
-  "finding": "Hay polvo seco superficial en la cara de entrada del radiador. No se representan fugas ni aletas dobladas.",
+  "finding": "Las manchas marrones representan polvo seco en la cara del radiador. Primero las revisarás con la linterna y después las quitarás con el cepillo.",
   "checks": [
-   "Equipo detenido, frío y sin ventilador en movimiento",
-   "Acceso al radiador habilitado en este escenario"
+   "El ventilador está detenido en este ejercicio",
+   "Voy a revisar antes de limpiar"
   ],
-  "question": "¿Qué intervención corresponde al hallazgo?",
+  "question": "¿Cómo quitarás el polvo del radiador?",
   "options": [
-   "Usar agua a presión cerca de las conexiones",
-   "Inspeccionar y retirar el polvo con cepillo suave, sin doblar las aletas"
+   "Mojarlo con agua a presión",
+   "Revisar con linterna y quitar el polvo con un cepillo suave"
   ],
   "answer": 1,
-  "criterion": "Ocho sectores inspeccionados y después limpiados; no se usa presión ni se modela apertura de un circuito caliente."
+  "criterion": "Termina cuando el contador marque ocho zonas revisadas y ocho limpiadas.",
+  "steps": [
+   {
+    "tool": "Linterna",
+    "action": "Apunta a cada una de las ocho manchas del radiador y pulsa E.",
+    "result": "El contador debe llegar a 8/8 revisadas."
+   },
+   {
+    "tool": "Cepillo",
+    "action": "Pulsa E sobre cada mancha que siga marcada.",
+    "result": "Las manchas desaparecen. Terminas al limpiar las ocho."
+   }
+  ],
+  "completed": "Revisaste las ocho zonas del radiador y retiraste el polvo con el cepillo."
  },
  {
-  "title": "Cambiar el elemento de admisión",
-  "location": "Carcasa cilíndrica sobre el motor",
-  "finding": "La orden de este escenario prescribe sustituir el elemento por saturación registrada. El repuesto asignado corresponde al alojamiento del equipo.",
+  "title": "Cambiar el filtro de aire",
+  "location": "Tapa redonda arriba del motor: sujetador superior e inferior",
+  "finding": "La orden de este ejercicio pide cambiar el filtro de aire por uno nuevo. Está dentro de la carcasa redonda de la parte alta del motor.",
   "checks": [
-   "Comparé la referencia del repuesto con la orden",
-   "Comprobé que el elemento y su sello están íntegros"
+   "El repuesto de este ejercicio corresponde al filtro",
+   "Revisaré que la tapa quede colocada al terminar"
   ],
-  "question": "¿Cómo cierras el trabajo después de instalarlo?",
+  "question": "¿Qué falta después de poner el filtro nuevo?",
   "options": [
-   "Colocar la tapa, cerrar ambos sujetadores y verificar el asiento",
-   "Dejar la tapa abierta para mejorar la entrada de aire"
+   "Volver a colocar la tapa y cerrar los dos sujetadores",
+   "Dejar la tapa abierta"
   ],
   "answer": 0,
-  "criterion": "Elemento asentado, tapa restituida y ambos sujetadores cerrados; el simulador no verifica un par de apriete real."
+  "criterion": "Termina con filtro nuevo, tapa colocada y ambos sujetadores al 100%.",
+  "steps": [
+   {
+    "tool": "Llave de vaso",
+    "action": "Apunta al sujetador de arriba y mantén E hasta 100%. Haz lo mismo con el de abajo.",
+    "result": "Los dos sujetadores quedan sueltos."
+   },
+   {
+    "tool": "Manos libres · H",
+    "action": "Apunta a la tapa redonda y pulsa E para retirarla.",
+    "result": "La tapa se separa del filtro."
+   },
+   {
+    "tool": "Filtro nuevo",
+    "action": "Apunta al filtro abierto y pulsa E con el repuesto.",
+    "result": "El filtro nuevo queda colocado."
+   },
+   {
+    "tool": "Manos libres · H",
+    "action": "Pulsa E en la tapa para volver a colocarla.",
+    "result": "La tapa vuelve a su sitio; todavía faltan los sujetadores."
+   },
+   {
+    "tool": "Llave de vaso",
+    "action": "Mantén E en cada sujetador hasta que ambos lleguen a 100%.",
+    "result": "El juego da por terminado el cambio. No comprueba una fuerza de apriete real."
+   }
+  ],
+  "completed": "Colocaste el filtro nuevo, repusiste la tapa y cerraste los dos sujetadores. El juego no mide una fuerza de apriete real."
  },
  {
-  "title": "Diagnosticar el estado de los bornes",
+  "title": "Revisar los dos terminales de la batería",
   "location": "Batería de arranque, costado del bastidor",
-  "finding": "Se observan depósitos blancos en ambos bornes. La batería sigue cargada aunque el arranque esté seccionado.",
+  "finding": "Los terminales, también llamados bornes, son los dos puntos de la batería donde se conectan los cables. Están marcados + y − y tienen depósitos blancos. Solo vas a observarlos, no a limpiarlos.",
   "checks": [
-   "Reconocí que los bornes siguen energizados",
-   "La orden actual permite inspección visual, sin desmontar conexiones"
+   "Solo voy a mirar los terminales con la linterna",
+   "Entiendo que no debo cepillarlos ni desconectarlos aquí"
   ],
-  "question": "¿Qué alcance eliges para este hallazgo?",
+  "question": "¿Qué harás con los depósitos blancos de la batería?",
   "options": [
-   "Cepillar los bornes energizados inmediatamente",
-   "Inspeccionar con linterna y generar una correctiva para tratamiento específico"
+   "Cepillarlos ahora aunque la batería conserve energía",
+   "Inspeccionar con la linterna; el juego guarda que la limpieza queda pendiente"
   ],
   "answer": 1,
-  "criterion": "Ambos bornes inspeccionados y correctiva registrada. La corrosión queda visible: no se declara reparada."
+  "criterion": "Termina al revisar los dos terminales con la linterna. El juego guarda la nota automáticamente; la corrosión queda visible porque no la limpiaste.",
+  "steps": [
+   {
+    "tool": "Linterna",
+    "action": "Apunta al terminal + de la batería y pulsa E. Después haz lo mismo con el terminal −.",
+    "result": "Al llegar a 2/2 el juego guarda una nota: hay suciedad blanca y la limpieza queda pendiente. Se guarda sola; no tienes que buscar otro menú."
+   }
+  ],
+  "completed": "Revisaste los dos terminales. Se guardó una nota: depósitos blancos; limpieza pendiente. No realizaste limpieza en este ejercicio."
  },
  {
-  "title": "Registrar tensión de batería en reposo",
+  "title": "Leer el voltaje de la batería",
   "location": "Bornes positivo (+) y negativo (−)",
-  "finding": "Batería de plomo-ácido de 12 V en reposo en este escenario. Se autoriza únicamente la medición didáctica de tensión; no una prueba de capacidad.",
+  "finding": "El multímetro es el instrumento para leer el voltaje. La pantalla mostrará 12.6 V (voltios) en este ejercicio. La batería es de 12 V.",
   "checks": [
-   "Inspeccioné el instrumento y las puntas",
-   "Seleccioné V DC; negro en COM y rojo en V, nunca en A"
+   "Usaré la función V DC: voltaje de corriente continua",
+   "La punta negra va en COM y la roja en V, nunca en A"
   ],
-  "question": "¿Cómo interpretarás una lectura de 12.6 V en este caso?",
+  "question": "¿Qué te dice esta lectura de 12.6 V?",
   "options": [
-   "Carga aproximada alta; falta una prueba específica para evaluar capacidad de arranque",
-   "Garantía de batería sana bajo cualquier carga"
+   "Que el voltaje está registrado; todavía no se probó si la batería puede arrancar el motor",
+   "Que la batería funcionará siempre, sin hacer ninguna otra prueba"
   ],
   "answer": 0,
-  "criterion": "Puntas colocadas, tensión registrada y limitación de la medición anotada."
+  "criterion": "Termina al pulsar Registrar lectura en Q. Limitación: el voltaje en reposo no prueba la capacidad de arranque.",
+  "steps": [
+   {
+    "tool": "Multímetro",
+    "action": "Apunta al terminal + y pulsa E para colocar la punta roja. Haz lo mismo en − para colocar la negra.",
+    "result": "Aparece una lectura de 12.6 V en este ejercicio."
+   },
+   {
+    "tool": "Cuaderno · Q",
+    "action": "Abre Q y pulsa Registrar lectura.",
+    "result": "Se guardan los 12.6 voltios. Esta lectura no demuestra que la batería pueda arrancar el motor."
+   }
+  ],
+  "completed": "Se guardó la lectura de 12.6 voltios del ejercicio. Todavía no se comprobó si la batería puede arrancar el motor."
  },
  {
-  "title": "Inspeccionar el enlace de protección",
+  "title": "Revisar el cable de protección",
   "location": "Conductor de protección al frente de la bancada",
-  "finding": "Se representan conductor, unión a la bancada y terminal. Esta actividad es visual y no proporciona valores de continuidad.",
+  "finding": "El cable de protección une la parte metálica del equipo con la conexión de tierra. Aquí solo revisarás lo que se ve en los tres puntos señalados.",
   "checks": [
-   "Identifiqué conductor y terminales sin desmontarlos"
+   "Solo voy a revisar el aspecto visible del cable y sus uniones"
   ],
-  "question": "¿Qué conclusión permite esta inspección?",
+  "question": "¿Qué puedes comprobar mirando el cable con la linterna?",
   "options": [
-   "La instalación completa ya cumple una norma",
-   "Solo el estado visual observado; la continuidad se verifica mediante otra prueba"
+   "Que toda la instalación ya cumple una norma",
+   "Solo si hay daño visible; comprobar el paso eléctrico requiere otra medición"
   ],
   "answer": 1,
-  "criterion": "Tres puntos examinados y alcance visual registrado, sin certificar continuidad ni resistencia de tierra."
+  "criterion": "Termina al revisar los tres puntos con la linterna. El juego anota la revisión visual automáticamente.",
+  "steps": [
+   {
+    "tool": "Linterna",
+    "action": "Apunta a cada uno de los tres puntos marcados en el cable de protección, abajo y al frente del equipo, y pulsa E.",
+    "result": "Al llegar a 3/3 el juego guarda la revisión visual. No mide continuidad ni resistencia."
+   }
+  ],
+  "completed": "Revisaste los tres puntos del cable de protección. Se guardó la revisión visual; no hiciste una medición eléctrica."
  },
  {
-  "title": "Cerrar el área de intervención",
+  "title": "Recoger el paño y la llave de vaso",
   "location": "Piso frente al generador y bolsa de herramientas",
-  "finding": "El inventario de cierre detectó dos objetos fuera de la bolsa: un paño y una llave de vaso.",
+  "finding": "Hay un paño y una llave de vaso en el piso, frente al generador. Debes recoger los dos antes de volver a conectar el arranque.",
   "checks": [
-   "Revisé que las tapas intervenidas estén restituidas",
-   "Confirmé que nadie permanece dentro del área de partes móviles"
+   "Voy a recoger los dos objetos, no solo uno"
   ],
-  "question": "¿Qué cuenta debe coincidir antes de restituir?",
+  "question": "¿Qué objetos recogerás antes de continuar?",
   "options": [
-   "Los dos objetos detectados deben regresar al inventario",
-   "Basta con recoger la llave, el paño puede quedarse"
+   "El paño y la llave de vaso",
+   "Solo la llave de vaso"
   ],
   "answer": 0,
-  "criterion": "Paño y llave retirados físicamente del piso; área revisada."
+  "criterion": "Termina cuando ya no veas el paño ni la llave en el piso.",
+  "steps": [
+   {
+    "tool": "Manos libres · H",
+    "action": "Apunta al paño que está en el piso y pulsa E. Después haz lo mismo con la llave de vaso.",
+    "result": "Los dos objetos desaparecen del piso porque se guardaron."
+   }
+  ],
+  "completed": "Recogiste el paño y la llave de vaso. Ya no están en el piso."
  },
  {
-  "title": "Entregar el equipo a operación",
+  "title": "Reconectar el arranque y retirar tu candado",
   "location": "Seccionador de arranque y gabinete de control",
-  "finding": "La intervención mecánica terminó, las herramientas están contadas y la correctiva de bornes quedó registrada para seguimiento. La orden didáctica permite una prueba supervisada, no certifica disponibilidad real.",
+  "finding": "La revisión terminó y recogiste las herramientas. Primero cerrarás el interruptor junto a la batería y después retirarás tu propio candado del gabinete. La limpieza pendiente de la batería seguirá anotada; esta prueba virtual no declara reparado un equipo real.",
   "checks": [
-   "Área despejada y personal informado",
-   "Reconozco el bloqueo como personal y la correctiva pendiente",
-   "Operación autorizó la restitución del escenario de entrenamiento"
+   "El área del ejercicio está libre de herramientas",
+   "Solo voy a retirar mi propio candado",
+   "La suciedad blanca de la batería seguirá anotada como pendiente"
   ],
-  "question": "¿Qué secuencia usarás en esta representación?",
+  "question": "¿Cómo terminarás la revisión?",
   "options": [
-   "Cerrar el seccionador y después retirar mi bloqueo para entregar el control",
-   "Retirar cualquier candado sin identificar a su responsable"
+   "Cerrar el interruptor de arranque y después retirar mi propio candado",
+   "Retirar un candado sin saber de quién es"
   ],
   "answer": 0,
-  "criterion": "Seccionador restituido y bloqueo propio retirado; hallazgos pendientes entregados a operación."
+  "criterion": "Termina cuando el interruptor esté cerrado y hayas retirado tu candado del control.",
+  "steps": [
+   {
+    "tool": "Manos libres · H",
+    "action": "Ve al interruptor junto a la batería y pulsa E para cerrarlo.",
+    "result": "El circuito de arranque vuelve a quedar conectado en el ejercicio."
+   },
+   {
+    "tool": "Candado",
+    "action": "Vuelve al selector del gabinete G-01 y pulsa E con el candado.",
+    "result": "Se retiran tu candado y tu etiqueta. Se conserva la nota de limpieza pendiente de la batería."
+   }
+  ],
+  "completed": "Cerraste el interruptor de arranque y retiraste tu candado. La nota de limpieza pendiente de la batería sigue guardada."
  },
  {
-  "title": "Observar la prueba funcional",
+  "title": "Probar el arranque y el cambio de alimentación",
   "location": "Cuaderno de trabajo · prueba de transferencia",
-  "finding": "Operación autorizó la prueba del escenario. La red fallará de forma simulada y el sistema deberá arrancar, estabilizarse y transferir la carga.",
+  "finding": "La transferencia es el cambio de alimentación de la red al generador. Aquí se prueba de forma simulada; no cortas la energía de un lugar real.",
   "checks": [
-   "Avisé a operación y delimitamos la prueba",
-   "La prueba es simulada; no voy a provocar una falla en una instalación real"
+   "Esta es una prueba virtual autorizada en el ejercicio",
+   "Voy a esperar a que termine antes de leer el resultado"
   ],
-  "question": "¿Qué se debe observar antes de aceptar la transferencia?",
+  "question": "¿Qué esperarás durante la prueba virtual?",
   "options": [
    "Solo que el motor haga ruido",
-   "Arranque, tensión/frecuencia estables y transferencia sin disparos"
+   "Que el motor arranque, el generador quede listo y cambie la alimentación"
   ],
   "answer": 1,
-  "criterion": "Resultado automático de la secuencia y hallazgos incluidos en la bitácora; sin inventar mediciones reales."
+  "criterion": "Termina cuando el juego muestre y guarde el resultado de la prueba.",
+  "steps": [
+   {
+    "tool": "Cuaderno · Q",
+    "action": "Abre Q y pulsa Iniciar prueba simulada. Espera a que termine la secuencia.",
+    "result": "El juego hace fallar la red, arranca el generador y cambia la alimentación. El resultado se guarda automáticamente."
+   }
+  ],
+  "completed": "La prueba terminó: el motor arrancó, el generador quedó listo y pasó a alimentar la instalación. El resultado se guardó."
  }
 ];
- function validate(index,checks,choice){const order=orders[index];if(!order)return{ok:false,message:'Orden inexistente.'};if(!Array.isArray(checks)||order.checks.some((_,i)=>checks[i]!==true))return{ok:false,message:'Confirma las condiciones previas de esta orden.'};if(choice!==order.answer)return{ok:false,message:'La decisión no corresponde al hallazgo. Revisa el alcance y vuelve a elegir.'};return{ok:true,message:'Orden preparada. Continúa con la acción indicada en pantalla.'};}
+ function validate(index,checks,choice){const order=orders[index];if(!order)return{ok:false,message:'Orden inexistente.'};if(!Array.isArray(checks)||order.checks.some((_,i)=>checks[i]!==true))return{ok:false,message:'Confirma que leíste los datos: marca las casillas de esta actividad.'};if(choice!==order.answer)return{ok:false,message:'Esa opción no corresponde a lo descrito arriba. Lee la pregunta y vuelve a elegir.'};return{ok:true,message:'Actividad lista. Pulsa Volver al equipo y haz el paso indicado.'};}
  return{orders,validate};
 })();

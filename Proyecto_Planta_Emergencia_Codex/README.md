@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D38: llaves, cubiertas y gabinetes
+# Simulador de planta de emergencia — D39: pasos de mantenimiento claros
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Esta entrega prepara el proyecto para programación; no cambia intencionadamente la simulación ni añade una nueva revisión funcional.
+
+## Cambios D39 · qué hacer en cada actividad
+
+**Q** muestra ahora el paso actual con una acción concreta, la herramienta y el cambio visible que confirma que lo hiciste. Los datos del ejercicio se distinguen de las acciones del jugador. El botón **Empezar actividad** confirma la lectura inicial; **Volver al equipo y hacer este paso** cierra las instrucciones e intenta capturar el mouse. Q y Esc también cierran las instrucciones cuando una casilla o botón de opción tiene el foco.
+
+En la revisión de batería solo se apunta con la linterna a cada terminal marcado + y − y se pulsa E. Al revisar ambos se guarda automáticamente que hay depósitos blancos y que la limpieza queda pendiente. No existe un botón adicional de diagnóstico. Las lecturas de aceite y voltaje sí requieren usar su botón de registro en Q; eso se indica en el paso correspondiente.
+
+Se simplificaron los títulos, preguntas y resultados de las doce actividades. Los pasos completos y las explicaciones técnicas quedan en secciones desplegables. En el gabinete, el selector FUERA/AUTO y sus etiquetas están debajo de la pantalla; la pantalla ya no tiene mandos ni etiquetas encima. El punto de la primera actividad está en la pantalla, y el del bloqueo está en el selector.
 
 ## Cambios D38 · llaves e inspección de gabinetes
 
