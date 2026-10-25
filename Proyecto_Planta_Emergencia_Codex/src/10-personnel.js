@@ -13,9 +13,25 @@ const Personnel=(()=>{
  const visorFrame=new T.MeshStandardMaterial({color:'#272c2d',roughness:.68});
  function detail(parent,geo,material,position){const o=new T.Mesh(geo,material);o.position.set(...position);o.castShadow=o.receiveShadow=true;parent.add(o);return o;}
  function badgeTexture(i){const c=document.createElement('canvas');c.width=256;c.height=128;const x=c.getContext('2d');x.fillStyle='#e7ebe0';x.fillRect(0,0,256,128);x.fillStyle='#12343e';x.fillRect(0,0,256,32);x.fillStyle='#fff';x.font='bold 20px sans-serif';x.fillText('MANTENIMIENTO',16,24);x.fillStyle='#233238';x.font='bold 28px sans-serif';x.fillText('TEC · 0'+(i+1),16,76);x.font='18px sans-serif';x.fillText(i<2?'PLANTA G-01':'SUBESTACIÓN',16,108);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;}
- data.people.forEach((p,i)=>{const g=new T.Group();g.name=p.name;g.userData.role=p.role;g.userData.source='Blender 4.0.2';g.position.set(...positions[i]);g.rotation.y=angles[i];if(i%2)g.scale.set(.96,.965,.96);for(const [gi,mi]of p.meshes){if(legacyFace.has(mi))continue;const o=new T.Mesh(geos[gi],mats[mi]);if(geos[gi].getAttribute('color'))o.material.vertexColors=true;// The original yellow helmet was exported with a skin material.
+ data.people.forEach((p,i)=>{const g=new T.Group();g.name=p.name;g.userData.role=p.role;g.userData.source='Blender 4.0.2';g.position.set(...positions[i]);g.rotation.y=angles[i];if(i%2)g.scale.set(.96,.965,.96);for(const [gi,mi]of p.meshes){if(legacyFace.has(mi))continue;let geometry=geos[gi].clone();const vertices=geometry.getAttribute('position');
+ geometry.computeBoundingBox();const facePart=geometry.boundingBox.min.y>1.39;
+ for(let v=0;v<vertices.count;v++){let x=vertices.getX(v),y=vertices.getY(v),z=vertices.getZ(v);
+ // Keep the eyes, lenses and head together; shorten the exposed neck and fit the helmet.
+ if(facePart){x*=1.045;y-=mi===7||mi===21?.040:.022;}
+ else if(y>1.64){y-=.040;}
+ // Preserve the stance but bring the boots back to a normal sole length/height.
+ if(y<.23){const footCenter=x<0?-.095:.095;x=footCenter+(x-footCenter)*.94;z=-.06+(z+.06)*.84;y*=.90;}
+ vertices.setXYZ(v,x,y,z);}
+ vertices.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
+ const o=new T.Mesh(geometry,mats[mi]);if(geos[gi].getAttribute('color'))o.material.vertexColors=true;// The original yellow helmet was exported with a skin material.
  if(mi===7||mi===21)o.material=helmet;
- if(o.material.name.startsWith('Piel anatómica'))o.material.roughness=.76;
+ if(o.material.name.startsWith('Piel anatómica')){o.material.roughness=.76;
+ // A short hair shell follows the actual head topology instead of a floating primitive.
+ const hairGeometry=geometry.clone(),pos=hairGeometry.getAttribute('position'),normal=hairGeometry.getAttribute('normal'),indices=hairGeometry.index,kept=[];
+ for(let f=0;f<indices.count;f+=3){const ids=[indices.getX(f),indices.getX(f+1),indices.getX(f+2)];if(ids.every(v=>pos.getY(v)>1.585&&pos.getZ(v)<.018))kept.push(...ids);}
+ hairGeometry.setIndex(kept);for(let v=0;v<pos.count;v++)pos.setXYZ(v,pos.getX(v)+normal.getX(v)*.0009,pos.getY(v)+normal.getY(v)*.0009,pos.getZ(v)+normal.getZ(v)*.0009);
+ const hair=new T.Mesh(hairGeometry,new T.MeshStandardMaterial({color:i%2?'#29221e':'#352b23',roughness:.98}));hair.name='Cabello ajustado';hair.castShadow=true;g.add(hair);
+ }
  if(o.material.name.startsWith('Esclerótica')){o.material.color.set('#b9b7a4');o.material.roughness=.48;}
  o.castShadow=o.receiveShadow=true;g.add(o);}
  // Equipment stays local to each person and shares geometry/materials where possible.
@@ -24,10 +40,11 @@ const Personnel=(()=>{
  detail(g,new T.BoxGeometry(.045,.075,.025),radioMat,[.105,1.30,.137]);
  detail(g,new T.CylinderGeometry(.002,.002,.065,6),radioMat,[.119,1.37,.137]);
  detail(g,new T.BoxGeometry(.025,.006,.004),trimMat,[.105,1.31,.153]);
- // Thin chin straps follow the sides of the face rather than crossing the eyes.
- for(const side of [-1,1]){const strap=detail(g,new T.BoxGeometry(.008,.145,.005),visorFrame,[side*.072,1.58,.006]);strap.rotation.z=side*.12;}
+ // D36: fitted suspension band, no loose vertical strips beside the face.
+ const band=detail(g,new T.CylinderGeometry(.084,.084,.014,32,1,true),visorFrame,[0,1.635,.004]);band.scale.z=1.10;
+
  const bounds=new T.Box3().setFromObject(g);g.position.y+=(i<2?-.07:6.65)-bounds.min.y;
- g.userData.presentation='D35 · rostro sin duplicados, casco, identificación y radio';group.add(g);});status='ready';renderer.shadowMap.needsUpdate=true;return true;
+ g.userData.presentation='D36 · casco ajustado, cuello y botas proporcionados; anatomía original';group.add(g);});status='ready';renderer.shadowMap.needsUpdate=true;return true;
  })().catch(error=>{status='error';console.error('Modelos de operarios:',error);return false;});
  const toggle=document.createElement('label');toggle.innerHTML='<input type="checkbox" checked> Mostrar operarios';document.querySelector('.route-controls .buttons').append(toggle);toggle.firstElementChild.onchange=()=>{group.visible=toggle.firstElementChild.checked;renderer.shadowMap.needsUpdate=true;};
  return{group,ready,count:()=>group.children.length,status:()=>status};

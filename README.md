@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D35
+# Planta de emergencia · simulador D36
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -29,4 +29,6 @@ Si ya existe Chromium, usa `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
 
 Las mejoras de los operarios afectan a su presentación en el simulador. Se conservan los originales Blender/GLB y las doce prácticas; los personajes mantienen poses estáticas.
 
-El manifiesto SHA256 incluido describe la entrega D34 original y no la revisión D35. Consulta el README del proyecto para los detalles y sus límites didácticos.
+El manifiesto SHA256 incluido describe la entrega D34 original y no la revisión D36. Consulta el README del proyecto para los detalles y sus límites didácticos.
+
+Las órdenes D36 explican dónde ir, qué observar, qué herramienta utilizar y qué evidencia cierra cada actividad. Consulta `Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D36.md`.

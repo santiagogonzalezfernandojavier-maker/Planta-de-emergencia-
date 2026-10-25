@@ -1,6 +1,16 @@
-# Simulador de planta de emergencia — D35: recorrido e interfaz
+# Simulador de planta de emergencia — D36: órdenes de mantenimiento y operarios
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Esta entrega prepara el proyecto para programación; no cambia intencionadamente la simulación ni añade una nueva revisión funcional.
+
+## Cambios D36
+
+Ahora cada una de las doce actividades tiene una orden de trabajo: ubicación, hallazgo del escenario, condiciones previas, decisión de intervención y criterio de cierre. **Q** abre la orden; la tarjeta en pantalla indica la siguiente acción y la herramienta. En guiado se conservan los marcadores. En evaluación también hay que preparar la orden y responder las preguntas previas.
+
+El selector se pone fuera de servicio antes de colocar el candado. El radiador se inspecciona antes de limpiar. El filtro exige instalar el elemento, reponer la tapa y cerrar ambos sujetadores. Los bornes se inspeccionan y se registra una correctiva pendiente: no se cepillan mientras la batería conserva energía. La entrega exige restituir el seccionador antes de retirar el bloqueo personal. La bitácora incluye las condiciones confirmadas y la decisión de cada orden.
+
+Los operarios conservan su anatomía y poses: se ajustan casco, cuello y botas, se eliminan las tiras sueltas de la cara y se añade cabello sobre la topología de la cabeza. Los Blender y GLB originales se conservan. No hay rig ni animación de locomoción de los personajes.
+
+Consulta `docs/MANTENIMIENTO_D36.md` para los alcances y la validación. Son escenarios didácticos; no se representan todas las fuentes de energía ni procedimientos completos de campo.
 
 ## Cambios D35
 
