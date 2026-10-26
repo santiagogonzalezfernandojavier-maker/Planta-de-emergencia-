@@ -1,4 +1,6 @@
-# Planta de emergencia · simulador D44
+# Planta de emergencia · simulador D45
+
+D45 añade cubierta desmontable en Anatomía, tablero G-01 fijo, linterna con botón/tecla L y un recorrido de presentación de nueve etapas. Consulta [la guía de presentación](Proyecto_Planta_Emergencia_Codex/docs/PRESENTACION_D45.md).
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 

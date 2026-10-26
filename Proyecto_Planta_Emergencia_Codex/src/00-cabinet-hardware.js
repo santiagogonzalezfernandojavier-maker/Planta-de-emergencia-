@@ -4,7 +4,7 @@ const CabinetAccess38=(()=>{
  return{check};
 })();
 const CabinetParts38=[];
-function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',body,front}){
+function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',openable=true,body,front}){
  const pivot=new T.Group(),leaf=new T.Group(),interior=new T.Group(),cover=new T.Group();
  pivot.name=id+' · bisagra';pivot.userData.noCompact=true;interior.userData.noCompact=true;
  owner.add(pivot,interior);pivot.position.set(x-w/2,y,z);pivot.add(leaf);
@@ -43,6 +43,6 @@ function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',body,f
  box(leaf,[w*.38,h*.19,.045],[w*.49,h*.20,-.043],dark);
  tube(leaf,[[w*.48,h*.10,-.069],[w*.18,h*.10,-.075],[.06,-h*.25,-.07]],.0035,mat('#596b77'));
  tube(pivot,[[.018,-h*.32,-.08],[.09,-h*.32,-.04],[.07,-h*.32,.02]],.003,mat('#54875b'));
- const entry={id,key,type,owner,pivot,leaf,interior,cover,coverHit:hit,open:false,angle:0,target:0,covered:true};
+ const entry={id,key,type,openable,owner,pivot,leaf,interior,cover,coverHit:hit,open:false,angle:0,target:0,covered:true};
  leaf.traverse(o=>{if(o.isMesh)o.userData.cabinet38=id;});CabinetParts38.push(entry);return entry;
 }

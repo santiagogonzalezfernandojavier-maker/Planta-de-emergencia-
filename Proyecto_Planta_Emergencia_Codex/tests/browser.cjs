@@ -176,10 +176,11 @@ const root = path.resolve(__dirname, '..');
       function act(id,x,z,amount=0){travel(x,z);if(!Maintenance.act(id,amount))throw Error('Action rejected: '+id+' order '+Maintenance.state().index);}
       function prepare(){if(Maintenance.state().mode==='guided'){if(!Maintenance.state().workOrder.ready)throw Error('Guided activity was gated');return;}throw Error('Unexpected assessment mode');}
       function advance(){if(!Maintenance.state().done)throw Error('Order not complete '+Maintenance.state().index);const before=Maintenance.state().index;key('KeyE','keydown');key('KeyE','keyup');if(Maintenance.state().index!==before+1)throw Error('E did not continue without journal');prepare();}
-      // The controller keeps its controls and progress when its real door moves.
-      travel(2.47,1.7);if(!Cabinets38.toggle('G01-CONTROL'))throw Error('G01 key did not open controller');for(let i=0;i<40;i++)CCM34.frame(.033);
-      const controller=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');updateView();if(controller.coverHit.material.opacity!==0)throw Error('Invisible interaction proxy became opaque');camera.lookAt(controller.coverHit.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);
-      if(!Cabinets38.cover())throw Error('Controller inner cover did not detach');if(Cabinets38.toggle('G01-CONTROL'))throw Error('Controller closed over removed cover');if(!Cabinets38.cover())throw Error('Controller cover did not return');if(!Cabinets38.toggle('G01-CONTROL'))throw Error('Controller did not close');for(let i=0;i<40;i++)CCM34.frame(.033);
+      // The G-01 control panel is fixed; E belongs to its working controls.
+      travel(2.47,1.7);const controller=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');
+      if(controller.openable!==false||Cabinets38.toggle('G01-CONTROL'))throw Error('G01 control panel still opens');
+      updateView();if(controller.coverHit.material.opacity!==0)throw Error('Invisible interaction proxy became opaque');camera.lookAt(controller.coverHit.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);
+      if(Cabinets38.use()||Cabinets38.cover()||controller.open||!controller.covered)throw Error('Fixed controller intercepted a cabinet action');
       travel(3.65,1.7);const transfer=Cabinets38.entries().find(d=>d.id==='G01-TRANSFER');if(!Cabinets38.toggle('G01-TRANSFER'))throw Error('Transfer cabinet did not open');for(let i=0;i<40;i++)CCM34.frame(.033);camera.lookAt(transfer.coverHit.getWorldPosition(new T.Vector3()));camera.updateMatrixWorld(true);if(!Cabinets38.cover()||!Cabinets38.cover()||!Cabinets38.toggle('G01-TRANSFER'))throw Error('Transfer cover failed');for(let i=0;i<40;i++)CCM34.frame(.033);
       travel(1.05,3.4);if(!Cabinets38.toggleCanopy()||!Cabinets38.canopyCovered())throw Error('Generator cover did not install');if(!Cabinets38.toggleCanopy()||Cabinets38.canopyCovered())throw Error('Generator cover did not remove');
       take('plan');act('control',2.47,1.17);advance();
@@ -187,7 +188,7 @@ const root = path.resolve(__dirname, '..');
       take('hand');act('isolate',.6,1.12);advance();
       take('hand');act('dipstick',-.82,.93);take('rag');act('dipstick',-.82,.93);take('hand');act('dipstick',-.82,.93);act('dipstick',-.82,.93);
       if(Walk31.state().journal||!document.querySelector('#flowQuick40'))throw Error('Oil reading requires a modal');key('KeyE','keydown');key('KeyE','keyup');advance();
-      take('light');travel(-2.95,0,.12);const lamp=scene.getObjectByName('Haz de la linterna de inspección'),hands=scene.getObjectByName('Manos enguantadas del jugador');Walk31.frame(0);if(!lamp.visible||lamp.intensity<10||!hands.visible)throw Error('Flashlight or hands inactive');
+      take('light');travel(-2.95,0,.12);const lamp=scene.getObjectByName('Haz de la linterna de inspección'),hands=scene.getObjectByName('Manos enguantadas del jugador');Walk31.frame(0);if(!lamp.visible||lamp.intensity<=0||!hands.visible)throw Error('Flashlight or hands inactive');
       for(let i=0;i<8;i++){const point=[-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48];aim(point);if(!Maintenance.clearSight('dust'+i,true))throw Error('Radiator zone blocked '+i+' '+JSON.stringify(Maintenance.clearSight.blocker));if(i===0){lamp.visible=false;renderer.render(scene,camera);await window.capture41('d41-linterna-apagada');Walk31.frame(0);renderer.render(scene,camera);await window.capture41('d41-linterna');}key('KeyE','keydown');for(let j=0;j<9;j++)Walk31.frame(.08);key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held inspection failed '+i+' '+JSON.stringify({state:Maintenance.state(),walk:Walk31.state(),rig:Maintenance.rigState()}));}
       if(Maintenance.state().done)throw Error('Inspection treated as cleaning');take('brush');
       for(let i=0;i<8;i++){aim([-2.48,.62+Math.floor(i/2)*.18,i%2?.48:-.48]);if(i===0){const p=Maintenance.targetScreen('dust0');await window.holdMouse41(p.x,p.y);}else key('KeyE','keydown');for(let j=0;j<4;j++)Walk31.frame(.08);if(i===0){renderer.render(scene,camera);await window.capture41('d41-cepillado');}for(let j=0;j<9&&!Maintenance.state().done;j++)Walk31.frame(.08);if(i===0)await window.releaseMouse41();else key('KeyE','keyup');if(Maintenance.state().needed.includes('dust'+i))throw Error('Held cleaning failed '+i);}if(Maintenance.state().index===4)advance();else if(Maintenance.state().index!==5||Maintenance.state().records.length!==5)throw Error('Unexpected automatic progress after cleaning');
@@ -210,8 +211,8 @@ const root = path.resolve(__dirname, '..');
       }
       const completed=Maintenance.state().records.length,evidence=Maintenance.state().records.every(r=>r.workOrder?.source==='scenario-briefing'&&r.workOrder.checks.length===0);
       Maintenance.close();build();Walk31.enterZone('plant');
-      const rebuilt=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let mounted=false;rebuilt.leaf.traverse(o=>{if(o.userData.workTarget==='control')mounted=true;});if(!mounted)throw Error('Configuration rebuild lost cabinet controls');
-      return{completed,evidence,functionalTestCompleted:true,controllerDoor:true,removableCover:true,canopy:true,exterior,rebuild:true};
+      const rebuilt=Cabinets38.entries().find(d=>d.id==='G01-CONTROL');let mounted=false;rebuilt.leaf.traverse(o=>{if(o.userData.workTarget==='control')mounted=true;});if(!mounted||rebuilt.openable!==false||Cabinets38.toggle('G01-CONTROL'))throw Error('Configuration rebuild lost fixed cabinet controls');
+      return{completed,evidence,functionalTestCompleted:true,fixedController:true,removableCover:true,canopy:true,exterior,rebuild:true};
     });
     assert.equal(results.completed,12);assert.equal(results.evidence,true);assert.equal(results.functionalTestCompleted,true);
     console.log(JSON.stringify({startup:true,operators:4,crouch:true,mouseLook:true,pointerLock:true,pause:true,journal:true,eyesDeduplicated:true,zones:true,doors:26,doorInteraction:true,returnToPractice:true,workOrders:results,stairs:stairRoundTrip,pageErrors:errors}));

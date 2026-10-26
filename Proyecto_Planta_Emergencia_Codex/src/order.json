@@ -18,5 +18,6 @@
   "60-scene-navigation.js",
   "62-substation-orders.js",
   "65-substation-maintenance.js",
-  "66-protection-inspector.js"
+  "66-protection-inspector.js",
+  "70-guided-presentation.js"
 ]

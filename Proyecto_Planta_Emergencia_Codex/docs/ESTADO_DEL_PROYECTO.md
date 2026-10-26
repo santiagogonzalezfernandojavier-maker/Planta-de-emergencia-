@@ -4,6 +4,14 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D45
+
+- Anatomía abre con cubierta; botón directo Retirar/Colocar en el visor, copia del gabinete de servicio y controles de despiece conservados.
+- G01-CONTROL tiene `openable: false`: puerta fija, sin interceptar E/V. El selector y las prácticas permanecen montados en su frente.
+- Linterna L/botón, haz dirigido a la superficie central, lente coherente y menor saturación. No se registran inspecciones con la linterna apagada.
+- `70-guided-presentation.js` presenta nueve etapas, con navegación manual y reproducción, utilizando los ciclos existentes. Suspende las prácticas y recupera sesión/bitácoras al salir.
+- Ver docs/PRESENTACION_D45.md. `test:player` añade cubierta, móvil, haz, giro del mouse y presentación; `test:browser` conserva las doce actividades y comprueba el tablero fijo tras reconstrucción.
+
 ## Actualización D44
 
 - Nueve apartarrayos en llegada/TE/TP y cuatro mástiles de captación PC-01 a PC-04. PR-01 sigue identificando el gabinete de protección. Bajantes y uniones de prueba a la malla común; AP-TE/AP-TP también figuran en DU-01.

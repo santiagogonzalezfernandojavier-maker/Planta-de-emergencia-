@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D44: protección y mantenimiento de subestación
+# Simulador de planta de emergencia — D45: presentación guiada y controles
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D45 · cubierta, linterna y presentación
+
+**Anatomía de la planta** abre con la cubierta colocada. **Retirar / Colocar cubierta** está sobre el visor y conserva las nueve etiquetas y sus despieces. G-01 / Control queda fijo para que E opere sus mandos; los otros gabinetes conservan su apertura.
+
+La linterna se enciende y apaga con su botón o **L**, y el haz apunta a la superficie bajo la mira. En la subestación, **F** o un clic sobre un espacio libre permite mirar con el mouse; Esc libera el cursor.
+
+**Recorrido de presentación**, en el menú y en Zonas, demuestra nueve etapas con Anterior/Siguiente y reproducción automática. Incluye anatomía, transferencia, unifilar, manos y linterna, subestación, protecciones y CCM. Suspende las prácticas y recupera la sesión al terminar. [Guía y alcance D45](docs/PRESENTACION_D45.md).
 
 ## D44 · protección y mantenimiento de subestación
 

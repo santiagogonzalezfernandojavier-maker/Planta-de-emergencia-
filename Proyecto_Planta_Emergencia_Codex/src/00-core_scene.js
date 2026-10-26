@@ -144,7 +144,7 @@ function buildControlCabinet20(g){const coat=mat('#c5c9bc',.18),metal=mat('#aeb9
  for(let j=0;j<7;j++)cabinetSkin20(g,.28,.008,.009,[x,.61+j*.022,1.124],seal,.003);
  for(const xx of [2.22,2.72])for(const yy of [.52,1.52])cabinetFastener20(g,[xx,yy,1.126]);
  for(const xx of [2.30,2.62]){box(g,[.06,.04,.20],[xx,.433,.91],metal);cyl(g,.018,.028,[xx,.473,.91],metal);}
- articulateCabinet38(g,{id:'G01-CONTROL',key:'plant',x:2.47,y:1.02,z:1.106,w:.579,h:1.083,depth:.35,type:'control',front:o=>o.position.z>=1.08&&o.position.y>.46});
+ articulateCabinet38(g,{id:'G01-CONTROL',key:'plant',x:2.47,y:1.02,z:1.106,w:.579,h:1.083,depth:.35,type:'control',openable:false,front:o=>o.position.z>=1.08&&o.position.y>.46});
 }
 
 function build(){root.traverse(o=>{if(o.isMesh)o.geometry.dispose()});scene.remove(root);root=new T.Group();scene.add(root);groups={};pieces=[];pistons=[];paths=[];particles=[];for(const key in PARTS){groups[key]=new T.Group();root.add(groups[key])}
