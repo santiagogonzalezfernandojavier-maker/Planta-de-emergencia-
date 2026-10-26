@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D43.1: menú de inicio y acceso a la escalera
+# Simulador de planta de emergencia — D44: protección y mantenimiento de subestación
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D44 · protección y mantenimiento de subestación
+
+Se completaron **nueve apartarrayos**: llegada, elevador TE y principal TP. Los **cuatro pararrayos PC-01 a PC-04** usan mástiles de celosía, puntas captoras, hilo de guarda y bajantes con uniones de prueba hasta la malla común. **Protección contra rayos** abre sus vistas de detalle. DU-01 incluye las nuevas derivaciones AP-TE y AP-TP; los parámetros de selección siguen pendientes.
+
+**Mantenimiento de subestación** está en el menú inicial y en Zonas. Añade tres actividades: inspección de apartarrayos, bajantes de pararrayos y comparación termográfica simulada. Incluye doce puntos, conclusiones elegidas por el jugador, una unión abierta visible de PC-03, cámara térmica en las manos y bitácora JSON. Conserva por separado las doce prácticas del generador.
+
+[Guía, equipos y alcance de D44](docs/SUBESTACION_D44.md). Prueba del recorrido: `npm run test:substation`.
 
 ## D43.1 · elección inicial y espacio de paso
 

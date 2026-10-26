@@ -1,0 +1,16 @@
+const SubstationOrders44=(()=>{
+ const layout=ProtectionLayout44;
+ const orders=[
+  {id:'SE-01',title:'Inspección de los apartarrayos',tool:'light',targets:layout.banks.flatMap(b=>[
+   {id:b.id+'-body',name:b.id+' · aisladores y bornes',point:[b.x,b.base+.45,b.z],result:'Faldas, cuerpo y conexión superior sin daño visible en el escenario.'},
+   {id:b.id+'-earth',name:b.id+' · bajante a tierra',point:b.collector,result:'Unión de prueba cerrada y bajante visible hasta el terreno. La continuidad no se demuestra visualmente.'}
+  ]),choices:['Sin daños visibles en los tres bancos; registrar la inspección','Se observaron aisladores rotos en los tres bancos'],answer:0,conclusion:'Tres bancos revisados: nueve apartarrayos y sus bajantes. Selección de Ur/MCOV y coordinación pendientes.'},
+  {id:'SE-02',title:'Pararrayos y bajantes',tool:'light',targets:layout.masts.map(m=>({id:m.id+'-joint',name:m.id+' · unión de prueba',point:m.joint,result:m.id==='PC-03'?'PC-03: la pletina está apartada y deja una separación visible. No tocar ni restituir durante esta inspección.':'Pletina de unión cerrada; bajante y fijaciones visibles. No equivale a una medición de continuidad.'})),choices:['Los cuatro puntos mantienen uniones cerradas','PC-03 tiene una unión abierta; solicitar intervención autorizada'],answer:1,conclusion:'Hallazgo registrado: unión abierta de PC-03. Se solicita correctiva y comprobación posterior; el jugador no repara una instalación en servicio.'},
+  {id:'SE-03',title:'Comparación termográfica',tool:'thermal',targets:layout.banks.filter(b=>b.id!=='AP-01').map(b=>({id:b.id+'-thermal',name:(b.id==='AP-TE'?'TE':'TP')+' · bornes de media tensión',point:b.terminals[1],stand:b.id==='AP-TE'?[13.5,8.30,5.5]:[26.5,8.30,.75],result:b.id==='AP-TE'?'TE: L1 31 °C · L2 32 °C · L3 32 °C. Lecturas aparentes simuladas.':'TP: L1 34 °C · L2 67 °C · L3 35 °C. L2 destaca en la imagen térmica simulada.'})),choices:['Las temperaturas de las fases son similares en ambos equipos','TP, fase L2, presenta mayor temperatura aparente; ampliar el diagnóstico'],answer:1,conclusion:'Indicio térmico en TP/L2 documentado. Revisar carga, emisividad, ambiente y conexiones mediante una intervención planificada; no se atribuye una causa definitiva.'}
+ ];
+ function create(){return{index:0,hits:[],records:[],errors:0,done:false};}
+ function observe(state,id){const target=orders[state.index]?.targets.find(t=>t.id===id);if(!target||state.done||state.hits.includes(id))return false;state.hits.push(id);return target.result;}
+ function conclude(state,choice){const order=orders[state.index];if(state.done||!order)return{ok:false,message:'Recorrido terminado.'};if(state.hits.length!==order.targets.length)return{ok:false,message:'Falta observar: '+order.targets.filter(t=>!state.hits.includes(t.id)).map(t=>t.name).join(', ')};if(choice!==order.answer){state.errors++;return{ok:false,message:'Revisa las observaciones guardadas antes de elegir la conclusión.'};}
+  state.records.push({time:new Date().toISOString(),id:order.id,title:order.title,targets:order.targets.map(t=>({id:t.id,observation:t.result})),conclusion:order.conclusion});state.index++;state.hits=[];state.done=state.index===orders.length;return{ok:true,message:order.conclusion};}
+ return{orders,create,observe,conclude};
+})();

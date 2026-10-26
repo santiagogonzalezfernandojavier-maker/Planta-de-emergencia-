@@ -10,6 +10,8 @@ const Unifilar42=(()=>{
   ['G-01','Generador síncrono','480 V L-L','Tres fases equilibradas. Potencia activa configurable; potencia aparente nominal calculada con FP nominal de referencia 0.80.'],
   ['Q0','Interruptor de generador · 52-G0','480 V','El modelo lo considera cerrado cuando el grupo queda disponible. Su capacidad interruptiva y curva no están dimensionadas.'],
   ['TE','Transformador elevador','0.48 / 13.8 kV','Transformador ideal del modelo. kVA, impedancia, derivaciones y conexión de devanados: PD. No se infiere neutro.'],
+  ['AP-TE','Apartarrayos del elevador TE','13.8 kV','Tres derivaciones fase-tierra en las boquillas MT de TE. Ur/MCOV, capacidad y coordinación: PD.'],
+  ['AP-TP','Apartarrayos del principal TP','13.8 kV','Tres derivaciones fase-tierra en las boquillas MT de TP. Ur/MCOV, capacidad y coordinación: PD.'],
   ['QG','Interruptor de entrada de respaldo · 52-G','13.8 kV','Enclavado con QN; no se permite paralelo red-generador.'],
   ['B-MT','Barra colectora de media tensión','13.8 kV','Nodo común de fuentes. Capacidad de corriente, soportabilidad de cortocircuito y aislamiento: PD.'],
   ['TP-M','Transformadores de potencial para medida','13.8 kV','Derivados de la barra MT. Se distinguen de TP, transformador de potencia reductor. Relación, conexión y clase: PD.'],
@@ -22,7 +24,7 @@ const Unifilar42=(()=>{
   ['RP-01','Funciones de protección propuestas','50/51 · 50N/51N','Números de función de uso ANSI/IEEE C37.2. No equivalen a símbolos NMX ni a ajustes o disparos calculados.'],
   ['RG-01','Supervisión propuesta del generador','27/59 · 81U/81O','Sub/sobretensión y sub/sobrefrecuencia. Umbrales, temporizaciones y coordinación: PD.']
  ].map(([id,name,voltage,description])=>({id,name,voltage,description,nominal:pending,interrupting:pending}));
- const symbolRefs={'G-01':['4.2.127','GG','24'], 'DS-01':['4.2.118','DSSC','22'], 'AP-01':['4.2.120','APART','22'], 'TC-01':['4.2.124','TC','23'], 'QN':['4.2.14','INT','5'], 'QG':['4.2.14','INT','5'], 'Q0':['4.2.14','INT','5'], 'QS':['4.2.14','INT','5'], 'QF-01':['4.2.14','INT','5'], 'TE':['4.2.69','TR2DEVF1','14'], 'TP':['4.2.69','TR2DEVF1','14'], 'TP-M':['4.2.75','TP','15'], 'PE':['4.2.13','T','5']};
+ const symbolRefs={'G-01':['4.2.127','GG','24'], 'DS-01':['4.2.118','DSSC','22'], 'AP-01':['4.2.120','APART','22'], 'AP-TE':['4.2.120','APART','22'], 'AP-TP':['4.2.120','APART','22'], 'TC-01':['4.2.124','TC','23'], 'QN':['4.2.14','INT','5'], 'QG':['4.2.14','INT','5'], 'Q0':['4.2.14','INT','5'], 'QS':['4.2.14','INT','5'], 'QF-01':['4.2.14','INT','5'], 'TE':['4.2.69','TR2DEVF1','14'], 'TP':['4.2.69','TR2DEVF1','14'], 'TP-M':['4.2.75','TP','15'], 'PE':['4.2.13','T','5']};
  for(const e of equipment){e.symbol=symbolRefs[e.id]||null;e.frame=pending;e.trip=pending;}
  const feeders=[['A-01','Red → DS-01 → TC-01 → QN',13800,'normal','Acometida trifásica del modelo'],['F-01','G-01 → Q0 → TE',480,'generator','3F + PE · canalización sótano/patio'],['F-02','TE → QG → B-MT',13800,'generator','Conexiones exteriores de MT'],['F-03','B-MT → QS → TP',13800,'load','Barra y salida MT'],['AF-01','TP → QF-01 → CCM-01',480,'load','3F + PE · tendido aéreo y bajadas']].map(([id,route,voltage,branch,installation])=>({id,route,voltage,branch,installation}));
  function values(cfg,q,grid){const pf=Number(cfg.pf),p=Number(q.kw);if(!(pf>0&&pf<=1)||!Number.isFinite(p)||p<0)throw Error('Potencia o FP fuera de dominio');

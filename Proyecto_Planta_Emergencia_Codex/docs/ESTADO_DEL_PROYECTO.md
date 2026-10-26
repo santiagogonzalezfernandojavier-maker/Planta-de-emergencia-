@@ -4,6 +4,13 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D44
+
+- Nueve apartarrayos en llegada/TE/TP y cuatro mástiles de captación PC-01 a PC-04. PR-01 sigue identificando el gabinete de protección. Bajantes y uniones de prueba a la malla común; AP-TE/AP-TP también figuran en DU-01.
+- Recorrido propio de tres actividades de subestación, doce observaciones, conclusiones, unión abierta de entrenamiento, termografía simulada, cámara en las manos y bitácora JSON. No sustituye reparaciones, mediciones ni estudios.
+- Fuentes nuevas: 00-protection-layout, 38-substation-protection, 62-substation-orders, 65-substation-maintenance y 66-protection-inspector. Se conserva una animación principal; la interfaz se actualiza desde CCM34.frame.
+- `npm run test:substation` comprueba el recorrido y el regreso a la práctica de planta. Ver docs/SUBESTACION_D44.md.
+
 ## Actualización D43.1
 
 - El menú inicial espera una selección; desaparece el arranque forzado. Explorar, misiones eléctricas, anatomía y mantenimiento tienen entradas independientes.
@@ -24,7 +31,7 @@ Un simulador educativo 3D de generación de emergencia que se sienta como un vid
 - Doce actividades de mantenimiento, secuenciadas, con guiado/evaluación, resultados y bitácora. Prueba final enlazada al arranque y transferencia del simulador.
 - Cuatro operarios procedentes de Blender, con fuentes artísticas incluidas. No son personajes de primera persona riggeados; no hay un sistema anatómico animado de manos del jugador.
 - CCM de doce secciones: principal, siete secciones con tres unidades cada una y cuatro reservas. 26 puertas con pivotes; contactores, relevadores, canaletas, borneras, PE, rieles y un variador ilustrativo. Principal con barras protegidas.
-- Tres apartarrayos, cuatro mástiles de captación con hilo de guarda y bajantes a la malla. Las funciones están representadas visualmente; no hay estudio de cobertura o coordinación de aislamiento.
+- Base original: tres apartarrayos, cuatro mástiles de captación con hilo de guarda y bajantes a la malla. Las funciones están representadas visualmente; no hay estudio de cobertura o coordinación de aislamiento.
 - Navegación de seis destinos y retorno a la posición de mantenimiento. Optimización de geometría estática, marcadores y luces. Modo Fluido/Detalle.
 
 ## Preferencias que se deben preservar

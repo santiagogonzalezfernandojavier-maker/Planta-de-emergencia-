@@ -6,7 +6,7 @@ const SiteWalk37=(()=>{
  const opening={minX:stairs.x-stairs.width/2-.17,maxX:stairs.x+stairs.width/2+.17,minZ:highEdge-.30,maxZ:lowEdge+.135};
  const landings={bottom:{minZ:lowEdge,maxZ:5.77,width:2.10},top:{minZ:highEdge-1.20,maxZ:highEdge,width:stairs.width}};
  const basement=[[-2.55,2.10,-1,1.02],[2.13,2.85,.70,1.42],[-3.62,-2.80,-3.70,-.35],[-5.85,-3.85,-4,-2.20],[1,2.9,-4.12,-2.88],[4.05,5.35,.25,1.65],[-7.45,-6.35,-5.35,-4.25],[7.25,8.35,-5.35,-4.25],[-7.45,-6.35,4.25,5.35],[7.25,8.35,4.25,5.35]];
- const yard=[[10,13.2,2.45,5.15],[22.8,26,-1.90,.90],[17,18.8,-2.45,-.75],[17.55,19.25,.45,2.15],[19.9,21.7,-1.75,-.05],[10.35,12.95,-2.95,-1.80],[23.6,25.2,-6.2,-4.6],[12,12.45,-5.1,-4.6],[15.9,16.35,-5.1,-4.6]];
+ const yard=[[10,13.2,2.45,5.15],[22.8,26,-1.90,.90],[17,18.8,-2.45,-.75],[17.55,19.25,.45,2.15],[19.9,21.7,-1.75,-.05],[10.35,12.95,-2.95,-1.80],[23.6,25.2,-6.2,-4.6],[12,12.45,-5.1,-4.6],[15.9,16.35,-5.1,-4.6],...ProtectionLayout44.mastBounds];
  const insideFlight=(x,z)=>Math.abs(x-stairs.x)<=half&&z>=highEdge&&z<=lowEdge;
  const blocked=(x,z,boxes,r=.18)=>boxes.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);
  function surface(x,z,currentFloor,serviceAccess=false){

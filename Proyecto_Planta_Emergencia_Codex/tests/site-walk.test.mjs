@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-const context=vm.createContext({});vm.runInContext(fs.readFileSync(new URL('../src/00-site-walk.js',import.meta.url),'utf8')+';globalThis.api=SiteWalk37;',context);
+const context=vm.createContext({});vm.runInContext(fs.readFileSync(new URL('../src/00-protection-layout.js',import.meta.url),'utf8')+';'+fs.readFileSync(new URL('../src/00-site-walk.js',import.meta.url),'utf8')+';globalThis.api=SiteWalk37;',context);
 const site=context.api;
 function travel(from,x,z){const distance=Math.hypot(x-from.x,z-from.z),count=Math.ceil(distance/.07);for(let i=0;i<count;i++){const nextX=from.x+(x-from.x)/(count-i),nextZ=from.z+(z-from.z)/(count-i),next=site.step(from,nextX,nextZ);assert.ok(next,'Blocked at '+nextX+','+nextZ+' from floor '+from.floor);assert.ok(Math.abs(next.height-from.floor)<=site.maxStep+1e-6);from={x:nextX,z:nextZ,floor:next.height,zone:next.zone};}return from;}
 test('all 36 physical treads join the basement and deck in both directions',()=>{

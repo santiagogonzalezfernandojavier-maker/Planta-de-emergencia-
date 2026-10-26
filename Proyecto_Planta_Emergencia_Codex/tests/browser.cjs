@@ -91,7 +91,7 @@ const root = path.resolve(__dirname, '..');
     await page.locator('#nav33toggle').click();await page.locator('[data-zone33=practice]').click();
     assert.equal(await page.evaluate(()=>Walk31.state().zone),'plant');
     assert.equal(await page.evaluate(()=>Protection33.masts),4);
-    assert.equal(await page.evaluate(()=>Protection33.apartarrayos),3);
+    assert.equal(await page.evaluate(()=>Protection33.apartarrayos),9);
     assert.deepEqual(errors,[]);
     // Climb the actual staircase and return using movement, without zone-menu teleportation.
     const stairRoundTrip=await page.evaluate(()=>{

@@ -1,4 +1,4 @@
-# Planta de emergencia · simulador D43.1
+# Planta de emergencia · simulador D44
 
 El proyecto editable está en `Proyecto_Planta_Emergencia_Codex/`. El ZIP original D34 se conserva como respaldo.
 
@@ -66,3 +66,5 @@ D42 añade **Unifilar técnico** (NMX-J-136-ANCE-2019, símbolos nacionales, dat
 D43 corrige brazos extensibles, agarres y reinicios de animación; restaura cámara/postura/herramienta al volver de las vistas. Subestación comienza en el acceso peatonal. Se revisaron blancos e indicaciones del radiador, el paso/herramienta y la lectura de resultados.
 
 D43.1 recupera el menú al abrir: cada modalidad empieza tras elegirla. Amplía el descanso al pie de la escalera separando el primer peldaño de la pared; los 36 peldaños y sus colisiones conservan la conexión entre niveles.
+
+D44 completa nueve apartarrayos y cuatro pararrayos con bajantes a la malla. **Mantenimiento de subestación**, en el menú inicial o Zonas, añade tres actividades de inspección, comparación termográfica y bitácora. [Guía y alcance](Proyecto_Planta_Emergencia_Codex/docs/SUBESTACION_D44.md).

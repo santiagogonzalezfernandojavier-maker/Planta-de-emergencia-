@@ -33,6 +33,7 @@ const SingleLine42=(()=>{
  ${item('G-01',1030,148,`<circle r="27" class="symbol"/>`+text(0,6,'G','tag','middle')+line('M0 27V52')+line('M-27 0H-65V43','pe')+earth(-65,55),text(58,-13,'G-01 · generador síncrono','tag')+text(58,11,'480 V · 3Φ · <tspan id="duFreq42">60</tspan> Hz','small')+text(58,33,'<tspan id="duRated42"></tspan>','small'))}
  ${line('M1030 200V205','','duGenSupply')}${cb('Q0',1030,245,'52-G0')}${line('M1030 285V305','','duGeneratorLV')}
  ${transformer('TE',1030,350,'0.48 / 13.8 kV')}${line('M1030 395V415','','duGeneratorMT')}
+ ${dot(1030,402)}${line('M1030 402H895V411')}${item('AP-TE',895,435,`<path d="M0 -24V-8 M0 4V26" class="wire"/><path d="M-7 18L0 28L7 18Z" fill="#253d4b"/>`,text(-18,-3,'AP-TE','small','end'))}${earth(895,473)}
  ${cb('QG',1030,455,'52-G')}${line('M1030 495V545H720','','duGeneratorLower')}
  ${line('M1003 148H1270V290','signal')}${item('RG-01',1270,323,`<circle r="33" class="symbol"/>`+text(0,-7,'27/59','small','middle')+text(0,12,'81U/O','small','middle'),text(45,0,'RG-01 · propuesta','small')+text(45,20,'Sin ajustes asignados','micro'))}
  ${line('M394 455H355V505H640 M800 505H1090V455H1058','signal')}
@@ -42,6 +43,7 @@ const SingleLine42=(()=>{
  ${line('M1070 545H1190V610')}${transformer('TP-M',1190,655,'medida de tensión')}
  ${line('M1190 700V730','signal')}<circle cx="1190" cy="750" r="20" class="symbol"/>${text(1190,756,'V','tag','middle')}${text(1225,751,'Medida · relación / clase: PD','small')}
  ${line('M720 545V580','','duLoadMT1')}${cb('QS',720,620,'52-S')}${line('M720 660V685','','duLoadMT2')}
+ ${dot(720,674)}${line('M720 674H565V699')}${item('AP-TP',565,723,`<path d="M0 -24V-8 M0 4V26" class="wire"/><path d="M-7 18L0 28L7 18Z" fill="#253d4b"/>`,text(18,-3,'AP-TP','small'))}${earth(565,761)}
  ${transformer('TP',720,730,'13.8 / 0.48 kV')}${line('M720 775V800','','duLoadBT1')}
  ${cb('QF-01',720,840,'salida fábrica')}${text(765,879,'Estado inferido de la carga agregada; sin mando independiente','micro')}
  ${line('M720 880V930','','duFactoryFeeder')}${text(765,908,'AF-01 · 480 V · 3F + PE · aéreo / bajadas protegidas','small')}
@@ -65,7 +67,7 @@ const SingleLine42=(()=>{
  ${text(70,925,'10. Números de función: misma NMX, capítulo 6 / Tabla 2.','note')}
  <rect x="1100" y="820" width="430" height="220" fill="#f6f8f9" stroke="#cbd6db"/>
  ${text(1120,852,'MAGNITUDES DE OPERACIÓN','tag')}${text(1120,881,'<tspan id="duPower42"></tspan>','value')}${text(1120,909,'<tspan id="duCurrent42"></tspan>','value')}${text(1120,938,'S = P / FP     I = P / (√3 · VLL · FP)','small')}${text(1120,965,'Transformadores ideales · sin pérdidas ni Icc calculada','micro')}${text(1120,990,'Tensión L-N no definida: no se presupone 277 V','micro')}${text(1120,1015,'<tspan id="duSource42"></tspan>','value')}
- ${line('M20 1060H1580 M1050 1060V1100 M1310 1060V1100')}${text(40,1076,'PROYECTO: PLANTA DE EMERGENCIA · Dirección / elaboró / aprobó: PD','micro')}${text(40,1092,'Plano funcional sin escala · Ubicación y orientación: por definir en plano de instalación','micro')}${text(1070,1086,'DU-01 · REV D42 · SIN ESCALA','small')}${text(1330,1086,'<tspan id="duDate42"></tspan>','small')}
+ ${line('M20 1060H1580 M1050 1060V1100 M1310 1060V1100')}${text(40,1076,'PROYECTO: PLANTA DE EMERGENCIA · Dirección / elaboró / aprobó: PD','micro')}${text(40,1092,'Plano funcional sin escala · Ubicación y orientación: por definir en plano de instalación','micro')}${text(1070,1086,'DU-01 · REV D44 · SIN ESCALA','small')}${text(1330,1086,'<tspan id="duDate42"></tspan>','small')}
  </svg>`;
  panel.innerHTML=`<div class="du-heading"><div><span>DOCUMENTACIÓN ELÉCTRICA / DU-01</span><h2>Unifilar de potencia, medida y protección</h2></div><strong id="duLive42"></strong></div>
  <div class="du-toolbar"><button data-du-action="minus" aria-label="Alejar diagrama">−</button><output id="duZoom42">100%</output><button data-du-action="plus" aria-label="Acercar diagrama">+</button><button data-du-action="fit">Ajustar</button><button data-du-action="download">Descargar SVG</button><button data-du-action="print">Imprimir / PDF</button><span id="duCase42"></span></div>
@@ -83,7 +85,7 @@ const SingleLine42=(()=>{
  panel.addEventListener('click',e=>{const t=e.target.closest('[data-du-tab]');if(t){tab(t.dataset.duTab);return;}const item=e.target.closest('[data-equip]');if(item){select(item.dataset.equip);if(!item.closest('svg'))tab('plan');return;}
   const action=e.target.closest('[data-du-action]')?.dataset.duAction;if(action==='print'){tab('plan');window.print();return;}if(action==='download'){download();return;}if(action){zoom=action==='fit'?1:Math.max(.65,Math.min(2.5,zoom+(action==='plus'?.15:-.15)));$('duSheet42').style.width=(zoom*100)+'%';$('duZoom42').textContent=Math.round(zoom*100)+'%';}});
  panel.addEventListener('keydown',e=>{const item=e.target.closest('[data-equip]');if(item&&['Enter',' '].includes(e.key)){e.preventDefault();select(item.dataset.equip);if(!item.closest('svg'))tab('plan');}});
- function download(){render();const copy=$('duSheet42').cloneNode(true);copy.querySelectorAll('.pick').forEach(n=>n.remove());copy.querySelectorAll('[data-selected]').forEach(n=>n.removeAttribute('data-selected'));copy.removeAttribute('style');copy.setAttribute('width','1600');copy.setAttribute('height','1120');const blob=new Blob([new XMLSerializer().serializeToString(copy)],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='DU-01-unifilar-D42.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+ function download(){render();const copy=$('duSheet42').cloneNode(true);copy.querySelectorAll('.pick').forEach(n=>n.remove());copy.querySelectorAll('[data-selected]').forEach(n=>n.removeAttribute('data-selected'));copy.removeAttribute('style');copy.setAttribute('width','1600');copy.setAttribute('height','1120');const blob=new Blob([new XMLSerializer().serializeToString(copy)],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='DU-01-unifilar-D44.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
  function render(){const q=circuitState(),v=Unifilar42.values(cfg,q,s.grid),key=JSON.stringify([v,s.target,selected]);if(key===last)return;last=key;
   for(const [id,on]of Object.entries({...v.contacts,'QF-01':q.bus})){$('duBlade'+id).setAttribute('d',on?'M0 -9V9':'M0 -9V-4 M0 4V9');$('duState'+id).textContent=on?'CERRADO':'ABIERTO';}
   const routes={duGridUpper:v.live.grid,duNormalUpper:v.live.grid,duNormalLower:q.qn,duGenSupply:v.live.generator,duGeneratorLV:q.q0,duGeneratorMT:q.q0,duGeneratorLower:q.qg,duBusMT:q.bus,duLoadMT1:q.bus,duLoadMT2:q.bus,duLoadBT1:q.bus,duFactoryFeeder:q.bus,duBusBT:q.bus};
