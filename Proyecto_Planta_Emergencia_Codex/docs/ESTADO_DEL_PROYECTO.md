@@ -4,6 +4,13 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D46
+
+- La cámara de órbita cede el control durante el recorrido. El jugador actualiza su cámara antes de seleccionar y ejecutar una acción mantenida. Se corrige el fallo reproducido en `frame()` que no aparecía al probar únicamente `Walk31.frame()`.
+- Los marcadores son botones que aceptan mantener clic en círculo o etiqueta. Se conserva la selección de un sector, visibilidad, alcance y herramienta.
+- Varilla sostenida por la derecha, paño en la izquierda sobre el extremo, desaparición progresiva del aceite y reinserción explícita en el tubo. Pausar cancela la pasada pendiente.
+- Nueva prueba `test:maintenance`, incluida en publicación, sobre el ciclo compuesto. Ver docs/MANTENIMIENTO_D46.md.
+
 ## Actualización D45
 
 - Anatomía abre con cubierta; botón directo Retirar/Colocar en el visor, copia del gabinete de servicio y controles de despiece conservados.

@@ -1,6 +1,12 @@
-# Simulador de planta de emergencia — D45: presentación guiada y controles
+# Simulador de planta de emergencia — D46: radiador y varilla de aceite
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D46 · acciones mantenidas y limpieza de la varilla
+
+Se corrigió el orden de actualización de la cámara en el ciclo real del simulador: mantener E o clic sobre el radiador ahora utiliza la cámara del jugador para registrar el avance. Los círculos y sus etiquetas aceptan una pulsación sostenida y muestran el porcentaje.
+
+La derecha sostiene la varilla extraída y la izquierda limpia su extremo de lectura. Permanece fuera del motor hasta pulsar E sobre su tubo para reinsertarla. La segunda extracción muestra MIN/MAX. [Detalles y prueba del ciclo completo](docs/MANTENIMIENTO_D46.md): `npm run test:maintenance`.
 
 ## D45 · cubierta, linterna y presentación
 

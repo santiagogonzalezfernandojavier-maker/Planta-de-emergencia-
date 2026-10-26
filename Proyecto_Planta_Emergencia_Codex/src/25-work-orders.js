@@ -90,21 +90,21 @@ const WorkOrders36=(()=>{
    "Guardar la lectura sin agregar aceite innecesariamente"
   ],
   "answer": 1,
-  "criterion": "Termina al pulsar Registrar nivel leído en Q. La varilla vuelve a su lugar.",
+  "criterion": "Termina al registrar la lectura después de la segunda extracción. La varilla vuelve a su tubo.",
   "steps": [
    {
     "tool": "Manos libres · H",
     "action": "Apunta a la argolla amarilla del motor y pulsa E para sacar la varilla.",
-    "result": "La varilla queda levantada."
+    "result": "La mano derecha sostiene la varilla fuera del tubo."
    },
    {
     "tool": "Paño",
-    "action": "Apunta a la varilla levantada y pulsa E con el paño.",
-    "result": "Se limpia la zona de lectura."
+    "action": "Con la varilla en la mano, pulsa E para pasar el paño por el extremo de lectura. La mano izquierda limpia esa zona.",
+    "result": "El paño retira el aceite del extremo inferior; la varilla sigue sostenida, fuera del motor."
    },
    {
     "tool": "Manos libres · H",
-    "action": "Pulsa E en la varilla para meterla hasta el fondo.",
+    "action": "Apunta al tubo de la varilla en el motor y pulsa E para reinsertarla hasta el fondo.",
     "result": "La varilla vuelve a su tubo."
    },
    {
@@ -114,7 +114,7 @@ const WorkOrders36=(()=>{
    },
    {
     "tool": "Cuaderno · Q",
-    "action": "Abre Q. Mueve la escala hasta el nivel mostrado y pulsa Registrar nivel leído.",
+    "action": "Compara con MIN y MAX y registra la lectura: E en modo guiado, o Registrar nivel leído en Q en evaluación.",
     "result": "El juego guarda la lectura y vuelve a colocar la varilla."
    }
   ],

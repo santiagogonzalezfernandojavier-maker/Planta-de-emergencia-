@@ -203,3 +203,6 @@ button,select{border-radius:4px;color:#dce8ed;border-color:#49616c;background:li
 @media(prefers-reduced-motion:reduce){.g-progress i{transition:none}}
 
 #tourPoint45{position:absolute;transform:translate(-50%,-50%);z-index:65;padding:8px 12px;border:1px solid #d9bd78;border-radius:20px;background:#16382fdd;color:#ffe6a6;font:12px system-ui}#tourPoint45[hidden]{display:none}
+
+/* Maintenance markers accept a hold on the label as well as the scene. */
+body.walking31 #work26 .w-dot{pointer-events:auto!important;padding:0!important;min-height:0!important}body.walking31 #work26 .w-dot em{pointer-events:auto}body.walking31 #work26 .w-dot:focus-visible{outline:2px solid #b7ead6;outline-offset:5px}

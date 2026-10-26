@@ -1,4 +1,6 @@
-# Planta de emergencia · simulador D45
+# Planta de emergencia · simulador D46
+
+D46 corrige las pulsaciones mantenidas del radiador en el ciclo completo de la cámara. La varilla queda sostenida mientras la otra mano limpia el extremo de lectura; se reinserta al actuar sobre el tubo. [Guía y validación](Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D46.md).
 
 D45 añade cubierta desmontable en Anatomía, tablero G-01 fijo, linterna con botón/tecla L y un recorrido de presentación de nueve etapas. Consulta [la guía de presentación](Proyecto_Planta_Emergencia_Codex/docs/PRESENTACION_D45.md).
 
