@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D47: acceso y mantenimiento didáctico
+# Simulador de planta de emergencia — D48: experiencia guiada y placas técnicas
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D48 · elegir, actuar y comprobar
+
+El inicio ofrece seis modos separados: conocer el equipo, practicar en planta, practicar en subestación, explorar a pie, ver la demostración y realizar pruebas eléctricas. La práctica muestra **Haz ahora**, la herramienta y **Confirma el resultado**; **Mirar pieza** orienta la vista y el botón de acción permite usar o mantener sobre el componente. Esc → Menú principal → Continuar recupera el recorrido.
+
+**Placas de datos**, en el inicio y en Zonas, acerca la cámara a veinte placas montadas en los equipos. Incluye zoom, datos legibles y regreso a la vista anterior. Los letreros tienen texturas ajustadas a sus proporciones y las identificaciones de apartarrayos se separan de las de los transformadores. La marca **NEXORA** y sus modelos son ficticios; capacidades y ajustes desconocidos permanecen **Por definir**.
+
+Los gabinetes SE-QN/QG/QS muestran mecanismos de carga y mando; PR-01 contiene circuitos secundarios y un IED montado en puerta. Se corrige la reaparición de superficies antiguas que tapaban estos interiores durante la optimización. La colocación del multímetro dura 0.7 s y mantiene un solo instrumento en uso, incluso al abrir su bolsa. Se ajustan proporciones, guantes y acabados de los cuatro operarios. [Uso, alcance y validación D48](docs/EXPERIENCIA_D48.md).
 
 ## D47 · escalera, instrumento único y conexión PE visible
 

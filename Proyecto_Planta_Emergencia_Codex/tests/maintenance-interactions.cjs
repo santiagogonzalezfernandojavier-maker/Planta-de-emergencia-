@@ -45,12 +45,12 @@ const {spawn}=require('node:child_process'),{chromium}=require('playwright');
   await page.keyboard.down('KeyE');await page.evaluate(()=>advance46(.20));assert.ok(await page.evaluate(()=>Maintenance.rigState().contact)>.15);assert.ok((await page.evaluate(()=>Maintenance.state().needed)).includes('dust6'));
   await page.evaluate(()=>capture46());await page.screenshot({path:path.join(os.tmpdir(),'d46-radiador-progreso.png')});
   await page.keyboard.up('KeyE');await page.evaluate(()=>advance46(.16));assert.equal(await page.evaluate(()=>Maintenance.rigState().contact),0);
-  await press(.7);assert.ok(!(await page.evaluate(()=>Maintenance.state().needed)).includes('dust6'),'Real frame hold did not inspect the sector');
+  const use=await page.locator('#missionUse48').boundingBox();await page.mouse.move(use.x+use.width/2,use.y+use.height/2);await page.mouse.down();await page.evaluate(()=>advance46(.7));await page.mouse.up();assert.ok(!(await page.evaluate(()=>Maintenance.state().needed)).includes('dust6'),'Holding the main action did not inspect the selected sector');
   // A hold on the visible label must work even when the crosshair is elsewhere.
   await page.evaluate(p=>aim46(p),point(7));await page.waitForTimeout(100);await page.evaluate(()=>advance46(.04));
   const label=page.locator('#wDots [data-id=dust7] em');assert.equal(await label.isVisible(),true);const box=await label.boundingBox();
   await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.evaluate(()=>advance46(.7));await page.mouse.up();assert.ok(!(await page.evaluate(()=>Maintenance.state().needed)).includes('dust7'),'Holding the marker label did not inspect');
-  for(let i=0;i<6;i++){await page.evaluate(p=>aim46(p),point(i));await press(.7);}
+  for(let i=0;i<6;i++){await page.evaluate(p=>aim46(p),point(i));if(i===0){await page.locator('#missionUse48').focus();await page.keyboard.down('Space');await page.evaluate(()=>advance46(.7));await page.keyboard.up('Space');assert.ok(!(await page.evaluate(()=>Maintenance.state().needed)).includes('dust0'),'Space did not hold the focused action');}else await press(.7);}
   assert.equal(await page.evaluate(()=>Maintenance.state().step),1);assert.equal(await page.evaluate(()=>Maintenance.state().tool),'brush');
   for(let i=0;i<8;i++){await page.evaluate(p=>aim46(p),point(i));await press(.9);}
   assert.equal(await page.evaluate(()=>Maintenance.state().done),true);assert.equal(await page.evaluate(()=>Maintenance.state().records.length),5);
@@ -93,6 +93,10 @@ const {spawn}=require('node:child_process'),{chromium}=require('playwright');
   assert.equal((await meter()).length,1);
   await page.evaluate(()=>aim46([0,.93,.85],[.25,1.58,1.6]));await press(.5);
   assert.equal((await meter())[0].id,meterId);assert.equal((await meter())[0].firstPerson,false);assert.equal((await meter())[0].visible,true);
+  await page.evaluate(()=>advance46(.85));
+  const singleVisibleMeter=()=>page.evaluate(()=>{const found=[];scene.traverse(o=>{if(!o.userData.meterCase48)return;for(let p=o;p;p=p.parent)if(!p.visible)return;found.push(o.uuid);});return found.length;});
+  assert.equal(await singleVisibleMeter(),1);
+  await page.evaluate(()=>Walk31.bag(true));assert.equal(await singleVisibleMeter(),1,'A second meter appeared in the open bag while the working meter was placed');await page.evaluate(()=>Walk31.bag(false));
   await page.evaluate(()=>{capture46();});await page.screenshot({path:path.join(os.tmpdir(),'d47-multimetro-unico.png')});
   await page.evaluate(()=>aim46([.5,.93,.85]));await press(.5);assert.equal(await page.evaluate(()=>Maintenance.state().step),1);
   await page.keyboard.press('KeyE');await page.evaluate(()=>advance46(.4));
@@ -108,6 +112,6 @@ const {spawn}=require('node:child_process'),{chromium}=require('playwright');
    if(i===0){await page.evaluate(()=>capture46());await page.screenshot({path:path.join(os.tmpdir(),'d47-tierra-visible.png')});}
   }
   assert.equal(await page.evaluate(()=>Maintenance.state().done),true);assert.equal(await page.evaluate(()=>Maintenance.state().records.length),9);
-  assert.deepEqual(errors,[]);console.log(JSON.stringify({productionFrame:true,heldKeyboard:true,markerLabelHold:true,allRadiatorSectors:true,heldDipstick:true,clothTouchesMeasuringEnd:true,noDipstickDrop:true,cancelWipeOnPause:true,viewChangePreservesDipstick:true,readAndReinsert:true,ladderClimbAndReturn:true,noGroundFilterWork:true,onePhysicalMeter:true,visiblePEObservations:true,pageErrors:errors}));
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({productionFrame:true,heldKeyboard:true,markerLabelHold:true,mainActionHold:true,mainActionKeyboardHold:true,allRadiatorSectors:true,heldDipstick:true,clothTouchesMeasuringEnd:true,noDipstickDrop:true,cancelWipeOnPause:true,viewChangePreservesDipstick:true,readAndReinsert:true,ladderClimbAndReturn:true,noGroundFilterWork:true,onePhysicalMeter:true,visiblePEObservations:true,pageErrors:errors}));
  }catch(e){if(page){console.error(await page.evaluate(()=>({walk:Walk31.state(),maintenance:Maintenance.state(),rig:Maintenance.rigState()})).catch(()=>null));await page.screenshot({path:path.join(os.tmpdir(),'d46-maintenance-failure.png')}).catch(()=>{});}throw e;}finally{await browser?.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

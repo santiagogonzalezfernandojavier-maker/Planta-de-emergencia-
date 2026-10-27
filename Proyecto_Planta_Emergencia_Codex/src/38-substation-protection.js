@@ -23,7 +23,9 @@ const ProtectionModel44=(()=>{
    cabinetLabel20(g,p.phase,[x,y-.18,z+.18],.15,.055,'#f1dfac','#263d45');
   }
   joint(g,b.id,b.collector);tube(g,[[b.collector[0],7.11,b.z],[b.collector[0],layout.gridY,b.z],b.gridTap],.014,copper);
-  cabinetLabel20(g,b.id+' · '+b.equipment,[b.x,b.base-.42,b.z+.22],b.id==='AP-01'?1.65:1.42,.13,'#fff0bd','#294751');
+  // Keep identification below the transformer's own label, on its support frame.
+  for(const dx of [-.55,.55])box(g,[.025,.80,.025],[b.x+.24+dx,7.12,b.z+.28],steel);
+  const identification=proPlate(g,b.id+' · '+b.equipment,[b.x+.24,7.46,b.z+.31],1.50,'#203e49',.16);identification.userData.equipment48=b.id;
   batchStaticGeometry(g);
  }
  for(const m of layout.masts){const g=new T.Group();g.name=m.id+' · punta captora, mástil y bajante';lightning.add(g);box(g,[.90,.32,.90],[m.x,6.78,m.z],concrete);

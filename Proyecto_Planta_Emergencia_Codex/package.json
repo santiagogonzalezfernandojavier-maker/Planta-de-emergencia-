@@ -1,7 +1,7 @@
 {
   "name": "planta-emergencia-simulador",
   "private": true,
-  "version": "0.47.0",
+  "version": "0.48.0",
   "description": "Simulador 3D de planta, subestaci\u00f3n y f\u00e1brica. Migraci\u00f3n D34.",
   "type": "module",
   "engines": {
@@ -20,7 +20,8 @@
     "test:technical": "node tests/technical.cjs",
     "test:player": "node tests/player-experience.cjs",
     "test:substation": "node tests/substation.cjs",
-    "test:maintenance": "node tests/maintenance-interactions.cjs"
+    "test:maintenance": "node tests/maintenance-interactions.cjs",
+    "test:experience": "node tests/experience48.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

@@ -5,12 +5,17 @@ const CabinetAccess38=(()=>{
 })();
 const CabinetParts38=[];
 function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',openable=true,body,front}){
+ const specialized=type==='mechanism'||type==='protection';
  const pivot=new T.Group(),leaf=new T.Group(),interior=new T.Group(),cover=new T.Group();
  pivot.name=id+' · bisagra';pivot.userData.noCompact=true;interior.userData.noCompact=true;
  owner.add(pivot,interior);pivot.position.set(x-w/2,y,z);pivot.add(leaf);
  owner.updateWorldMatrix(true,true);
  // Keep the original buttons, handles and labels on the moving door.
- for(const child of [...owner.children]){if(child===pivot||child===interior||!child.isMesh)continue;if(body?.(child)){child.visible=false;continue;}if(front?.(child))leaf.attach(child);}
+ for(const child of [...owner.children]){if(child===pivot||child===interior||!child.isMesh)continue;
+  child.geometry.computeBoundingBox();const size=child.geometry.boundingBox.getSize(new T.Vector3());
+  const solidLegacy=!!body&&size.x>=w*.95&&size.x<=w*1.25&&size.y>=h*.95&&size.y<=h*1.25&&size.z>=depth*.80&&Math.abs(child.position.x-x)<.03&&Math.abs(child.position.y-y)<.03;
+  const flatLegacySeal=specialized&&size.x>=w*.99&&size.y>=h*.99&&size.z<.035&&child.position.z<z-.015&&child.position.z>z-.065;
+  if(body?.(child)||solidLegacy||flatLegacySeal){child.visible=false;child.userData.replacedSolid48=true;continue;}if(front?.(child))leaf.attach(child);}
  if(!leaf.children.length)box(leaf,[w,h,.025],[w/2,0,.015],mat('#aebbb7',.2));
  const paint=mat('#a6b3ad',.16),metal=mat('#9eaaa8',.7),rubber=mat('#273235'),back=z-depth;
  box(interior,[w,.018,depth],[x,y+h/2,z-depth/2],paint);box(interior,[w,.018,depth],[x,y-h/2,z-depth/2],paint);
@@ -18,10 +23,11 @@ function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',openab
  box(interior,[w,h,.018],[x,y,back],paint);box(interior,[w*.86,h*.86,.015],[x,y,back+.035],metal);
  for(const dx of [-w/2+.02,w/2-.02])box(interior,[.009,h-.03,.012],[x+dx,y,z+.006],rubber);
  // A distinct backplane for each function, with routed conductors and ferrules.
- const dz=back+.075,rows=type==='feeder'?2:3;
+ const dz=back+.075,rows=specialized?0:type==='feeder'?2:3;
+ const assembly48=specialized?CabinetInterior48.create({interior,leaf,pivot,id,type,x,y,z,w,h,back}):null;
  for(let r=0;r<rows;r++){const yy=y+h*.27-r*h*.25;box(interior,[w*.76,.022,.035],[x,yy,dz],metal);}
  const dark=mat('#273238'),plastic=mat('#c5c9bd'),copper=mat('#b28351',.75);
- if(type==='feeder'){
+ if(specialized){/* Functional layout is built above. */}else if(type==='feeder'){
   box(interior,[w*.48,h*.36,.10],[x,y+.10,dz+.05],dark);
   for(let j=0;j<3;j++){const xx=x+(j-1)*w*.15;box(interior,[w*.105,h*.22,.022],[xx,y+.10,dz+.114],plastic);cyl(interior,.012,.01,[xx,y+h*.28,dz+.12],copper,'z');tube(interior,[[xx,y+h*.40,dz],[xx,y+h*.28,dz+.12]],.010,dark);tube(interior,[[xx,y-h*.10,dz+.12],[xx,y-h*.35,dz]],.010,dark);}
   cabinetLabel20(interior,'MCCB · SALIDA BT',[x,y+.12,dz+.132],w*.42,.045);
@@ -35,14 +41,18 @@ function articulateCabinet38(owner,{id,key,x,y,z,w,h,depth,type='control',openab
  }
  // Separate inner deadfront; removing it never removes the equipment.
  interior.add(cover);cover.name=id+' · cubierta interior';
+ let guard48;
+ if(specialized)guard48=CabinetInterior48.guard(cover,{x,y,z,w,h,type});
+ else{
  const windowW=w*.58,windowH=h*.43;
  for(const sign of [-1,1]){box(cover,[(w-windowW)/2,h,.012],[x+sign*(w+windowW)/4,y,z-.035],paint);box(cover,[windowW,(h-windowH)/2,.012],[x,y+sign*(h+windowH)/4,z-.035],paint);}
  const windowMaterial=new T.MeshPhysicalMaterial({color:'#c4d9d5',transparent:true,opacity:.12,roughness:.18,depthWrite:false,side:T.DoubleSide});windowMaterial.userData.glass20=true;mesh(cover,new T.PlaneGeometry(windowW,windowH),windowMaterial,[x,y,z-.027]);
  for(const dx of [-w*.42,w*.42])for(const dy of [-h*.43,h*.43])cabinetFastener20(cover,[x+dx,y+dy,z-.02]);
- const hit=mesh(interior,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}),[x,y,z-.025]);hit.name=id+' · área de cubierta';hit.userData.cover38=id;
- box(leaf,[w*.38,h*.19,.045],[w*.49,h*.20,-.043],dark);
+ }
+ const hit=mesh(interior,new T.PlaneGeometry(guard48?.width||w,guard48?.height||h),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}),[x,guard48?.y??y,z-.025]);hit.name=id+' · área de cubierta';hit.userData.cover38=id;
+ if(!specialized){box(leaf,[w*.38,h*.19,.045],[w*.49,h*.20,-.043],dark);
  tube(leaf,[[w*.48,h*.10,-.069],[w*.18,h*.10,-.075],[.06,-h*.25,-.07]],.0035,mat('#596b77'));
- tube(pivot,[[.018,-h*.32,-.08],[.09,-h*.32,-.04],[.07,-h*.32,.02]],.003,mat('#54875b'));
- const entry={id,key,type,openable,owner,pivot,leaf,interior,cover,coverHit:hit,open:false,angle:0,target:0,covered:true};
+ tube(pivot,[[.018,-h*.32,-.08],[.09,-h*.32,-.04],[.07,-h*.32,.02]],.003,mat('#54875b'));}
+ const entry={id,key,type,assembly48,dimensions48:{x,y,z,w,h,depth},openable,owner,pivot,leaf,interior,cover,coverHit:hit,open:false,angle:0,target:0,covered:true};
  leaf.traverse(o=>{if(o.isMesh)o.userData.cabinet38=id;});CabinetParts38.push(entry);return entry;
 }

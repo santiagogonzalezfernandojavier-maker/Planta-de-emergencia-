@@ -1,4 +1,6 @@
-# Planta de emergencia · simulador D47
+# Planta de emergencia · simulador D48
+
+D48 reorganiza el inicio en seis modalidades y guía cada actividad con acción, herramienta y resultado observable. Añade veinte placas NEXORA ficticias con acercamiento, mejora letreros e interiores de gabinetes y la colocación del único multímetro. Conserva las instalaciones y prácticas. [Uso, alcance y validación](Proyecto_Planta_Emergencia_Codex/docs/EXPERIENCIA_D48.md).
 
 D47 añade una escalera de plataforma para el filtro, conserva un único multímetro y hace visible y comprensible la conexión de protección a tierra. Compacta los avisos y recupera en guiado la herramienta ya recogida. [Guía y validación](Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D47.md).
 

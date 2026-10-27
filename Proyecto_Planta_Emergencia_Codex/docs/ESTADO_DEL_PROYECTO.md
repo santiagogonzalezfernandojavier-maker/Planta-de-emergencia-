@@ -4,6 +4,16 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D48
+
+- Inicio con seis tarjetas de modalidad y consulta de placas, unifilar y ayuda. Explorar entra a pie por elección expresa. Esc → Menú principal → Continuar conserva la pose y actividad. Seguridad/unifilar/protección se reúnen en Zonas.
+- Guía con acción inmediata, herramienta y resultado observable. Botones Mirar pieza y Usar/Mantener/Guardar/Continuar. Orientar no teletransporta; se conserva alcance, visibilidad, herramientas y pulsación mantenida. Avisos duplicados se retiran del pie durante el guiado.
+- `00-equipment-labels.js`: lienzos de texto con proporciones físicas, ajuste de fuente, sRGB y anisotropía; no se estira un lienzo fijo. Identificación AP elevada/separada de los rótulos de transformadores.
+- `68-equipment-data.js` y `69-equipment-inspector.js`: veinte placas NEXORA ficticias, datos del escenario y pendientes de proyecto, zoom sobre placa física, selección, consulta de interiores y restauración de cámara/puertas/herramienta. Utiliza CCM34.frame y su luz existente; no añade un RAF o renderer.
+- `00-cabinet-interiors.js`: mecanismos con resortes/motor/reductor/levas/bobinas/contactos y PR-01 con IED en puerta, auxiliares DC, relés, borneras TC de prueba, bornes de tensión, alarmas y PE. Las cubiertas son guardas locales transparentes. La estructura del interruptor despeja el gabinete frontal. `batchStaticGeometry` excluye piezas invisibles retiradas; antes las volvía a combinar como visibles.
+- Multímetro: misma instancia en mano/apoyo, transición de 0.7 s, sin miniatura seleccionable en bolsa durante el uso, puntas al terminar la colocación y bloqueo de la segunda conexión mientras se está apoyando. Operarios: ajuste explícito de geometría/material, sin tocar originales Blender/GLB/gzip.
+- Pruebas nuevas de semántica de placas y `test:experience`, incluida en publicación. Se conservan las doce actividades, tres prácticas de subestación, anatomía, demostración, fábrica, CCM, flujo y día/noche. Ver docs/EXPERIENCIA_D48.md.
+
 ## Actualización D47
 
 - `29-service-ladder.js`: escalera portátil con plataforma, tres peldaños, barandales, pies antideslizantes y un único juego de dimensiones para malla y recorrido. E coloca/retira; WASD sube y baja. Se impide entrar por los lados, abandonar la plataforma lateralmente y retirar la escalera ocupada. La orden del filtro requiere terminar el acceso y la retirada.

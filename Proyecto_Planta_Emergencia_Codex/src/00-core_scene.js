@@ -119,7 +119,7 @@ function piece(key,name,explain,offset,create){const p=new T.Group();p.userData=
 function route(points,color,kind){if(['electric','grid','loadfeed','cool','fuel','exhaust'].includes(kind))return;const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)));const line=mesh(root,new T.TubeGeometry(curve,50,.019,6,false),mat(color));paths.push({curve,line,kind});for(let i=0;i<9;i++){const dot=mesh(root,new T.SphereGeometry(.046,8,8),new T.MeshBasicMaterial({color}));particles.push({dot,curve,kind,offset:i/9})}}
 // D24: cabinets built from folded panels, separate doors and service hardware.
 function cabinetSkin20(g,w,h,d,p,m,r=.025){const sh=new T.Shape(),x=-w/2,y=-h/2;r=Math.min(r,w*.15,h*.15);sh.moveTo(x+r,y);sh.lineTo(x+w-r,y);sh.quadraticCurveTo(x+w,y,x+w,y+r);sh.lineTo(x+w,y+h-r);sh.quadraticCurveTo(x+w,y+h,x+w-r,y+h);sh.lineTo(x+r,y+h);sh.quadraticCurveTo(x,y+h,x,y+h-r);sh.lineTo(x,y+r);sh.quadraticCurveTo(x,y,x+r,y);const geo=new T.ExtrudeGeometry(sh,{depth:Math.max(.002,d-.004),bevelEnabled:true,bevelThickness:.002,bevelSize:.002,bevelSegments:2,curveSegments:8});return mesh(g,geo,m,[p[0],p[1],p[2]-d/2+.002]);}
-function cabinetLabel20(g,text,pos,w,h,color='#c7d7d8',background='#20333b'){const c=document.createElement('canvas');c.width=512;c.height=128;const cx=c.getContext('2d');cx.fillStyle=background;cx.fillRect(0,0,512,128);cx.strokeStyle='#799094';cx.lineWidth=3;cx.strokeRect(4,4,504,120);cx.fillStyle=color;let labelSize=35;cx.font='500 '+labelSize+'px Arial';while(cx.measureText(text).width>480&&labelSize>15)cx.font='500 '+(--labelSize)+'px Arial';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(text,256,65);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return mesh(g,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t}),pos);}
+function cabinetLabel20(g,text,pos,w,h,color='#c7d7d8',background='#20333b'){return EquipmentLabels48.face(g,text,pos,w,h,color,background);}
 function cabinetFastener20(g,p){const metal=mat('#aeb8b9',.85);const b=mesh(g,new T.CylinderGeometry(.010,.010,.008,6),metal,p);b.rotation.x=Math.PI/2;box(g,[.012,.002,.003],[p[0],p[1],p[2]+.006],mat('#3c4447',.6));}
 function buildTransferCabinet20(g,live=false){const coat=mat('#819095',.32),door=mat('#a6b0ae',.25),seal=mat('#20292c'),metal=mat('#b9c1be',.8);const x=3.65,y=.9;
  for(const side of [-1,1]){box(g,[.018,1.30,.55],[x+side*.416,y,0],coat);box(g,[.85,.018,.55],[x,y+side*.641,0],coat);}box(g,[.82,1.26,.018],[x,y,-.266],coat);
@@ -258,7 +258,7 @@ const campusNav={mode:'basement',target:new T.Vector3(0,1.5,0),tour:false,u:0};
 const LEVEL=6.5;
 function circuitState(){const ready=['ready','cool'].includes(s.stage)&&!s.fault;const q0=ready,qn=s.source==='grid'&&s.grid,qg=s.source==='gen'&&ready;return {ready,q0,qn,qg,bus:qn||qg,kw:(qn||qg)?cfg.rating*s.load/100:0}}
 function createSubstation(){const site=new T.Group();scene.add(site);const basementFloor=new T.Group();site.add(basementFloor);const walls=new T.Group(),decks=new T.Group(),covers=new T.Group(),outdoor=new T.Group(),subParts={};site.add(walls,decks,covers,outdoor);const flowItems=[],lights=[],fans=[],breakerHandles={};
-const sceneLabels=[];function label(text,pos,w=2,color='#1c4141'){const cv=document.createElement('canvas');cv.width=1024;cv.height=192;const c=cv.getContext('2d');c.fillStyle=color;c.fillRect(0,0,1024,192);c.fillStyle='#f1f4ee';c.font='bold 45px Arial';c.textAlign='center';c.fillText(text,512,112);const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;const m=mesh(site,new T.PlaneGeometry(w,w*.1875),new T.MeshBasicMaterial({map:tx,side:T.DoubleSide,transparent:true}),pos);m.userData.labelText=text;sceneLabels.push(m);return m}
+const sceneLabels=[];function label(text,pos,w=2,color='#1c4141'){const m=EquipmentLabels48.face(site,text,pos,w,w*.1875,'#f1f4ee',color);m.material.side=T.DoubleSide;sceneLabels.push(m);return m}
 function curve(points){const c=new T.CurvePath();for(let j=1;j<points.length;j++)c.add(new T.LineCurve3(new T.Vector3(...points[j-1]),new T.Vector3(...points[j])));return c}
 function line(g,points,r,m){return mesh(g,new T.TubeGeometry(curve(points),Math.max(30,Math.min(480,points.length*4)),r,8,false),m)}
 function texture(){const cv=document.createElement('canvas');cv.width=cv.height=256;const cx=cv.getContext('2d');cx.fillStyle='#9c9c91';cx.fillRect(0,0,256,256);let seed=7;for(let i=0;i<15000;i++){seed=(seed*1664525+1013904223)>>>0;const x=(seed>>>16)%256;seed=(seed*1664525+1013904223)>>>0;const y=(seed>>>16)%256;cx.fillStyle=i%2?'#ffffff10':'#20202012';cx.fillRect(x,y,2,2)}const tx=new T.CanvasTexture(cv);tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.repeat.set(5,4);tx.colorSpace=T.SRGBColorSpace;return new T.MeshStandardMaterial({map:tx,roughness:.93,bumpMap:tx,bumpScale:.015})}
@@ -498,7 +498,9 @@ for(const [name,x,z] of [['QG',18.4,1.3],['QN',17.9,-1.6],['QS',20.8,-.9]]){
   box(g,[.25,.06,.25],[x+dx,6.88,z+dz],alloy);box(g,[.075,.88,.075],[x+dx,7.35,z+dz],alloy);
   for(const a of [-.08,.08])cyl(g,.019,.05,[x+dx+a,6.93,z+dz],steel);
  }
- for(const dz of [-.49,.49]){box(g,[1.5,.13,.12],[x,7.79,z+dz],alloy);line(g,[[x-.63,6.95,z+dz],[x+.63,7.70,z+dz]],.024,alloy);}
+ for(const dz of [-.49,.49]){box(g,[1.5,.13,.12],[x,7.79,z+dz],alloy);if(dz<0)line(g,[[x-.63,6.95,z+dz],[x+.63,7.70,z+dz]],.024,alloy);}
+ // Side braces clear the full depth of the front-mounted mechanism cabinet.
+ for(const dx of [-.64,.64])line(g,[[x+dx,6.95,z-.44],[x+dx,7.70,z+.44]],.024,alloy);
  for(const dx of [-.64,.64])box(g,[.12,.13,1.1],[x+dx,7.79,z],alloy);
  // Local mechanism cabinet mounted beneath the pole frame.
  box(g,[.61,.63,.33],[x,7.36,z+.60],cab);box(g,[.55,.56,.026],[x,7.36,z+.78],paint);
@@ -908,11 +910,8 @@ function proPipe(parent,points,r,material,bend=.15){
 }
 
 function proPlate(parent,text,pos,w=1.2,color='#214657',height=.26){
- const cv=document.createElement('canvas');cv.width=1024;cv.height=Math.round(1024*height/w);const c=cv.getContext('2d');
- c.fillStyle=color;c.fillRect(0,0,cv.width,cv.height);c.fillStyle='#f5f8f9';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${Math.min(cv.height*.50,80)}px Arial`;c.fillText(text,512,cv.height/2,970);
- const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;
- box(parent,[w+.06,height+.06,.055],[pos[0],pos[1],pos[2]-.04],mat('#596c73',.4));
- return mesh(parent,new T.PlaneGeometry(w,height),new T.MeshBasicMaterial({map:tx}),pos);
+ box(parent,[w+.04,height+.04,.025],[pos[0],pos[1],pos[2]-.018],mat('#81959a',.7));
+ return EquipmentLabels48.face(parent,text,pos,w,height,'#f5f8f9',color);
 }
 
 function proSign(parent,kind,text,pos,w=.7){
@@ -1171,7 +1170,7 @@ function batchStaticGeometry(parent){
  for(const g of [...parent.children])if(g.isGroup)batchStaticGeometry(g);
  const buckets=new Map();
  for(const m of parent.children){
-  if(!m.isMesh||Array.isArray(m.material)||m.material.transparent||m.userData.labelText||m.userData.safety||interactive.has(m)||m.geometry.type==='PlaneGeometry'||m.geometry.type==='ConeGeometry')continue;
+  if(!m.isMesh||!m.visible||m.userData.replacedSolid48||Array.isArray(m.material)||m.material.transparent||m.userData.labelText||m.userData.safety||interactive.has(m)||m.geometry.type==='PlaneGeometry'||m.geometry.type==='ConeGeometry')continue;
   if(m.geometry.type==='BoxGeometry'&&m.geometry.parameters.width<.09&&m.geometry.parameters.height===.20)continue;
   if(m.material.emissiveIntensity>0&&m.material.emissive?.getHex()!==0)continue;
   // Breaker handles change material dynamically; recognize their narrow geometry.
@@ -1299,7 +1298,7 @@ const normBtn=document.createElement('button');normBtn.textContent='Criterios no
 function setupHMI(){
  document.querySelector('header small').textContent='SISTEMA DE SUPERVISIÓN / SE-01';
  document.querySelector('header h1').textContent='Subestación y generación de respaldo';
- const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
+ const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL · D48</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
  document.querySelector('.rail-head span').textContent='PUESTO DE OPERACIÓN';document.querySelector('.rail-head b').textContent='HMI / 01';
  $('operate').querySelector('h2').textContent='MANDO DEL GRUPO';
  const annunciator=document.createElement('div');annunciator.id='hmiAlarm';annunciator.className='hmi-annunciator';annunciator.setAttribute('role','status');annunciator.innerHTML='<div><small>ESTADO DE SERVICIO</small><b id="hmiAlarmText"></b></div>';$('operate').prepend(annunciator);

@@ -28,8 +28,10 @@ jobs:
           npm test
           npm run site:build
           npx playwright install --with-deps chromium
+          npm run test:browser
           npm run test:player
           npm run test:maintenance
+          npm run test:experience
           npm run test:substation
           npm run test:technical
           npm run test:site
