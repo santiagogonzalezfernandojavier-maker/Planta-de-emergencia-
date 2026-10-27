@@ -7,6 +7,7 @@
   "20-surfaces_presentation_ui.js",
   "25-work-orders.js",
   "28-player-motion.js",
+  "29-service-ladder.js",
   "30-maintenance_walk.js",
   "38-substation-protection.js",
   "40-protections_ccm_performance.js",

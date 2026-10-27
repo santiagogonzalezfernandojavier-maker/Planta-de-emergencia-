@@ -206,3 +206,33 @@ button,select{border-radius:4px;color:#dce8ed;border-color:#49616c;background:li
 
 /* Maintenance markers accept a hold on the label as well as the scene. */
 body.walking31 #work26 .w-dot{pointer-events:auto!important;padding:0!important;min-height:0!important}body.walking31 #work26 .w-dot em{pointer-events:auto}body.walking31 #work26 .w-dot:focus-visible{outline:2px solid #b7ead6;outline-offset:5px}
+
+/* Notices and controls share a footer, so wrapped text cannot cover the toolbar. */
+#work26 #walkFooter47{position:absolute;left:12px;bottom:18px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:max-content;max-width:min(620px,calc(100% - 24px));pointer-events:none}
+body.walking31 #work26 #walkFooter47 .fp-hud{position:static;transform:none;justify-content:flex-start;width:auto;max-width:100%!important;margin:0}
+#work26 #wFeedback{display:none;box-sizing:border-box;max-width:520px;width:100%;padding:9px 12px;border:1px solid #b77b6270;border-left:3px solid #ed9b78;border-radius:5px;background:#301e1af0;color:#ffe5d7;font:13px/1.45 system-ui;text-align:left;overflow:visible;overflow-wrap:anywhere;pointer-events:none}
+#work26 #wFeedback[data-error=true]:not(:empty){display:block}
+@media(max-width:700px){#work26 #walkFooter47{left:6px;max-width:calc(100% - 12px)}#work26 #wFeedback{font-size:12px;padding:8px 10px}}
+@media(max-width:700px),(pointer:coarse) and (max-height:500px){
+ #work26 #walkFooter47{display:grid;grid-template-columns:126px minmax(0,1fr);width:calc(100% - 12px);bottom:max(12px,env(safe-area-inset-bottom))}
+ #work26 #wFeedback{grid-column:1/-1;max-width:none}
+ body.walking31 #work26 #walkFooter47 .fp-hud{grid-column:2;grid-row:2;min-width:0;align-self:end;gap:4px;padding:7px!important}
+ #work26 #walkFooter47 .fp-hud>div{width:100%;min-width:0}
+ #work26 #walkFooter47 .fp-hud small{max-width:none;font-size:9px!important}
+ #work26 #walkFooter47 .fp-hud button{font-size:0!important;min-width:40px;padding:6px!important}
+ #work26 #walkFooter47 .fp-hud button::after{font:10px system-ui}
+ #work26 #walkFooter47 #fpCrouch::after{content:'Agachar'}#work26 #walkFooter47 #fpBag::after{content:'Bolsa'}#work26 #walkFooter47 #fpJournal::after{content:'Objetivo'}#work26 #walkFooter47 #fpLook::after{content:'Mirar'}#work26 #walkFooter47 #fpLamp45::after{content:'Linterna'}
+ #work26 #walkFooter47 #fpHands,#work26 #walkFooter47 #fpDetail{display:none!important}
+ #work26 #walkFooter47 .fp-touch{position:static;grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;gap:4px;align-self:end}
+ #work26 #walkFooter47 .fp-touch>button{margin:0}
+ #work26 #walkFooter47 .fp-touch button{min-width:38px;min-height:34px!important;padding:6px!important}
+}
+
+#work26 #walkFooter47 #canopy38{position:static;grid-column:1/-1;grid-row:3;max-width:none;width:100%;font:10px system-ui;letter-spacing:0;text-transform:none;min-height:30px;padding:6px 9px}
+
+#work26:has(#wFeedback[data-error=true]:not(:empty)) #fpTarget{visibility:hidden}
+@media(max-width:700px),(pointer:coarse) and (max-height:500px){
+#work26 #walkFooter47 #fpCrouch[aria-pressed=true]::after{content:'Levantarse'}
+#work26 #walkFooter47 #fpLamp45[aria-pressed=true]::after{content:'Apagar luz'}
+#work26 #walkFooter47 #fpLamp45[aria-pressed=false]::after{content:'Encender luz'}
+}

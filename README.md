@@ -1,4 +1,6 @@
-# Planta de emergencia · simulador D46
+# Planta de emergencia · simulador D47
+
+D47 añade una escalera de plataforma para el filtro, conserva un único multímetro y hace visible y comprensible la conexión de protección a tierra. Compacta los avisos y recupera en guiado la herramienta ya recogida. [Guía y validación](Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D47.md).
 
 D46 corrige las pulsaciones mantenidas del radiador en el ciclo completo de la cámara. La varilla queda sostenida mientras la otra mano limpia el extremo de lectura; se reinserta al actuar sobre el tubo. [Guía y validación](Proyecto_Planta_Emergencia_Codex/docs/MANTENIMIENTO_D46.md).
 

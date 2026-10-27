@@ -155,6 +155,7 @@ const WorkOrders36=(()=>{
   "finding": "La orden de este ejercicio pide cambiar el filtro de aire por uno nuevo. Está dentro de la carcasa redonda de la parte alta del motor.",
   "checks": [
    "El repuesto de este ejercicio corresponde al filtro",
+   "Usaré la escalera de plataforma, apoyada en piso firme; no subiré al motor",
    "Revisaré que la tapa quede colocada al terminar"
   ],
   "question": "¿Qué falta después de poner el filtro nuevo?",
@@ -163,11 +164,11 @@ const WorkOrders36=(()=>{
    "Dejar la tapa abierta"
   ],
   "answer": 0,
-  "criterion": "Termina con filtro nuevo, tapa colocada y ambos sujetadores al 100%.",
+  "criterion": "Termina con filtro nuevo, tapa colocada, ambos sujetadores al 100% y la escalera retirada después de bajar al piso.",
   "steps": [
    {
     "tool": "Llave de vaso",
-    "action": "Apunta al sujetador de arriba y mantén E hasta 100%. Haz lo mismo con el de abajo.",
+    "action": "Pulsa E en la escalera amarilla para colocarla. Entra por el peldaño inferior y sube con W. Desde la plataforma, mantén E en ambos sujetadores hasta 100%.",
     "result": "Los dos sujetadores quedan sueltos."
    },
    {
@@ -188,10 +189,15 @@ const WorkOrders36=(()=>{
    {
     "tool": "Llave de vaso",
     "action": "Mantén E en cada sujetador hasta que ambos lleguen a 100%.",
-    "result": "El juego da por terminado el cambio. No comprueba una fuerza de apriete real."
+    "result": "La tapa queda cerrada. Falta bajar y retirar la escalera; no se comprueba una fuerza de apriete real."
+   },
+   {
+    "tool": "Manos libres · H",
+    "action": "Desciende por los peldaños mirando hacia ellos. En el piso, apunta a la escalera y pulsa E para retirarla.",
+    "result": "La escalera vuelve a su lugar y el paso queda despejado."
    }
   ],
-  "completed": "Colocaste el filtro nuevo, repusiste la tapa y cerraste los dos sujetadores. El juego no mide una fuerza de apriete real."
+  "completed": "Filtro nuevo, tapa y sujetadores cerrados. Bajaste y retiraste la escalera; paso despejado. No se midió un par de apriete real."
  },
  {
   "title": "Revisar los dos terminales de la batería",
@@ -235,21 +241,21 @@ const WorkOrders36=(()=>{
   "steps": [
    {
     "tool": "Multímetro",
-    "action": "Apunta al terminal + y pulsa E para colocar la punta roja. Haz lo mismo en − para colocar la negra.",
+    "action": "Apunta al terminal + y pulsa E: apoyas tu multímetro y conectas la punta roja. Pulsa E en − para conectar la negra.",
     "result": "Aparece una lectura de 12.6 V en este ejercicio."
    },
    {
     "tool": "Cuaderno · Q",
-    "action": "Abre Q y pulsa Registrar lectura.",
+    "action": "Lee los 12.6 V. E guarda la lectura en guiado; en evaluación abre Q y pulsa Registrar lectura. Retiras las puntas y recuperas el mismo instrumento.",
     "result": "Se guardan los 12.6 voltios. Esta lectura no demuestra que la batería pueda arrancar el motor."
    }
   ],
   "completed": "Se guardó la lectura de 12.6 voltios del ejercicio. Todavía no se comprobó si la batería puede arrancar el motor."
  },
  {
-  "title": "Revisar el cable de protección",
-  "location": "Conductor de protección al frente de la bancada",
-  "finding": "El cable de protección une la parte metálica del equipo con la conexión de tierra. Aquí solo revisarás lo que se ve en los tres puntos señalados.",
+  "title": "Reconocer la conexión de protección a tierra",
+  "location": "Frente del generador: placa PE, cable verde/amarillo y barra de cobre",
+  "finding": "PE significa conductor de protección. Une el chasis metálico a la barra de tierra y participa en la trayectoria de una falla para que actúen las protecciones. Primero observarás la terminal al chasis; después, el aislamiento verde/amarillo; al final, la terminal en la barra PE.",
   "checks": [
    "Solo voy a revisar el aspecto visible del cable y sus uniones"
   ],
@@ -263,8 +269,18 @@ const WorkOrders36=(()=>{
   "steps": [
    {
     "tool": "Linterna",
-    "action": "Apunta a cada uno de los tres puntos marcados en el cable de protección, abajo y al frente del equipo, y pulsa E.",
-    "result": "Al llegar a 3/3 el juego guarda la revisión visual. No mide continuidad ni resistencia."
+    "action": "Ilumina la placa PE al frente del bastidor. Mantén E sobre el tornillo y la terminal: busca corrosión o separación visible. C permite agacharte.",
+    "result": "Se guarda la observación del enlace al chasis y se resalta el cable."
+   },
+   {
+    "tool": "Linterna",
+    "action": "Sigue el tramo verde/amarillo. Mantén E sobre él y busca cortes o cobre expuesto fuera de las terminales.",
+    "result": "Se guarda el estado visual del aislamiento y se resalta la barra PE."
+   },
+   {
+    "tool": "Linterna",
+    "action": "Ilumina la terminal en la barra de cobre PE y mantén E. Busca corrosión o piezas separadas.",
+    "result": "Se guardan las tres observaciones. La linterna no verifica firmeza, continuidad ni resistencia."
    }
   ],
   "completed": "Revisaste los tres puntos del cable de protección. Se guardó la revisión visual; no hiciste una medición eléctrica."

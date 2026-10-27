@@ -4,6 +4,14 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D47
+
+- `29-service-ladder.js`: escalera portátil con plataforma, tres peldaños, barandales, pies antideslizantes y un único juego de dimensiones para malla y recorrido. E coloca/retira; WASD sube y baja. Se impide entrar por los lados, abandonar la plataforma lateralmente y retirar la escalera ocupada. La orden del filtro requiere terminar el acceso y la retirada.
+- El multímetro usa el mismo grupo 3D en la mano y en el soporte. El cambio de padre conserva la pose y anima la colocación/recogida; las dos puntas habilitan la lectura. No se conserva un clon simultáneo del instrumento en uso.
+- Unión PE expuesta al frente del bastidor, cable verde/amarillo y barra de cobre. Tres pasos con nombres y observaciones concretas; no se permite afirmar firmeza, continuidad o resistencia por inspección visual.
+- Se retiran 23 reglas antiguas del aviso, incluido padding-left de 118 px y topes con scroll. `walkFooter47` organiza aviso y controles en flujo normal; se evita repetir la instrucción en el aviso de gabinetes. El guiado vuelve a preparar una herramienta ya recogida al actuar.
+- Pruebas ampliadas `test:maintenance` y recorrido de doce órdenes en `test:browser`; ver docs/MANTENIMIENTO_D47.md.
+
 ## Actualización D46
 
 - La cámara de órbita cede el control durante el recorrido. El jugador actualiza su cámara antes de seleccionar y ejecutar una acción mantenida. Se corrige el fallo reproducido en `frame()` que no aparecía al probar únicamente `Walk31.frame()`.

@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D46: radiador y varilla de aceite
+# Simulador de planta de emergencia — D47: acceso y mantenimiento didáctico
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D47 · escalera, instrumento único y conexión PE visible
+
+El cambio de filtro usa una **escalera de plataforma**: E la coloca, WASD sube/baja por sus tres peldaños y E la retira al terminar. El filtro no se trabaja desde el piso; la actividad solo termina después de bajar y despejar el paso.
+
+El multímetro es un solo objeto: pasa de las manos al soporte al conectar la primera punta, muestra la lectura después de conectar ambas y vuelve a la mano al registrarla. La revisión de tierra tiene terminal al chasis, cable verde/amarillo y barra PE accesibles, con tres observaciones explicadas por separado.
+
+Los avisos aprovechan todo el ancho del texto, sin el margen vacío ni barra de desplazamiento. Comparten un pie adaptable con los controles; en pantalla táctil, los controles de movimiento quedan a un lado. El guiado recupera al actuar la herramienta que ya recogiste. [Uso y validación D47](docs/MANTENIMIENTO_D47.md).
 
 ## D46 · acciones mantenidas y limpieza de la varilla
 
