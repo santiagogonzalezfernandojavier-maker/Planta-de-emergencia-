@@ -4,6 +4,15 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D49
+
+- `scripts/author-surfaces.py` genera doce familias originales de PBR: albedo, normales y AO/rugosidad empaquetadas en 72 WebP para 512/1024 px. Se guardan escala métrica, semilla, tamaño y SHA256 en `assets/textures/industrial/manifest.json`. Los archivos comprimidos suman aproximadamente 5.5 MB; no se necesita Python ni red para construir/jugar.
+- `19-industrial-surfaces.js` comparte las texturas, conserva espacios de color, cambia resolución según Fluido/Detalle y actualiza los materiales reconstruidos. `20-surfaces_presentation_ui.js` conserva clasificación y UV físicas, usando esta biblioteca en vez del antiguo grano común. El galvanizado y acero responden al entorno; el recubrimiento del transformador se mantiene fino.
+- `18-mechanical-detail.js`: cuatro conjuntos de abrazaderas, bridas/juntas de escape, arandelas/apoyos y juntas/fijaciones de tapas. Se montan en sus piezas originales para despiece, visibilidad y reconstrucción.
+- `78-scene-look.js`: dos entornos de reflexión precalculados, selección interior/exterior y control de intensidad por día/noche y suministro. Ajusta la sombra de la luz existente alrededor de la zona del jugador. Añade apoyos transparentes suaves bajo equipos/operarios y un selector de calidad en pausa. No añade luces, renderizadores ni RAF.
+- `build.mjs` incluye los recursos en el JS/HTML autónomo. `serve.mjs` detecta cambios de texturas/manifiesto junto con las fuentes. Se conserva el funcionamiento sin CDN, las actividades, cámaras, gabinetes, fábrica, paisaje, flujo y anatomía.
+- `test:visual` comprueba decodificación, cambio de calidad/caché, recuperación de materiales tras reconstrucción, luz de reflexión durante apagón y ausencia de errores de shader. Pruebas de integridad y vigilancia de recursos ampliadas. Ver docs/REALISMO_D49.md.
+
 ## Actualización D48
 
 - Inicio con seis tarjetas de modalidad y consulta de placas, unifilar y ayuda. Explorar entra a pie por elección expresa. Esc → Menú principal → Continuar conserva la pose y actividad. Seguridad/unifilar/protección se reúnen en Zonas.

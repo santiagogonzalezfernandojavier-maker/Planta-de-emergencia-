@@ -1,0 +1,35 @@
+// Material decoding, profile changes, electrical darkness and rebuilds in the actual renderer.
+const assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os');
+const {spawn}=require('node:child_process'),{chromium}=require('playwright');
+(async()=>{
+ const root=path.resolve(__dirname,'..'),port=Number(process.env.TEST_PORT||4197);
+ const server=spawn(process.execPath,['scripts/serve.mjs'],{cwd:root,env:{...process.env,PORT:String(port)},stdio:'ignore'});let browser,page;const failedResources=[];
+ try{
+  let ready=false;for(let i=0;i<100;i++){try{ready=(await fetch('http://127.0.0.1:'+port)).ok;}catch{}if(ready)break;await new Promise(r=>setTimeout(r,100));}assert.ok(ready);
+  browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
+  page=await browser.newPage({viewport:{width:1500,height:950}});const errors=[],shaderErrors=[];page.on('response',r=>{if(r.status()>=400)failedResources.push({status:r.status(),url:r.url()});});page.on('pageerror',e=>errors.push(e.message));page.on('console',e=>{if(e.type()==='error')shaderErrors.push(e.text().slice(0,500));});
+  await page.addInitScript(()=>window.requestAnimationFrame=()=>0);await page.goto('http://127.0.0.1:'+port,{timeout:180000});
+  await page.waitForFunction(()=>document.documentElement.classList.contains('ready32'),{},{timeout:180000,polling:100});
+  await page.evaluate(()=>SurfaceRealism.ready());
+  assert.equal(await page.evaluate(()=>Personnel.count()),4);
+  const initial=await page.evaluate(()=>({surface:SurfaceRealism.stats(),look:SceneLook49.stats(),details:MechanicalDetail49.stats(),maps:Object.keys(INDUSTRIAL_SURFACES_49.materials).map(kind=>{const m=IndustrialSurfaces49.get(kind);return{kind,width:m.base.image.width,normal:m.normal.image.width,linear:m.normal.colorSpace,colour:m.base.colorSpace,shared:m.base.userData.sharedFinish};})}));
+  await page.evaluate(()=>SurfaceRealism.ready());assert.equal(initial.look.cachedEnvironments,2);assert.ok(initial.details.meshesCreated>70);assert.equal(initial.maps.length,12);assert.ok(initial.maps.every(m=>m.width===512&&m.normal===512&&m.linear===''&&m.colour==='srgb'&&m.shared));
+  await page.locator('#gameMaintenance').click();await page.locator('#wBeginG').click();
+  await page.evaluate(()=>{const draw=renderer.render.bind(renderer);renderer.render=()=>{scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);};let time=performance.now();window.advance49=seconds=>{for(let i=0;i<Math.ceil(seconds/.04);i++){time+=40;frame(time);}};window.capture49=()=>draw(scene,camera);window.aim49=(point,position)=>{const d=new T.Vector3(...point).sub(new T.Vector3(...position));Walk31.restoreInspection({...Walk31.state(),position,yaw:Math.atan2(-d.x,-d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z)),floor:position[1]-1.65,crouch:false,inspection:false});};aim49([0,1.35,0],[.8,1.58,3.5]);advance49(.2);});
+  const session=await page.evaluate(()=>({walk:Walk31.state(),index:Maintenance.state().index,lightCount:(()=>{let n=0;scene.traverse(o=>{if(o.isLight)n++;});return n;})()}));
+  await page.evaluate(()=>Performance33.setMode('detail'));await page.evaluate(()=>SurfaceRealism.ready());
+  const detailed=await page.evaluate(()=>({stats:SurfaceRealism.stats(),walk:Walk31.state(),textures:[...new Set([...pieces.flatMap(p=>{const all=[];p.traverse(o=>{if(o.material?.userData.finish49)all.push(o.material.map.image.width);});return all;})])]}));
+  assert.equal(detailed.stats.resolution,1024);assert.ok(detailed.textures.includes(1024));assert.deepEqual(detailed.walk.position,session.walk.position);assert.equal(detailed.walk.yaw,session.walk.yaw);
+  const sets=detailed.stats.textureSets;await page.evaluate(()=>{Performance33.setMode('fluid');Performance33.setMode('detail');});await page.evaluate(()=>SurfaceRealism.ready());assert.equal(await page.evaluate(()=>SurfaceRealism.stats().textureSets),sets,'Quality changes allocate another copy of the same texture sets');
+  await page.evaluate(()=>{isNight=false;applyTimeOfDay();advance49(.12);capture49();});await page.screenshot({path:path.join(os.tmpdir(),'d49-planta-dia.png')});assert.equal(await page.evaluate(()=>SceneLook49.stats().environment),'interior');assert.ok(await page.evaluate(()=>SceneLook49.stats().shadowSpan)<=24);
+  await page.evaluate(()=>{isNight=true;applyTimeOfDay();advance49(.12);capture49();});await page.screenshot({path:path.join(os.tmpdir(),'d49-planta-noche.png')});
+  const lit=await page.evaluate(()=>SceneLook49.stats().environmentIntensity);await page.evaluate(()=>{s.grid=false;s.source='none';s.stage='off';substation.update();advance49(.12);});const dark=await page.evaluate(()=>SceneLook49.stats().environmentIntensity);assert.ok(dark<lit*.25,'Interior reflections illuminate the room during an outage');
+  await page.evaluate(()=>{s.grid=true;s.source='grid';s.stage='off';isNight=false;applyTimeOfDay();Maintenance.suspend33();Walk31.enterZone('yard');aim49([19,8.1,0],[20.2,8.3,4.6]);advance49(.12);capture49();});await page.screenshot({path:path.join(os.tmpdir(),'d49-subestacion-dia.png')});assert.equal(await page.evaluate(()=>SceneLook49.stats().environment),'exterior');
+  await page.evaluate(()=>{aim49([24.4,6.68,.55],[23.2,8.3,2.5]);advance49(.12);capture49();});await page.screenshot({path:path.join(os.tmpdir(),'d49-grava.png')});
+  await page.evaluate(()=>{Walk31.enterZone('ccm');advance49(.12);capture49();});await page.screenshot({path:path.join(os.tmpdir(),'d49-ccm.png')});assert.equal(await page.evaluate(()=>SceneLook49.stats().environment),'interior');
+  await page.evaluate(()=>{Maintenance.close();build();});await page.evaluate(()=>SurfaceRealism.ready());
+  const rebuilt=await page.evaluate(()=>({details:pieces.reduce((n,p)=>n+p.children.filter(o=>o.userData.visualDetail49).length,0),plates:EquipmentInspector48.plates().length,materials:(()=>{const found=[];root.traverse(o=>{if(o.material?.userData.finish49)found.push(o.material.map.image.width);});return found;})(),lightCount:(()=>{let n=0;scene.traverse(o=>{if(o.isLight)n++;});return n;})()}));
+  assert.equal(rebuilt.details,4);assert.equal(rebuilt.plates,20);assert.ok(rebuilt.materials.every(n=>n===1024));assert.equal(rebuilt.lightCount,session.lightCount);
+  assert.deepEqual(errors,[]);assert.deepEqual(shaderErrors,[]);console.log(JSON.stringify({materialFamilies:12,packedChannels:true,detailResolution:1024,profileCacheStable:true,walkPreserved:true,powerDependentReflections:true,mechanicalDetailSurvivesRebuild:true,noAddedLights:true,pageErrors:errors,shaderErrors}));
+ }catch(e){if(page){console.error(await page.evaluate(()=>({ready:document.documentElement.className,surface:typeof SurfaceRealism!=='undefined'?SurfaceRealism.stats():null})).catch(()=>null));console.error('Failed resources',JSON.stringify(failedResources));await page.screenshot({path:path.join(os.tmpdir(),'d49-visual-failure.png')}).catch(()=>{});}throw e;}finally{await browser?.close();server.kill();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

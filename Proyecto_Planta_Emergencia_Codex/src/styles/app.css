@@ -248,6 +248,7 @@ body.equipment-inspecting48 #work26,body.equipment-inspecting48 #viewbar,body.eq
 
 /* D48: one visual language for selecting a mode, following an action and checking it. */
 body.playable48{font-family:system-ui,Segoe UI,sans-serif}
+ #visualQuality49{flex:1;min-width:0;background:#17313a;color:#e3efeb;border:1px solid #5c797e;border-radius:5px;padding:9px;font:12px system-ui}
 .playable48 #gameLaunch{border-radius:14px;border-color:#526c75;background:#10242e}
 .playable48 #gameLaunch .g-launch-wrap{padding:26px 32px}
 .playable48 #gameLaunch .g-launch-main{grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:32px;padding:25px 0}

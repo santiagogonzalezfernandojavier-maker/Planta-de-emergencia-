@@ -1,6 +1,14 @@
-# Simulador de planta de emergencia — D48: experiencia guiada y placas técnicas
+# Simulador de planta de emergencia — D49: materiales y detalle industrial
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
+
+## D49 · materiales, reflejos y apoyos
+
+Doce acabados diferencian pintura, fundición, acero cepillado, galvanizado, cobre, concreto, piso, grava, asfalto, tierra, caucho y cerámica. Cada uno usa color, normales y rugosidad/oclusión propios, con escala física de repetición. La pintura de transformadores conserva un relieve fino. Se añaden abrazaderas, bridas, juntas, arandelas y apoyos al generador; acompañan a sus piezas en Anatomía.
+
+Los reflejos distinguen interior/exterior y siguen el suministro durante un apagón. Se ajustan el contraste diurno y el encuadre de sombras de la luz existente; las sombras suaves de apoyo anclan equipos y operarios al piso. No se añaden luces ni ciclos de animación.
+
+**Esc → Calidad visual → Detalle** selecciona 1024 px; **Fluido** usa 512 px. También se conserva el selector de Zonas. Cambiar calidad mantiene el lugar y la actividad. Las texturas son originales, están empaquetadas con la aplicación y no requieren descargas externas. [Alcance y comprobación D49](docs/REALISMO_D49.md).
 
 ## D48 · elegir, actuar y comprobar
 

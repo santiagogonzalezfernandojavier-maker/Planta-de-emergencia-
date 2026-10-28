@@ -419,13 +419,10 @@ for(const x of [-4.9,-4.05]){const pts=conduit([[x,2,-5.65],[x,4.65,-5.65],[1,4.
 for(const x of [-3,5]){const pts=conduit([[1,5.3,1],[x,5.3,1]],.055);line(site,pts,.023,jacket);}
 for(const [x,z,w] of [[5.8,-5.5,1.23],[-3.2,-3.7,1.03]])for(let y=1;y<7;y+=.8){box(site,[w,.04,1.04],[x,y,z],zinc);for(const dx of [-.4,.4])bolt(site,x+dx,y+.035,z+.49)}
 // Patio: cama de grava, bordillos, andadores y canaleta con rejilla.
-const gravelCanvas=document.createElement('canvas');gravelCanvas.width=gravelCanvas.height=512;const gc=gravelCanvas.getContext('2d');gc.fillStyle='#696b63';gc.fillRect(0,0,512,512);let randSeed=83;function rnd(){randSeed=(Math.imul(randSeed,1664525)+1013904223)>>>0;return randSeed/4294967296}
-for(let i=0;i<18000;i++){const v=90+Math.floor(rnd()*75);gc.fillStyle=`rgb(${v},${v},${v-7})`;gc.beginPath();gc.ellipse(rnd()*512,rnd()*512,1+rnd()*3,1+rnd()*2,rnd()*6.28,0,6.28);gc.fill()}
-const gravelTx=new T.CanvasTexture(gravelCanvas);gravelTx.wrapS=gravelTx.wrapT=T.RepeatWrapping;gravelTx.repeat.set(7,5);gravelTx.colorSpace=T.SRGBColorSpace;
 // Terreno del patio en tres capas: grava superficial, subbase compactada y suelo natural. Se agrupan para poder ocultarlas y revelar la malla de tierra enterrada.
 const subbaseMat=mat('#8a8368'),soilMat=mat('#6b4a30'),rodMat=mat('#c9b48a',.85);
 const terrain=new T.Group();outdoor.add(terrain);
-box(terrain,[18.2,.08,14.6],[18.1,6.61,-1.3],new T.MeshStandardMaterial({map:gravelTx,bumpMap:gravelTx,bumpScale:.055,roughness:1}));
+const gravelMaterial49=new T.MeshStandardMaterial({color:'#aeb0aa',roughness:1});gravelMaterial49.userData.hdFinish='gravel';box(terrain,[18.2,.08,14.6],[18.1,6.61,-1.3],gravelMaterial49);
 box(terrain,[18,.30,14.4],[18.1,6.42,-1.3],subbaseMat);
 box(terrain,[17.8,.56,14.2],[18.1,5.99,-1.3],soilMat);
 
@@ -1298,7 +1295,7 @@ const normBtn=document.createElement('button');normBtn.textContent='Criterios no
 function setupHMI(){
  document.querySelector('header small').textContent='SISTEMA DE SUPERVISIÓN / SE-01';
  document.querySelector('header h1').textContent='Subestación y generación de respaldo';
- const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL · D48</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
+ const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL · D49</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
  document.querySelector('.rail-head span').textContent='PUESTO DE OPERACIÓN';document.querySelector('.rail-head b').textContent='HMI / 01';
  $('operate').querySelector('h2').textContent='MANDO DEL GRUPO';
  const annunciator=document.createElement('div');annunciator.id='hmiAlarm';annunciator.className='hmi-annunciator';annunciator.setAttribute('role','status');annunciator.innerHTML='<div><small>ESTADO DE SERVICIO</small><b id="hmiAlarmText"></b></div>';$('operate').prepend(annunciator);

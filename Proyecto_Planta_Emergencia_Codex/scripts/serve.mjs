@@ -6,12 +6,14 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const port=Number(process.env.PORT||4173);
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.glb':'model/gltf-binary','.gz':'application/gzip','.svg':'image/svg+xml','.pdf':'application/pdf'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.glb':'model/gltf-binary','.gz':'application/gzip','.svg':'image/svg+xml','.pdf':'application/pdf'};
 let version='',buildError=false;
 function refresh(){
  try{
   const order=JSON.parse(fs.readFileSync(path.join(root,'src/order.json'),'utf8'));
-  const files=['scripts/build.mjs','src/order.json','src/index.template.html','src/styles/app.css','vendor/three.js','assets/personnel/scene-data.json.gz',...order.map(p=>'src/'+p)];
+  const finishes=JSON.parse(fs.readFileSync(path.join(root,'assets/textures/industrial/manifest.json'),'utf8'));
+  const surfaceFiles=Object.values(finishes.materials).flatMap(m=>Object.values(m.levels).flatMap(level=>Object.values(level).map(asset=>'assets/textures/industrial/'+asset.file)));
+  const files=['scripts/build.mjs','src/order.json','src/index.template.html','src/styles/app.css','vendor/three.js','assets/personnel/scene-data.json.gz','assets/textures/industrial/manifest.json',...surfaceFiles,...order.map(p=>'src/'+p)];
   const stamp=crypto.createHash('sha256').update(files.map(p=>{const s=fs.statSync(path.join(root,p));return p+':'+s.mtimeMs+':'+s.size;}).join('\n')).digest('hex');
   if(stamp!==version){
    const result=spawnSync(process.execPath,['scripts/build.mjs'],{cwd:root,encoding:'utf8'});

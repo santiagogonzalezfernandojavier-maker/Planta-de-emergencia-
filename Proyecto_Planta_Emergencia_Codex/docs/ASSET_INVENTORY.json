@@ -26,13 +26,16 @@
     "herramientas y bolsa",
     "materiales y paisaje",
     "20 placas didácticas NEXORA con datos y pendientes de proyecto",
-    "mecanismos SE-QN/QG/QS y circuitos secundarios PR-01"
+    "mecanismos SE-QN/QG/QS y circuitos secundarios PR-01",
+    "72 mapas PBR WebP originales en 12 familias y dos resoluciones",
+    "abrazaderas, bridas, juntas y apoyos del generador D49"
   ],
   "editableBlend": "assets/blender/Operarios_Anatomicos_D26.blend",
   "notes": [
     "El GLB y Blender son fuentes auxiliares D26. El visor D34 utiliza scene-data.json.gz; no sustituir uno por otro sin regenerar el paquete.",
     "No hay un .blend original de toda la instalación: su geometría es procedural.",
     "Se preservan las referencias técnicas antiguas como documentación; no certifican conformidad.",
-    "D48 modifica proporciones y acabados de operarios explícitamente en tiempo de carga; conserva los originales serializados y artísticos. NEXORA es una marca inventada para el simulador."
+    "D48 modifica proporciones y acabados de operarios explícitamente en tiempo de carga; conserva los originales serializados y artísticos. NEXORA es una marca inventada para el simulador.",
+    "D49 incluye materiales originales generados por scripts/author-surfaces.py; procedencia, escala y sumas de comprobación en assets/textures/industrial/manifest.json. No utiliza imágenes de terceros ni descargas de texturas al jugar."
   ]
 }

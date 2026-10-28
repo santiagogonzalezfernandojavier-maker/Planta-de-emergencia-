@@ -6,6 +6,8 @@
   "00-site-walk.js",
   "00-core_scene.js",
   "10-personnel.js",
+  "18-mechanical-detail.js",
+  "19-industrial-surfaces.js",
   "20-surfaces_presentation_ui.js",
   "25-work-orders.js",
   "28-player-motion.js",
@@ -25,5 +27,6 @@
   "68-equipment-data.js",
   "69-equipment-inspector.js",
   "70-guided-presentation.js",
-  "75-playable-ui.js"
+  "75-playable-ui.js",
+  "78-scene-look.js"
 ]

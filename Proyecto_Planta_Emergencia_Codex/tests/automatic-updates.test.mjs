@@ -4,12 +4,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
+import crypto from 'node:crypto';
 import {spawn,spawnSync} from 'node:child_process';
 import {once} from 'node:events';
 import {syncCheckout} from '../scripts/sync.mjs';
 const project=new URL('../',import.meta.url);
 const git=(cwd,...args)=>{const r=spawnSync('git',args,{cwd,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
 function commit(root,message){git(root,'-c','user.name=Test','-c','user.email=test@local','commit','-am',message);}
+function surfaceFixture(root){const directory=path.join(root,'assets/textures/industrial');fs.mkdirSync(directory,{recursive:true});fs.writeFileSync(path.join(directory,'sample.webp'),'texture-fixture');fs.writeFileSync(path.join(directory,'manifest.json'),JSON.stringify({materials:{paint:{levels:{512:{base:{file:'sample.webp'}}}}}}));}
 test('automatic synchronization fast-forwards clean work and preserves edits and diverged commits',()=>{
  const base=fs.mkdtempSync(path.join(os.tmpdir(),'planta-sync-'));
  try{
@@ -24,6 +26,7 @@ test('server rebuilds changed sources, advertises a new version and protects pri
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'planta-server-'));let child;
  try{
   for(const folder of ['scripts','src/styles','vendor','assets/personnel','.runtime'])fs.mkdirSync(path.join(root,folder),{recursive:true});
+  surfaceFixture(root);
   for(const name of ['serve.mjs','build.mjs'])fs.copyFileSync(new URL('scripts/'+name,project),path.join(root,'scripts',name));
   fs.writeFileSync(path.join(root,'package.json'),'{"type":"module"}');
   fs.writeFileSync(path.join(root,'src/order.json'),'["main.js"]');fs.writeFileSync(path.join(root,'src/main.js'),'window.example=1;');fs.writeFileSync(path.join(root,'src/styles/app.css'),'body{color:red}');fs.writeFileSync(path.join(root,'vendor/three.js'),'// vendor');fs.writeFileSync(path.join(root,'assets/personnel/scene-data.json.gz'),'fixture');fs.writeFileSync(path.join(root,'src/index.template.html'),'<html><head><!--APP_STYLE--></head><body><!--VENDOR_SCRIPT--><!--APP_SCRIPT--></body></html>');
@@ -35,6 +38,12 @@ test('server rebuilds changed sources, advertises a new version and protects pri
   const first=await(await fetch(url+'/__dev/version')).json();assert.match(await(await fetch(url)).text(),/Nueva versión disponible/);
   fs.writeFileSync(path.join(root,'src/main.js'),'window.example=222;');
   const second=await(await fetch(url+'/__dev/version')).json();assert.notEqual(second.version,first.version);assert.match(await(await fetch(url+'/build/app.js')).text(),/example=222/);
+  fs.writeFileSync(path.join(root,'assets/textures/industrial/sample.webp'),'updated-texture-fixture');const textureVersion=await(await fetch(url+'/__dev/version')).json();assert.notEqual(textureVersion.version,second.version);second.version=textureVersion.version;
+  assert.match((await fetch(url+'/assets/textures/industrial/sample.webp')).headers.get('content-type'),/image\/webp/);
+  const resourceManifest=JSON.parse(fs.readFileSync(path.join(root,'assets/textures/industrial/manifest.json'),'utf8')),validTexture=fs.readFileSync(path.join(root,'assets/textures/industrial/sample.webp'));resourceManifest.materials.paint.levels[512].base.sha256=crypto.createHash('sha256').update(validTexture).digest('hex');fs.writeFileSync(path.join(root,'assets/textures/industrial/manifest.json'),JSON.stringify(resourceManifest));const validVersion=await(await fetch(url+'/__dev/version')).json();second.version=validVersion.version;
+  fs.writeFileSync(path.join(root,'assets/textures/industrial/sample.webp'),'partial-download');assert.equal((await(await fetch(url+'/__dev/version')).json()).version,validVersion.version);assert.equal((await(await fetch(url+'/__dev/health')).json()).buildError,true);assert.equal((await fetch(url)).status,200);
+  fs.writeFileSync(path.join(root,'assets/textures/industrial/sample.webp'),validTexture);const restoredTexture=await(await fetch(url+'/__dev/version')).json();second.version=restoredTexture.version;assert.equal((await(await fetch(url+'/__dev/health')).json()).buildError,false);
+
   fs.writeFileSync(path.join(root,'src/main.js'),'window.broken = ;');
   const failed=await fetch(url+'/__dev/version');assert.equal(failed.status,200);assert.equal((await failed.json()).version,second.version);
   assert.equal((await fetch(url)).status,200);assert.match(await(await fetch(url+'/build/app.js')).text(),/example=222/);
@@ -50,6 +59,7 @@ test('Codespaces starts without npm or Git, survives terminal detachment and res
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'planta-supervisor-'));let supervisor,serverPid;
  try{
   for(const folder of ['scripts','src/styles','vendor','assets/personnel'])fs.mkdirSync(path.join(root,folder),{recursive:true});
+  surfaceFixture(root);
   for(const name of ['serve.mjs','build.mjs','codespaces.mjs','sync.mjs','sync-worker.mjs'])fs.copyFileSync(new URL('scripts/'+name,project),path.join(root,'scripts',name));
   fs.writeFileSync(path.join(root,'src/order.json'),'["main.js"]');fs.writeFileSync(path.join(root,'src/main.js'),'window.working=true;');fs.writeFileSync(path.join(root,'src/styles/app.css'),'');fs.writeFileSync(path.join(root,'vendor/three.js'),'');fs.writeFileSync(path.join(root,'assets/personnel/scene-data.json.gz'),'fixture');fs.writeFileSync(path.join(root,'src/index.template.html'),'<html><!--APP_STYLE--><body><!--VENDOR_SCRIPT--><!--APP_SCRIPT--></body></html>');
   const socket=net.createServer();socket.listen(0,'127.0.0.1');await once(socket,'listening');const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));

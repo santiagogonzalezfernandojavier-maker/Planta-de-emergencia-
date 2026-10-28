@@ -1,0 +1,505 @@
+{
+  "revision": "D49",
+  "origin": "Materiales originales generados para este proyecto; sin fotografías ni archivos de terceros.",
+  "seed": 49027,
+  "generator": "scripts/author-surfaces.py",
+  "channels": {
+    "base": "sRGB albedo",
+    "normal": "OpenGL tangent space, linear",
+    "orm": "R ambient occlusion / G roughness / B white; linear"
+  },
+  "materials": {
+    "paint": {
+      "tileMetres": 0.3,
+      "roughness": 0.5,
+      "normalStrength": 0.45,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "paint-512-base.webp",
+            "bytes": 2580,
+            "sha256": "61a4995d64e1ec86939bf1b8bcf572c84491bc5adf32a3d0bade62c2ebf1e275"
+          },
+          "normal": {
+            "file": "paint-512-normal.webp",
+            "bytes": 31726,
+            "sha256": "0f41ebbbf3c713ef579392af29bb471d0541cf95735c3a1f462c2c77fc968c6d"
+          },
+          "orm": {
+            "file": "paint-512-orm.webp",
+            "bytes": 13534,
+            "sha256": "8d2432a69d7c3852c46f83737185f0795323008de010e090193025ba31dda36b"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "paint-1024-base.webp",
+            "bytes": 10474,
+            "sha256": "f87f238a29f8d9997e5c78f5cb22a62ac8da483c47a3dc5def87a5ca0ee317e6"
+          },
+          "normal": {
+            "file": "paint-1024-normal.webp",
+            "bytes": 91186,
+            "sha256": "a38492b081c9617c72dc3a7aadfc73afa425c464a84390a1d3f19aa419b90868"
+          },
+          "orm": {
+            "file": "paint-1024-orm.webp",
+            "bytes": 32294,
+            "sha256": "1af0c6309706ee43715b862d4b0cfff6084f6de9adc05e44f0b8e4e2fbc8c1e0"
+          }
+        }
+      }
+    },
+    "cast": {
+      "tileMetres": 0.2,
+      "roughness": 0.72,
+      "normalStrength": 0.65,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "cast-512-base.webp",
+            "bytes": 17574,
+            "sha256": "09300cbf5c252b5a90011f9d9f01c390635dcc73d46d0489530be9581b1dfdb3"
+          },
+          "normal": {
+            "file": "cast-512-normal.webp",
+            "bytes": 176902,
+            "sha256": "79491f2e02cf9c41cd28059ee31567a14cccff79fb45a788926f4e7835142257"
+          },
+          "orm": {
+            "file": "cast-512-orm.webp",
+            "bytes": 16746,
+            "sha256": "478244ee4ae9980e144d4b3cc15c4993a0b5fb30c08178d9d12519b510134c97"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "cast-1024-base.webp",
+            "bytes": 40754,
+            "sha256": "bdcc202dd56bd3dff2b6bfdd91bcc5bd99e0c3465101837211bd31996f65df4f"
+          },
+          "normal": {
+            "file": "cast-1024-normal.webp",
+            "bytes": 598982,
+            "sha256": "ca6e728454defec431b59b23b3bd1ae5036be81e040dcef9e0cb9da92ca7f3ca"
+          },
+          "orm": {
+            "file": "cast-1024-orm.webp",
+            "bytes": 39032,
+            "sha256": "48048187845940439c04c60fe6894f2f62da6188a0f3fd9d5973560139d5d056"
+          }
+        }
+      }
+    },
+    "steel": {
+      "tileMetres": 0.45,
+      "roughness": 0.31,
+      "normalStrength": 0.45,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "steel-512-base.webp",
+            "bytes": 3918,
+            "sha256": "09b936248315a7df6992b55fec19ccec978b3bc030a5c876de766a51ea72ba95"
+          },
+          "normal": {
+            "file": "steel-512-normal.webp",
+            "bytes": 964,
+            "sha256": "f1ae783b6f16fbb7ec1adbd64cbe416233bb01968a2b467f02e5a8c91ef40026"
+          },
+          "orm": {
+            "file": "steel-512-orm.webp",
+            "bytes": 37536,
+            "sha256": "518bb2835038f58e1944ec2728c4304c607a7e887bb2a766ab82600d1f9e9e09"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "steel-1024-base.webp",
+            "bytes": 14886,
+            "sha256": "24ed4c2af816c7193b56b02cd677394169f2a97e196088e44cdaf44f44bbeaae"
+          },
+          "normal": {
+            "file": "steel-1024-normal.webp",
+            "bytes": 9056,
+            "sha256": "2d65ba69467b1abce29566013169d487aeec66b5d21a4413d1574ba5858454f8"
+          },
+          "orm": {
+            "file": "steel-1024-orm.webp",
+            "bytes": 116556,
+            "sha256": "8b59045f04b8e71d5fe5a2106344a4acb7a0859194a3cd140acdde2f835f4aaf"
+          }
+        }
+      }
+    },
+    "zinc": {
+      "tileMetres": 0.25,
+      "roughness": 0.53,
+      "normalStrength": 0.32,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "zinc-512-base.webp",
+            "bytes": 4810,
+            "sha256": "548eaca8778019779e6dacd85281b071a0ed2e0114c7787064773cfbde375b8e"
+          },
+          "normal": {
+            "file": "zinc-512-normal.webp",
+            "bytes": 882,
+            "sha256": "e88486c8c9a6344d97f7984034c5e14ff9a111e4147e19a9fd22858a269bb7a0"
+          },
+          "orm": {
+            "file": "zinc-512-orm.webp",
+            "bytes": 21138,
+            "sha256": "dfac21c4f77998a1f77af10627634cc41464c60ac8a106f4c43ea2be902babad"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "zinc-1024-base.webp",
+            "bytes": 11570,
+            "sha256": "b0bbd13f8db102804d4555f22e3a529300a2cf8107571ab2a1bb6e86592c8244"
+          },
+          "normal": {
+            "file": "zinc-1024-normal.webp",
+            "bytes": 3642,
+            "sha256": "57b98574df1a1fe926c965e1d52a7a5c15de13ce5f05bc966ee2efe6ff3ca103"
+          },
+          "orm": {
+            "file": "zinc-1024-orm.webp",
+            "bytes": 53300,
+            "sha256": "00fdfdea0c7ec28e2166d39367ad370c42e88ac40207a39c6f1550fc426a8ad9"
+          }
+        }
+      }
+    },
+    "copper": {
+      "tileMetres": 0.35,
+      "roughness": 0.4,
+      "normalStrength": 0.36,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "copper-512-base.webp",
+            "bytes": 9414,
+            "sha256": "fae882e0548230947b788c83e22198a857005bd2fa189d98e16cb71d7c7755c4"
+          },
+          "normal": {
+            "file": "copper-512-normal.webp",
+            "bytes": 5026,
+            "sha256": "01deedd6492ae4c7869920b231335dec840150e2ab98b3aab336ff495b1877c9"
+          },
+          "orm": {
+            "file": "copper-512-orm.webp",
+            "bytes": 17516,
+            "sha256": "6ba1d0bccc04d194cfee1bcf45ef5ad3c2106e107882035d8b53a8bb74b938b7"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "copper-1024-base.webp",
+            "bytes": 25412,
+            "sha256": "09aae4e60a51b442b515c287aec7234e1b323ecfb64b98ad72f556121f224fbb"
+          },
+          "normal": {
+            "file": "copper-1024-normal.webp",
+            "bytes": 25446,
+            "sha256": "edb3d88fa6a1fb647885f99a3f384fa091a68a84ce83e751dff2e80bd13258b6"
+          },
+          "orm": {
+            "file": "copper-1024-orm.webp",
+            "bytes": 41708,
+            "sha256": "fa88851c7d72a563b49700602ec3b4fca68a7954f3ed8038c83ada14495556dd"
+          }
+        }
+      }
+    },
+    "concrete": {
+      "tileMetres": 2.8,
+      "roughness": 0.92,
+      "normalStrength": 0.72,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "concrete-512-base.webp",
+            "bytes": 13500,
+            "sha256": "3f1e4d04ee011dc17eb517644d1253345911e59b853edce10e2c05cb34ec8c03"
+          },
+          "normal": {
+            "file": "concrete-512-normal.webp",
+            "bytes": 46664,
+            "sha256": "f46ff074db13fb9c0d17f227fd6e8d98e3c89f09fa56e7229d090789c605bc50"
+          },
+          "orm": {
+            "file": "concrete-512-orm.webp",
+            "bytes": 24406,
+            "sha256": "eb38e7d45c4cf506af670ed94352e112274287e5dc389de7dda80ebee0801978"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "concrete-1024-base.webp",
+            "bytes": 40948,
+            "sha256": "daf8eacda98ac2adfd6d4266d806f02b1c0f3731430b516fb8ac48515a541d1e"
+          },
+          "normal": {
+            "file": "concrete-1024-normal.webp",
+            "bytes": 164770,
+            "sha256": "a934f2a911cf518e9971a71c92fd63b0788efdd81015fdac82b13e0b8813fbed"
+          },
+          "orm": {
+            "file": "concrete-1024-orm.webp",
+            "bytes": 79636,
+            "sha256": "416d2a41c0879d6dc8d746ab96df270067004e7e7766658a0b006e17fc0ce68c"
+          }
+        }
+      }
+    },
+    "floor": {
+      "tileMetres": 2.0,
+      "roughness": 0.66,
+      "normalStrength": 0.42,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "floor-512-base.webp",
+            "bytes": 2948,
+            "sha256": "650a75e2b3e3ccbf7f927542800335a4b4e8178f7375d8f5d1cb53cfee0e0dcf"
+          },
+          "normal": {
+            "file": "floor-512-normal.webp",
+            "bytes": 23686,
+            "sha256": "ce37303987a9040aaf397621198eba8466669dbe512e99352d8ddff577d2f0c3"
+          },
+          "orm": {
+            "file": "floor-512-orm.webp",
+            "bytes": 8474,
+            "sha256": "29c438ad5a783685b04fefb3e5adeb8662c10e275c30733b9317a6e2e9012b4a"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "floor-1024-base.webp",
+            "bytes": 6662,
+            "sha256": "0be2bcf4d1178d6a2522d2b34f6fb380f637be7fe3f9e328826ede172535d6de"
+          },
+          "normal": {
+            "file": "floor-1024-normal.webp",
+            "bytes": 72844,
+            "sha256": "6a34fce0c2ae2579c511d632801e57558fc8608987f6800f6a03ae0f438ffba2"
+          },
+          "orm": {
+            "file": "floor-1024-orm.webp",
+            "bytes": 22724,
+            "sha256": "52f93d91c631b11b136317f3249305b5f9a9fdcba2c391c0b645792204d9c1be"
+          }
+        }
+      }
+    },
+    "gravel": {
+      "tileMetres": 1.2,
+      "roughness": 0.94,
+      "normalStrength": 0.92,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "gravel-512-base.webp",
+            "bytes": 59402,
+            "sha256": "74e30024d1f5777dfc5b52ee2d1459cd50e8d1b998b8767e3ce64ef2657e416b"
+          },
+          "normal": {
+            "file": "gravel-512-normal.webp",
+            "bytes": 183498,
+            "sha256": "a4103bb58f0a11de9954c41f7d744e711781bbb55cf331f79bf86530e9638f43"
+          },
+          "orm": {
+            "file": "gravel-512-orm.webp",
+            "bytes": 80930,
+            "sha256": "1af531f84730052ef51a8c5d68bfe4a7789c8ed544fae07af538df21a8eb6d6e"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "gravel-1024-base.webp",
+            "bytes": 131080,
+            "sha256": "e1b6e4f9fd3b8bc151116dbddffb57dd04d41d384ddf4f4adc3cfec257f96416"
+          },
+          "normal": {
+            "file": "gravel-1024-normal.webp",
+            "bytes": 524172,
+            "sha256": "a89bcd6321e9a6754e878bcd1f0bce43581e6d5154cb7a147dd34599076ee259"
+          },
+          "orm": {
+            "file": "gravel-1024-orm.webp",
+            "bytes": 212462,
+            "sha256": "5bad2dd58821fb0e90703eb05603bb835ce76bb9ef6665b34d7200e0a93086e5"
+          }
+        }
+      }
+    },
+    "asphalt": {
+      "tileMetres": 2.0,
+      "roughness": 0.94,
+      "normalStrength": 0.75,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "asphalt-512-base.webp",
+            "bytes": 69118,
+            "sha256": "0af1148c4dce63679897e7a584a20ac72e748fd67eea9e7a49aedcbe5b8a109a"
+          },
+          "normal": {
+            "file": "asphalt-512-normal.webp",
+            "bytes": 141140,
+            "sha256": "e8decb5ef3b37ee7b019fb30e6c737502428950e01a97b628c27603886aba52b"
+          },
+          "orm": {
+            "file": "asphalt-512-orm.webp",
+            "bytes": 70490,
+            "sha256": "4cf921c39297e051949944f3438703f9be0c69d5e9cc92a78020994b70252d20"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "asphalt-1024-base.webp",
+            "bytes": 225892,
+            "sha256": "640ab4f8eb9540a2d1cbfc7e20ec78d5f550f84d957039085e5af7e8ddd9de3d"
+          },
+          "normal": {
+            "file": "asphalt-1024-normal.webp",
+            "bytes": 527220,
+            "sha256": "5ebabbdb7f347d48b038e854240f7ce3270e159fdc5f55562ac0f8efd2d7fc46"
+          },
+          "orm": {
+            "file": "asphalt-1024-orm.webp",
+            "bytes": 269166,
+            "sha256": "2598ddebc1b9ab37a99cb39374efe74550a650bd8752c56b5cde8517b7b0376a"
+          }
+        }
+      }
+    },
+    "soil": {
+      "tileMetres": 2.0,
+      "roughness": 0.98,
+      "normalStrength": 0.68,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "soil-512-base.webp",
+            "bytes": 32278,
+            "sha256": "ac3be747e39986961e233800ff34a7d746c8493514518e990dbb81ca152230c9"
+          },
+          "normal": {
+            "file": "soil-512-normal.webp",
+            "bytes": 147780,
+            "sha256": "4d662f294bedcefeffba4eff285ec40649153a7e496297f8b325b25c699a084f"
+          },
+          "orm": {
+            "file": "soil-512-orm.webp",
+            "bytes": 44312,
+            "sha256": "ad99a64e427c7f84ff711a7399b8dfeda20516b41d456774195db17a4e19992c"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "soil-1024-base.webp",
+            "bytes": 67844,
+            "sha256": "d2e40b0cbe2b68eafc22c0a8dbe5a916f8d9a4ae0e4bcb19cdaeb03cdf2451e3"
+          },
+          "normal": {
+            "file": "soil-1024-normal.webp",
+            "bytes": 363478,
+            "sha256": "9be14b9da4e04187fa269b9cc9fa525b72e0afccde18e6f2176e6f4ab7c005f5"
+          },
+          "orm": {
+            "file": "soil-1024-orm.webp",
+            "bytes": 104716,
+            "sha256": "45b1f8cd9312e9450701bc391142033465d060e4c63d6990a13b834156124714"
+          }
+        }
+      }
+    },
+    "rubber": {
+      "tileMetres": 0.18,
+      "roughness": 0.85,
+      "normalStrength": 0.45,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "rubber-512-base.webp",
+            "bytes": 2552,
+            "sha256": "dfe6780433139357743b38d46b5f4412e61844822c4da11cf3ddbfddd675b07e"
+          },
+          "normal": {
+            "file": "rubber-512-normal.webp",
+            "bytes": 49106,
+            "sha256": "88edf9ec88e0be8f01ce3b4f50f21063592140e37cf41b2c5432d4e1b637b352"
+          },
+          "orm": {
+            "file": "rubber-512-orm.webp",
+            "bytes": 13804,
+            "sha256": "f1fd699261deedc558394dc76d2b8e6fe7ce88c64784aea401a32306b3006faf"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "rubber-1024-base.webp",
+            "bytes": 8306,
+            "sha256": "4b1b755ff1c172f9862b6433e3ac19120a89e15c8b41195d53f73ec1f6ac451c"
+          },
+          "normal": {
+            "file": "rubber-1024-normal.webp",
+            "bytes": 131736,
+            "sha256": "3ab5d8b0ca697cce14d7a41f3f93e41bcf6ac173fea21888cb622e9a17526252"
+          },
+          "orm": {
+            "file": "rubber-1024-orm.webp",
+            "bytes": 32678,
+            "sha256": "403dcd9fc2ccad7d3ba22bcf86c030810df3d2fd8d0be98424f9ee7e3f56c927"
+          }
+        }
+      }
+    },
+    "ceramic": {
+      "tileMetres": 0.5,
+      "roughness": 0.19,
+      "normalStrength": 0.1,
+      "levels": {
+        "512": {
+          "base": {
+            "file": "ceramic-512-base.webp",
+            "bytes": 574,
+            "sha256": "1866c77afd5c67a8966a4f97adf53d4416ed7936b5a8dba9f5a397b2d2613ca7"
+          },
+          "normal": {
+            "file": "ceramic-512-normal.webp",
+            "bytes": 548,
+            "sha256": "9be3759a56b49b34815aa1e1564227963bf683f0f95e89a85070e64e6d96e7c9"
+          },
+          "orm": {
+            "file": "ceramic-512-orm.webp",
+            "bytes": 3152,
+            "sha256": "d4c1f57d5a3ef34265f3b93fd7152d5b55fb5fa6ccbbad9b12040f8327bf80da"
+          }
+        },
+        "1024": {
+          "base": {
+            "file": "ceramic-1024-base.webp",
+            "bytes": 2076,
+            "sha256": "2fc64da6eb77d2848d7633a8dd2d13af8cfb781e3aa22d60d87f3267b21fa0ee"
+          },
+          "normal": {
+            "file": "ceramic-1024-normal.webp",
+            "bytes": 1946,
+            "sha256": "7ad07c58c94e642ebcea106eade406b5031c7a3f14bc07e7614042f59bc799cb"
+          },
+          "orm": {
+            "file": "ceramic-1024-orm.webp",
+            "bytes": 7524,
+            "sha256": "221c9a92b4121db0c2a99ef623c06f2f0a0ec7dcd3e14c3cd2bf69c899ee96d1"
+          }
+        }
+      }
+    }
+  }
+}
