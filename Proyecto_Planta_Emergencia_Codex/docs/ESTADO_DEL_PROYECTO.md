@@ -4,6 +4,15 @@
 
 Un simulador educativo 3D de generación de emergencia que se sienta como un videojuego de mantenimiento, con realismo industrial y referencias mexicanas. La instalación incluye planta en sótano, subestación a nivel de terreno y fábrica alimentada mediante conexión aérea, con CCM dentro de su sótano.
 
+## Actualización D49.1
+
+- Inicio de inspección con casilla amplia, explicación permanente, habilitación visible del botón y salida explícita de pausa. Reabrir reinicia la confirmación sin conservar mensajes obsoletos.
+- Se corrige `seTarget44.hidden=true` antes del retorno de actualización de 80 ms: causaba que el marcador desapareciera entre fotogramas. Ahora conserva visibilidad y ofrece dirección fuera de pantalla. La flecha de la actividad de planta se destaca.
+- Carteles: fuente mayor, contraste mínimo corregido, anisotropía de hasta 16; señales vectoriales a doble resolución sin comprimir texto. Nuevo cartel integral de acceso SE-01.
+- `00-control-house.js` reemplaza el bloque macizo de caseta con paredes y hueco reales, dos puertas con bisagras mediante Cabinets38, dos peldaños y un pasillo interior. Incluye SC-PR, SC-PLC y SC-DC con puertas/cubiertas, canalizaciones y banco. Colisiones compartidas en SiteWalk37; las puertas cerradas bloquean el acceso. La luminaria que atravesaba la caseta se traslada fuera del recinto con su colisión.
+- `test:usability` verifica contraste, E en ambas hojas, entrada/salida y gabinete interior. `test:substation` comprueba casilla/clic/teclado/móvil, inicio desde pausa, persistencia del marcador en fotogramas consecutivos y dirección fuera de vista. El punto de observación PC-02 se sitúa en el pasillo este exterior de la caseta.
+- Validación: 29 pruebas unitarias y recorridos browser, substation, experience, usability y site aprobados. Capturas revisadas del cartel SE-01, acceso al mantenimiento en escritorio/móvil y gabinete abierto dentro de la caseta. Se conserva la edición D49 de materiales; la identificación visible del parche es D49.1.
+
 ## Actualización D49
 
 - `scripts/author-surfaces.py` genera doce familias originales de PBR: albedo, normales y AO/rugosidad empaquetadas en 72 WebP para 512/1024 px. Se guardan escala métrica, semilla, tamaño y SHA256 en `assets/textures/industrial/manifest.json`. Los archivos comprimidos suman aproximadamente 5.5 MB; no se necesita Python ni red para construir/jugar.

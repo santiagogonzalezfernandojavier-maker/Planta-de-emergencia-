@@ -698,9 +698,7 @@ line(measureTrunk,roundedRoute([[20.9,6.8,-4.65],[22.7,6.8,-4.65],[22.7,6.8,-5.4
 box(measureTrunk,[.20,.26,.18],[20.9,6.92,-4.65],instrumentMetal);
 for(const xx of [21.2,21.8,22.4])box(measureTrunk,[.06,.12,.12],[xx,6.77,-4.65],steel);
 // Caseta posterior dentro del patio; mantiene libre el acceso frontal a los equipos.
-const house=assembly('house');box(house,[3.5,.25,1.75],[22.8,6.85,-4.65],concrete);box(house,[3.3,2.45,1.6],[22.8,8.18,-4.65],mat('#8b9490'));box(house,[3.55,.17,1.85],[22.8,9.48,-4.65],concrete);house.position.x+=1.6;house.position.z+=-0.75;
-for(const x of [22.32,23.22]){box(house,[.86,2.03,.05],[x,7.96,-3.83],sheet);box(house,[.025,.22,.05],[x+.28,7.96,-3.78],black);for(const y of [7.25,8.6])box(house,[.065,.14,.07],[x-.35,y,-3.78],zinc)}
-for(let j=0;j<12;j++)box(house,[.4,.027,.06],[21.46,8.23+j*.065,-3.81],dark);label('06 · CASETA DE CONTROL',[24.4,9.88,-4.53],2.6);label('RIESGO ELÉCTRICO',[22.8,8.59,-3.765],1.1,'#896c16');
+const house=assembly('house');createControlHouse491(house);label('06 · CASETA DE CONTROL',[24.4,9.88,-4.53],2.6);
 // D24: panel de protección con puerta sellada, herrajes y anclajes.
 const relay=assembly('relay');
 const relayPaint=new T.MeshPhysicalMaterial({color:'#35464a',metalness:.12,roughness:.45,clearcoat:.28,clearcoatRoughness:.32});relayPaint.userData.hdFinish='paint';
@@ -912,7 +910,7 @@ function proPlate(parent,text,pos,w=1.2,color='#214657',height=.26){
 }
 
 function proSign(parent,kind,text,pos,w=.7){
- const cv=document.createElement('canvas');cv.width=512;cv.height=620;const c=cv.getContext('2d');c.fillStyle='#fcfcf6';c.fillRect(0,0,512,620);
+ const cv=document.createElement('canvas');cv.width=1024;cv.height=1240;const c=cv.getContext('2d');c.scale(2,2);c.fillStyle='#fcfcf6';c.fillRect(0,0,512,620);
  c.lineWidth=22;c.lineJoin='round';c.lineCap='round';c.strokeStyle='#111c23';
  if(kind==='warning'){
   c.fillStyle='#f9ca26';c.beginPath();c.moveTo(256,35);c.lineTo(474,436);c.lineTo(38,436);c.closePath();c.fill();c.stroke();
@@ -926,10 +924,10 @@ function proSign(parent,kind,text,pos,w=.7){
  }else{
   c.fillStyle='#17242e';c.beginPath();c.arc(256,156,42,0,7);c.fill();c.fillRect(215,207,82,146);c.strokeStyle='#c22436';c.lineWidth=36;c.beginPath();c.arc(256,240,201,0,7);c.stroke();c.beginPath();c.moveTo(112,96);c.lineTo(400,384);c.stroke();
  }
- c.fillStyle='#142e3b';c.font='bold 33px Arial';c.textAlign='center';text.split('|').forEach((t,i)=>c.fillText(t,256,513+i*42,478));
- const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;
+ c.fillStyle='#142e3b';c.font='bold 33px Arial';c.textAlign='center';text.split('|').forEach((t,i)=>{let size=33;c.font='bold '+size+'px Arial';while(c.measureText(t).width>478&&size>14)c.font='bold '+(--size)+'px Arial';c.fillText(t,256,513+i*42);});
+ const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;tx.anisotropy=Math.min(16,renderer.capabilities.getMaxAnisotropy());
  box(parent,[w+.05,w*620/512+.05,.045],[pos[0],pos[1],pos[2]-.027],mat('#4a5c63',.35));
- const m=mesh(parent,new T.PlaneGeometry(w,w*620/512),new T.MeshBasicMaterial({map:tx}),pos);m.userData.safety=true;return m;
+ const m=mesh(parent,new T.PlaneGeometry(w,w*620/512),new T.MeshBasicMaterial({map:tx,toneMapped:false}),pos);m.userData.safety=true;return m;
 }
 
 function refineTechnicalModel(){
@@ -1295,7 +1293,7 @@ const normBtn=document.createElement('button');normBtn.textContent='Criterios no
 function setupHMI(){
  document.querySelector('header small').textContent='SISTEMA DE SUPERVISIÓN / SE-01';
  document.querySelector('header h1').textContent='Subestación y generación de respaldo';
- const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL · D49</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
+ const meta=document.createElement('div');meta.className='hmi-meta';meta.innerHTML='<span class="sim-tag">SIMULACIÓN LOCAL · D49.1</span><span class="hmi-config">GRUPO G-01<b id="hmiConfig"></b></span><span>TIEMPO SIMULADO<b id="hmiClock">00:00:00</b></span>';document.querySelector('header').insertBefore(meta,$('edu'));
  document.querySelector('.rail-head span').textContent='PUESTO DE OPERACIÓN';document.querySelector('.rail-head b').textContent='HMI / 01';
  $('operate').querySelector('h2').textContent='MANDO DEL GRUPO';
  const annunciator=document.createElement('div');annunciator.id='hmiAlarm';annunciator.className='hmi-annunciator';annunciator.setAttribute('role','status');annunciator.innerHTML='<div><small>ESTADO DE SERVICIO</small><b id="hmiAlarmText"></b></div>';$('operate').prepend(annunciator);
@@ -2011,7 +2009,7 @@ function nightFixture(x,y,z,ground,size=7){box(nightLighting,[.75,.14,.42],[x,y,
 // The basement access fixture belongs on the solid slab, never inside the stair opening.
 const siteLuminaireMounts=[];
 for(const nominalX of [-6,2,11,18,25])for(const z of [-6,4]){
- const x=nominalX===-6?-7.45:nominalX,grade=x<9?6.50:6.65,baseTop=grade+.24,poleBottom=baseTop+.025;
+ const x=nominalX===-6?-7.45:nominalX===25&&z===-6?22:nominalX,grade=x<9?6.50:6.65,baseTop=grade+.24,poleBottom=baseTop+.025;
  const mount=new T.Group();mount.name='Base_luminaria_'+x+'_'+z;nightLighting.add(mount);
  box(mount,[.46,.24,.46],[x,grade+.12,z],fc);box(mount,[.31,.025,.31],[x,baseTop+.0125,z],steel);
  for(const dx of [-.105,.105])for(const dz of [-.105,.105]){cyl(mount,.013,.055,[x+dx,baseTop+.0375,z+dz],steel);cyl(mount,.022,.018,[x+dx,baseTop+.036,z+dz],steel);}

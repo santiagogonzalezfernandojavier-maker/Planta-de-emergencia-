@@ -16,11 +16,11 @@ const SceneLook49=(()=>{
  const sunOffset=new T.Vector3(-15,26,19),focus=new T.Vector3();
  function frameLook(){
   const walk=Walk31.state(),inspection=EquipmentInspector48.state(),data=inspection.active?EquipmentInspector48.data(inspection.selected):null;
-  const inside=inspection.active?['Planta de emergencia','Interior de fábrica'].includes(data.zone):walk.active?['plant','ccm'].includes(walk.zone):campusNav.mode==='basement';
+  const inHouse=walk.active&&walk.zone==='yard'&&walk.position[0]>22.8&&walk.position[0]<26&&walk.position[2]<-4.4&&walk.position[2]>-6.9;const inside=inHouse|| (inspection.active?['Planta de emergencia','Interior de fábrica'].includes(data.zone):walk.active?['plant','ccm'].includes(walk.zone):campusNav.mode==='basement');
   const powered=!!circuitState().bus,key=[inside,isNight,powered].join('|');
   scene.environment=(inside?indoor:outdoor).texture;scene.environmentIntensity=inside?(powered?(isNight?.42:.48):.045):(isNight?.065:.50);
   if(key!==signature){signature=key;for(const o of scene.children)if(o.isHemisphereLight)o.intensity=isNight?.19:.64;light.intensity=isNight?.28:2.65;rim.intensity=isNight?.10:.35;}
-  if(walk.active||inspection.active){focus.copy(inspection.active?campusNav.target:camera.position);focus.y=inside?(focus.x>60?3.8:1.8):8;}
+  if(walk.active||inspection.active){focus.copy(inspection.active?campusNav.target:camera.position);focus.y=inside?(inHouse?8:focus.x>60?3.8:1.8):8;}
   else focus.copy(campusNav.target);
   const radius=walk.active||inspection.active?(inside?12:18):55,cell=[Math.round(focus.x/4)*4,Math.round(focus.y/2)*2,Math.round(focus.z/4)*4],next=[...cell,radius].join('|');
   if(next!==shadowKey){shadowKey=next;light.target.position.set(...cell);light.position.copy(light.target.position).add(sunOffset);Object.assign(light.shadow.camera,{left:-radius,right:radius,top:radius,bottom:-radius,near:.5,far:120});light.shadow.camera.updateProjectionMatrix();light.shadow.normalBias=.006;light.shadow.bias=-.00004;light.shadow.radius=2;renderer.shadowMap.needsUpdate=true;}

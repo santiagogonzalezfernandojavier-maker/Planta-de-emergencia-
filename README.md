@@ -1,5 +1,7 @@
 # Planta de emergencia · simulador D49
 
+D49.1 aclara el inicio de mantenimiento, corrige el marcador intermitente y añade una flecha fuera de vista. Mejora carteles y abre las dos puertas de la caseta SC-01 con E; permite entrar caminando e inspeccionar sus tableros de control, protección y servicios auxiliares.
+
 D49 mejora los acabados de toda la instalación con doce familias de materiales, texturas de color/relieve/rugosidad, reflejos de interior y exterior, sombras de contacto y detalle mecánico del generador. **Esc → Calidad visual → Detalle** activa texturas de 1024 px; Fluido usa 512 px. Las texturas están incluidas en la aplicación. [Uso y alcance visual](Proyecto_Planta_Emergencia_Codex/docs/REALISMO_D49.md).
 
 D48 reorganiza el inicio en seis modalidades y guía cada actividad con acción, herramienta y resultado observable. Añade veinte placas NEXORA ficticias con acercamiento, mejora letreros e interiores de gabinetes y la colocación del único multímetro. Conserva las instalaciones y prácticas. [Uso, alcance y validación](Proyecto_Planta_Emergencia_Codex/docs/EXPERIENCIA_D48.md).

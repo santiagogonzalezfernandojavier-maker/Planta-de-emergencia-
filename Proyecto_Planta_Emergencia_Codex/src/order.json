@@ -3,6 +3,7 @@
   "00-cabinet-interiors.js",
   "00-cabinet-hardware.js",
   "00-protection-layout.js",
+  "00-control-house.js",
   "00-site-walk.js",
   "00-core_scene.js",
   "10-personnel.js",

@@ -287,3 +287,17 @@ body.playable48 #missionCard #actionResult41:not([data-error=true]),body.playabl
 .equipment-inspecting48 #energyStrip,.equipment-inspecting48 #currentReadout{display:none!important}
 @media(max-width:1000px){.playable48 #gameLaunch .g-launch-main{grid-template-columns:1fr}.playable48 #gameLaunch .g-launch-right{min-height:0}.playable48 #gameLaunch #gameRoutePane>svg{max-height:200px}.playable48 #gameLaunch .g-launch-wrap{padding:20px}}
 @media(max-width:700px){.playable48 #gameLaunch .g-entry-actions{grid-template-columns:1fr}.playable48 #gameLaunch .g-entry-actions .entry-card48{min-height:82px;padding:12px}.playable48 #gameLaunch .entry-card48 b{font-size:14px}.playable48 #gameLaunch .entry-card48 small{margin-top:3px}body.playable48 #work26 #missionCard{width:235px;right:8px;top:118px;padding:12px}body.playable48 #missionCard strong{font-size:13px}body.playable48 #missionCard p{font-size:11px}.mission-actions48{grid-template-columns:1fr}.playable48 #gameLaunch .g-launch-intro h2{font-size:28px}}
+
+/* The inspection entry always explains how to enable its primary action. */
+#techDialog .se-brief44 .se-scope44{display:flex;align-items:center;gap:14px;min-height:56px;padding:14px 16px;border:2px solid #8b9da5;border-radius:7px;background:#edf3f6;cursor:pointer;box-sizing:border-box}
+#techDialog .se-brief44 .se-scope44 input{flex:0 0 22px;width:22px;height:22px;margin:0;accent-color:#206e5b;cursor:pointer}
+#techDialog .se-brief44 .se-scope44:focus-within{outline:3px solid #24796b;outline-offset:3px}
+#techDialog .se-brief44.se-ready44 .se-scope44{border-color:#28735c;background:#e9f5ef}
+#techDialog #seSetupMessage44{margin:0 0 16px;font-weight:600;color:#465e6a}
+#techDialog #seBegin44{min-height:48px;background:#21664f;color:#fff;border-color:#19503e;font-weight:600}
+#techDialog #seBegin44:disabled{background:#e0e7eb;color:#5c6b74;border-color:#aebdc5;opacity:1}
+
+#seTarget44{display:flex;gap:9px;align-items:center;max-width:260px;box-sizing:border-box;line-height:1.4}
+#seTarget44[data-offscreen=true]{background:#102b36f2;border-color:#f5d17a}
+.se-direction491{flex-shrink:0;font:700 28px/1 system-ui;color:#f5d17a}
+#missionBearing{flex-shrink:0;width:32px;height:32px;text-align:center;border:1px solid #a6bbaf;border-radius:50%;line-height:30px!important}

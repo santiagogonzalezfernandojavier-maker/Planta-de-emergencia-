@@ -2,6 +2,12 @@
 
 Base funcional: D34, recuperada el 24 de octubre de 2026. Las revisiones siguientes conservan sus instalaciones y amplían el recorrido interactivo.
 
+## D49.1 · acceso, orientación y caseta
+
+La entrada al mantenimiento explica cómo habilitar **Comenzar inspección**; la casilla tiene un área amplia y admite clic o teclado. Comenzar recupera el recorrido sin dejarlo en pausa. La guía de subestación conserva su marcador entre actualizaciones y muestra una flecha en el borde si el objetivo queda fuera de vista.
+
+Los carteles usan letras mayores, contraste corregido y mejor muestreo. SE-01 incorpora un cartel completo con jerarquía de acceso, tensión y pasillo. En exploración, **E** abre cada hoja de la caseta SC-01; **WASD** permite subir sus dos peldaños y entrar. Incluye tableros de protección, control y servicios DC, banco de trabajo y canalizaciones. Sus gabinetes admiten E y cubiertas V. Es una distribución representativa de control; no se introducen máquinas de producción ni maniobras dentro de la actividad de inspección exterior.
+
 ## D49 · materiales, reflejos y apoyos
 
 Doce acabados diferencian pintura, fundición, acero cepillado, galvanizado, cobre, concreto, piso, grava, asfalto, tierra, caucho y cerámica. Cada uno usa color, normales y rugosidad/oclusión propios, con escala física de repetición. La pintura de transformadores conserva un relieve fino. Se añaden abrazaderas, bridas, juntas, arandelas y apoyos al generador; acompañan a sus piezas en Anatomía.

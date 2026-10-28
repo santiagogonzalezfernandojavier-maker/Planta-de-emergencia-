@@ -32,6 +32,7 @@ jobs:
           npm run test:player
           npm run test:maintenance
           npm run test:experience
+          npm run test:usability
           npm run test:visual
           npm run test:substation
           npm run test:technical
