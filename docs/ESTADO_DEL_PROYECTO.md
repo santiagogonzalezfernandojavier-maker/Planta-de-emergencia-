@@ -95,3 +95,11 @@ Cambios:
 - Al caminar, mover el ratón sin pulsar nada gira la cámara; llevarlo al borde de la pantalla sigue girando. El clic sigue capturando el ratón por completo.
 - Al terminar una actividad, el mensaje y la flecha de objetivo apuntan a la siguiente («✔ Hecho · Siguiente: …» con equipo y distancia).
 - v5.1: si el navegador bloquea la API de gamepad (SecurityError), se ignora el control en lugar de romper el ciclo de dibujo.
+
+## v7 · Ayudas para principiantes (src/50-ayudas_novato.js)
+- Pantalla de bienvenida con controles al empezar a caminar (una vez por apertura; se cierra con cualquier tecla, clic o botón del control).
+- Nombres flotantes de equipos en la planta (tecla N o botón «Nombres»): motor, alternador, tablero de control, transferencia, batería, radiador, filtro de aire, unión a tierra.
+- Glosario de siglas (botón en el menú y botón «Glosario» durante el recorrido).
+- Menú: una frase por opción y orden sugerido. Etiqueta de versión oculta (se ve al final del glosario).
+- Texto de objetivo y botones más grandes para proyector; se oculta el texto viejo «Arrastrar/Shift/Rueda» al caminar.
+- Pendiente: nombres de equipos en subestación y fábrica; modo presentación guiado.
