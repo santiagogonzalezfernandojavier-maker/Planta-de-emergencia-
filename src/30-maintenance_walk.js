@@ -303,7 +303,7 @@
  function useCenter(){if(!walk.on)return;if(walk.zone==='ccm'){const id=window.CCM34?.pick();if(id!==null&&id!==undefined)CCM34.toggle(id);return;}if(walk.zone==='yard')return;const bagHit=bagPick32();if(walk.bag){take32(bagHit);return;}if(bagHit==='floorBag'){setBag(true);return;}const id=centerPick();if(!id){say('Mira hacia el punto de la actividad. Puedes usar clic sobre el punto o apuntar y pulsar E.');return;}act(id,index===5&&step===0?.16:0);}
  /* Control de consola (mapa estándar): palanca izq. caminar, der. mirar, A usar, B agacharse, X cuaderno, Y bolsa, L3/RB/RT correr, Inicio menú. */
  const pad={prev:[],on:false};
- function pollPad(){const list=navigator.getGamepads?[...navigator.getGamepads()]:[];const gp=list.find(g=>g&&g.connected);if(!gp){pad.on=false;return null;}
+ function pollPad(){if(pad.blocked)return null;let list=[];try{list=navigator.getGamepads?[...navigator.getGamepads()]:[];}catch(e){pad.blocked=true;pad.on=false;return null;}const gp=list.find(g=>g&&g.connected);if(!gp){pad.on=false;return null;}
   if(!pad.on){pad.on=true;say('Control detectado · palanca izquierda caminar · derecha mirar · A usar · B agacharse · Y bolsa · X cuaderno · L3 correr');}
   const dz=v=>Math.abs(v)<.18?0:(v-Math.sign(v)*.18)/.82,ax=gp.axes||[],b=i=>!!(gp.buttons&&gp.buttons[i]&&gp.buttons[i].pressed),edge=i=>{const now=b(i),was=!!pad.prev[i];pad.prev[i]=now;return now&&!was;};
   if(edge(0))useCenter();if(edge(1))crouch34();if(edge(3))setBag(!walk.bag);if(edge(2))$('fpJournal')?.click();if(edge(9))window.GameInterface?.openMenu(true);
