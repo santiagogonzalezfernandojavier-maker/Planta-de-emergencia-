@@ -109,3 +109,8 @@ Cambios:
 - Mantenimiento: tarjeta «ARREGLANDO n/12» (pieza, qué hacemos, por qué importa) y aro pulsante «AQUÍ» sobre el componente de la actividad. Tras terminar muestra «✔ LISTO» y lo aprendido.
 - El recorrido entra a subestación/CCM por la misma ruta que el menú «Zonas» (suspend33 + vista + enterZone).
 - Pendiente: probar en laptop real; modo presentación automático (apagón + transferencia narrados).
+
+## v9 · Visita independiente y paso al despiece
+- «Explorar instalación» muestra solo la visita guiada (se oculta cabecera, zonas, pie y todo el HUD de mantenimiento). Esc / «Salir» / «Volver al menú» regresan al menú y cierran el motor de mantenimiento.
+- Al terminar la visita, «Ver el despiece» (Enter / → / A): la cámara se aleja, la pantalla se funde a negro («Preparando el despiece…») y el despiece aparece con desvanecimiento. Al cerrar el despiece se entra al simulador (comportamiento existente de la presentación).
+- El mantenimiento queda individual: se inicia solo desde «Mantenimiento práctico».

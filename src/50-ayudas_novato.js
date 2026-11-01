@@ -101,7 +101,7 @@ let tagsOn=true;const layer=document.createElement('div');layer.id='walkTags';la
 const tagEls=tagDefs.map(([t])=>{const e=document.createElement('span');e.textContent=t;layer.append(e);return e;});
 const tagPos=tagDefs.map(([,p])=>new T.Vector3(...p));const tmp=new T.Vector3();
 function tagLoop(){requestAnimationFrame(tagLoop);const walking=document.body.classList.contains('walking31');let st=null;try{st=window.Walk31&&Walk31.state();}catch(e){}
- const show=walking&&tagsOn&&st&&st.active&&st.zone==='plant'&&!st.bag&&!st.journal&&!(window.WalkWelcome&&WalkWelcome.visible());
+ const show=walking&&tagsOn&&st&&st.active&&st.zone==='plant'&&!st.bag&&!st.journal&&!(window.WalkWelcome&&WalkWelcome.visible())&&!(window.Tour&&Tour.hideTags&&Tour.hideTags());
  layer.hidden=!show;if(!show)return;const w=innerWidth,h=innerHeight,cp=st.position;
  tagPos.forEach((p,i)=>{const e=tagEls[i],dx=p.x-cp[0],dz=p.z-cp[2],d=Math.hypot(dx,dz);tmp.copy(p).project(camera);const ok=d<7.5&&tmp.z<1&&Math.abs(tmp.x)<.97&&tmp.y>-.8&&tmp.y<.9;e.style.display=ok?'block':'none';if(ok){e.style.left=((tmp.x+1)/2*w)+'px';e.style.top=((1-tmp.y)/2*h)+'px';}});}
 requestAnimationFrame(tagLoop);
@@ -125,8 +125,11 @@ let tour=null,glideId=0,padPrev={};
 const body=document.body;
 const tc=document.createElement('div');tc.id='tourCard';tc.hidden=true;document.body.append(tc);
 const cs=document.createElement('style');cs.textContent=`
+body.touring header,body.touring #sceneFooter,body.touring #viewbar,body.touring #nav33{opacity:0!important;pointer-events:none!important}
 body.touring #work26 .w-top,body.touring #fpNav,body.touring .fp-hud,body.touring .fp-touch,body.touring #fpTarget,body.touring #fpCross,body.touring #fixCard,body.touring #fixRing{display:none!important}
 #tourCard{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:2147482000;width:min(820px,94vw);background:#0b1722f4;border:1px solid #2b5362;border-top:4px solid #efc474;border-radius:10px;padding:18px 24px;color:#edf5f5;font-family:system-ui,Segoe UI,Arial,sans-serif;box-shadow:0 14px 44px #000a}
+#tourCard{transition:opacity .45s}#tourCard.out{opacity:0;pointer-events:none}
+#tourFade{position:fixed;inset:0;background:#02070b;opacity:0;pointer-events:none;z-index:2147482500;transition:opacity .85s ease}#tourFade.on{opacity:1;pointer-events:all}#tourFade{display:flex;align-items:center;justify-content:center}#tourFade span{color:#9fc5cb;font:600 16px system-ui,Segoe UI,Arial,sans-serif;letter-spacing:1px;opacity:0;transition:opacity .6s .5s}#tourFade.on span{opacity:1}
 #tourCard .tc-n{font:700 12px ui-monospace,Consolas,monospace;letter-spacing:2px;color:#efc474}
 #tourCard h3{margin:4px 0 6px;font-size:24px;color:#fff!important;text-transform:none!important;letter-spacing:normal!important}#tourCard p{margin:0;font-size:17px;line-height:1.5;color:#d6e6e8}
 #tourCard .tc-b{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
@@ -147,10 +150,10 @@ function aim(p,t){const dx=t[0]-p[0],dy=t[1]-p[1],dz=t[2]-p[2];return {yaw:Math.
 function glide(p,t){cancelAnimationFrame(glideId);const s=Walk31.state(),a=aim(p,t);let dy=a.yaw-s.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const f=s.position,t0=performance.now(),ms=1100;
  const step=now=>{const k=Math.min(1,(now-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;WalkCam.set([f[0]+(p[0]-f[0])*e,p[1],f[2]+(p[2]-f[2])*e],s.yaw+dy*e,s.pitch+(a.pitch-s.pitch)*e);if(k<1)glideId=requestAnimationFrame(step);};glideId=requestAnimationFrame(step);}
 function render(){const st=stops[tour.i];const last=tour.i>=stops.length;
- if(last){tc.innerHTML='<div class="tc-n">FIN DEL RECORRIDO</div><h3>Ya conoces la instalación</h3><p>¿Qué quieres hacer ahora?</p><div class="tc-b"><button class="pri" id="tcMant">Hacer mantenimiento</button><button id="tcRep">Repetir recorrido</button><button id="tcMenu">Volver al menú</button></div>';
-  $$('tcMant').onclick=()=>exitTour(true);$$('tcRep').onclick=()=>goStop(0);$$('tcMenu').onclick=()=>{exitTour(false);window.GameInterface&&GameInterface.openMenu(true);};return;}
+ if(last){tc.innerHTML='<div class="tc-n">FIN DEL RECORRIDO</div><h3>Ahora veamos la planta por dentro</h3><p>Sigue el despiece: cada pieza se separa para que veas cómo está hecha por dentro.</p><div class="tc-b"><button class="pri" id="tcDesp">Ver el despiece ▶</button><button id="tcRep">Repetir recorrido</button><button id="tcMenu">Volver al menú</button></div>';
+  $$('tcDesp').onclick=toDespiece;$$('tcRep').onclick=()=>goStop(0);$$('tcMenu').onclick=leaveToMenu;return;}
  tc.innerHTML='<div class="tc-n">PARADA '+(tour.i+1)+' DE '+stops.length+'</div><h3>'+st.title+'</h3><p>'+st.text+'</p><div class="tc-b"><button id="tcPrev"'+(tour.i?'':' disabled')+'>◀ Anterior</button><button class="pri" id="tcNext">Siguiente ▶</button><button id="tcExit">Salir del recorrido</button><span class="tc-k">Enter / → siguiente · ← anterior · Esc salir</span></div>';
- $$('tcPrev').onclick=()=>goStop(tour.i-1);$$('tcNext').onclick=()=>goStop(tour.i+1);$$('tcExit').onclick=()=>exitTour(false);}
+ $$('tcPrev').onclick=()=>goStop(tour.i-1);$$('tcNext').onclick=()=>goStop(tour.i+1);$$('tcExit').onclick=leaveToMenu;}
 function goStop(i){if(!tour)return;i=Math.max(0,Math.min(stops.length,i));tour.i=i;if(i<stops.length){const st=stops[i];
   if(WalkCam.zone()!==st.z){enterZ(st.z);WalkCam.clean();body.classList.add('touring');if(st.p){const a=aim(st.p,st.t);WalkCam.set(st.p,a.yaw,a.pitch);}}
   else if(st.p)glide(st.p,st.t);}
@@ -158,14 +161,27 @@ function goStop(i){if(!tour)return;i=Math.max(0,Math.min(stops.length,i));tour.i
 function startTour(){if(tour)return;try{document.exitPointerLock?.();}catch(e){}tour={i:0};body.classList.add('touring');WalkCam.clean();tc.hidden=false;
  if(WalkCam.zone()!=='plant')enterZ('plant');const st=stops[0],a=aim(st.p,st.t);WalkCam.set(st.p,a.yaw,a.pitch);WalkCam.clean();render();}
 function exitTour(toMaint){if(!tour)return;cancelAnimationFrame(glideId);tour=null;tc.hidden=true;if(WalkCam.zone()!=='plant')enterZ('plant');body.classList.remove('touring');}
-window.Tour={start:startTour,exit:()=>exitTour(false),active:()=>!!tour,goto:goStop};
+function cleanupTour(){cancelAnimationFrame(glideId);tour=null;tc.hidden=true;tc.classList.remove('out');body.classList.remove('touring');}
+function leaveToMenu(){if(!tour)return;cleanupTour();try{Maintenance.close();}catch(e){}window.GameInterface&&GameInterface.openMenu(true);}
+const fade=document.createElement('div');fade.id='tourFade';fade.innerHTML='<span>Preparando el despiece…</span>';document.body.append(fade);
+let busy=false;
+function toDespiece(){if(!tour||busy)return;busy=true;try{document.exitPointerLock?.();}catch(e){}
+ tc.classList.add('out');glide([1.4,1.58,5.3],[1.2,1.1,0]);
+ setTimeout(()=>{fade.classList.add('on');},800);
+ setTimeout(()=>{cleanupTour();try{Maintenance.close();}catch(e){}
+  const dlg=$$('plantPresentation');dlg.style.transition='none';dlg.style.opacity='0';
+  const op=$$('openPlantPresentation');if(op)op.click();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{dlg.style.transition='opacity 1.3s ease';dlg.style.opacity='1';}));
+  setTimeout(()=>{dlg.style.transition='';dlg.style.opacity='';fade.classList.remove('on');busy=false;},1700);},1700);}
+window.Tour={hideTags:()=>!!tour&&(tour.i===0||tour.i===7||tour.i>=stops.length),toDespiece,start:startTour,exit:()=>exitTour(false),active:()=>!!tour,goto:goStop};
 window.addEventListener('keydown',e=>{if(!tour||e.ctrlKey||e.metaKey||e.altKey)return;const c=e.code;
- if(c==='Enter'||c==='Space'||c==='ArrowRight'||c==='NumpadEnter'){if(tour.i<stops.length)goStop(tour.i+1);}
+ if(busy){}
+ else if(c==='Enter'||c==='Space'||c==='ArrowRight'||c==='NumpadEnter'){if(tour.i<stops.length)goStop(tour.i+1);else toDespiece();}
  else if(c==='ArrowLeft'||c==='Backspace'){goStop(tour.i-1);}
- else if(c==='Escape'){exitTour(false);}
+ else if(c==='Escape'){leaveToMenu();}
  else return;e.preventDefault();e.stopImmediatePropagation();},true);
 setInterval(()=>{if(!tour)return;try{const l=navigator.getGamepads?navigator.getGamepads():[];const g=[...l].find(x=>x&&x.connected);if(!g)return;const b=i=>!!(g.buttons[i]&&g.buttons[i].pressed);
- const now={n:b(0)||b(5),p:b(1)||b(4),x:b(9)};if(now.n&&!padPrev.n&&tour.i<stops.length)goStop(tour.i+1);if(now.p&&!padPrev.p)goStop(tour.i-1);if(now.x&&!padPrev.x)exitTour(false);padPrev=now;}catch(e){}},120);
+ const now={n:b(0)||b(5),p:b(1)||b(4),x:b(9)};if(now.n&&!padPrev.n){if(tour.i<stops.length)goStop(tour.i+1);else toDespiece();}if(now.p&&!padPrev.p)goStop(tour.i-1);if(now.x&&!padPrev.x)leaveToMenu();padPrev=now;}catch(e){}},120);
 let tourIntent=false;const ge=$$('gameEnter');if(ge)ge.addEventListener('click',e=>{if(e.isTrusted)tourIntent=true;},true);
 
 // ===== Mantenimiento: qué se arregla ahora =====
