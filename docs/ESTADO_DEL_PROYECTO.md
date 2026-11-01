@@ -49,3 +49,12 @@ Antes, al terminar de cargar los operarios, el arranque (`src/40-protections_ccm
 - Comprobado en Chrome (carga, 6 s de espera, Explorar, misión y anatomía), sin errores de JavaScript, y `node --test tests/assets.test.mjs` en verde.
 - Pendiente: las pruebas históricas de `tests/browser.cjs` esperaban el arranque automático y no se han actualizado.
 - `npm run verify:package` compara contra la línea base D34 y por eso informa 4 diferencias: `.gitignore`, `dist/ABRIR_SIMULADOR.html`, este documento y `src/40-protections_ccm_performance.js`. Son los cambios de esta modificación, no una corrupción.
+
+## Cambio posterior: controles que no dependen de los cuadros por segundo
+
+Causa medida de «los controles no responden» en equipos lentos: caminar y girar con teclado usaban un tiempo por fotograma recortado a 0.08 s, así que por debajo de ~12 fps el movimiento perdía velocidad (a 5 fps el giro llegaba al 40 %, a 2 fps al 16 %). Cambios en `src/30-maintenance_walk.js`:
+
+- Movimiento y giro con teclas usan el tiempo real transcurrido (tope 0.5 s por fotograma; una pausa de más de 2 s se descarta) y se integran en subpasos de ≤ 0.04 s para que las colisiones sigan funcionando.
+- Un control con foco (lista, deslizador, casilla) ya no bloquea el teclado del recorrido; solo se respetan los campos de texto (`window.walkInput`). Clic en la escena devuelve el foco al lienzo. En modo recorrido no se encontró ningún control enfocable, así que esto es una protección y no la causa principal.
+- Comprobado en Chrome con fotogramas simulados: a 5 fps el giro pasó de 0.64 a 1.65 rad/s (teórico 1.6); a 2 fps caminando en 8 direcciones hubo 0 posiciones inválidas.
+- No comprobado: el comportamiento en una GPU real, el bloqueo del puntero (tecla F / «Mirar con ratón») y pantallas táctiles.
