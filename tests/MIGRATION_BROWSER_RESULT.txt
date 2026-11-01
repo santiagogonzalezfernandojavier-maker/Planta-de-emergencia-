@@ -1,0 +1,1 @@
+{"startup":true,"operators":4,"crouch":true,"mouseLook":true,"zones":true,"doors":26,"doorInteraction":true,"returnToPractice":true,"pageErrors":[]}

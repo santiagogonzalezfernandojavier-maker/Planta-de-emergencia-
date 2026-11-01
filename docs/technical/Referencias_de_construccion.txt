@@ -1,0 +1,35 @@
+Referencias consultadas para la construcción de las geometrías
+
+STAMFORD P6 Owner Manual. Figuras de rotor y apartados Parts Identification / Parts and Fasteners.
+https://www.stamford-avk.com/sites/stamfordavk/files/2020-07/P6-Owners-Manual-English.pdf
+
+MAHLE. Piston systems / Power Cell Unit.
+https://www.mahle.com/en/products-and-services/commercial-vehicles/piston-systems/
+
+MAHLE Aftermarket. Light Vehicle Pistons.
+https://www.mahle-aftermarket.com/na/en/products-and-services/engine-components/light-vehicle/pistons/
+
+Referencias auxiliares D13 (geometrías representativas, no réplica de fabricante):
+Perkins — The role of your cylinder head
+https://www.perkins.com/en_GB/aftermarket/overhaul/overhaul-components/major-components/cylinder-head.html
+Cummins — Service Manual 0981-0516, Issue 9
+https://www.cummins.com/sites/default/files/2024-10/0981-0516-i9-hdkag-service-manual.pdf
+
+D14 — Parker Racor: componentes representativos de filtros y separadores, vaso, drenaje y racores.
+https://www.parker.com/content/dam/Parker-com/Literature/Racor/Tech_Install/73309_Dual_FBO_Manual.pdf
+https://ph.parker.com/us/en/120at
+
+D15 — Documento del usuario: Unidad VII Generación de Emergencia, componentes pp. 7–13, instalación pp. 17–20, pruebas pp. 21–23 y mantenimiento pp. 24–27.
+Excitación brushless y rectificador giratorio: STAMFORD, MX321 Automatic Voltage Regulator Manual. El modelo base usa excitación derivada, sin PMG; no se reproduce la placa de un fabricante.
+https://www.stamford-avk.com/sites/stamfordavk/files/2021-01/STAMFORD-MX321-Automatic-Voltage-Regulator.pdf
+https://www.stamford-avk.com/stamford-avk/sites/stamfordavk/files/2024-04/AGN093_F.pdf
+
+D17 — Simbología y estado de la referencia mexicana
+Catálogo oficial de la Secretaría de Economía: NMX-J-136-ANCE-2019, estado vigente, cancela edición 2007.
+https://platiica.economia.gob.mx/normalizacion/nmx-j-136-ance-2019/
+Vista previa ANCE: alcance e índice (no las tablas completas).
+https://vnormas.anceinstituto.org.mx/wp-content/uploads/2024/11/NMX-J-136-ANCE-2019-PREVIEW.pdf
+CFE 00200-02, marzo 1995: figura 12, página 15. Consultada para la convención de cuadros, devanados, seccionadores y conexiones; no se adopta su arreglo de barras como topología del simulador.
+https://lapem.cfe.gob.mx/normas/pdfs/d/00200-02.pdf
+ABB COM605 Operator Guide: comparación de símbolos IEC/ANSI, pp.29–30, consulta auxiliar.
+https://library.e.abb.com/public/22834552e933b57dc125746d004681d3/COM605_oper_756121_Ene.pdf

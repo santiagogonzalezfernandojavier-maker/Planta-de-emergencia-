@@ -1,0 +1,7 @@
+node_modules/
+playwright-report/
+test-results/
+*.blend1
+.env
+*.log
+build/

@@ -1,0 +1,22 @@
+{
+  "name": "planta-emergencia-simulador",
+  "private": true,
+  "version": "0.34.0",
+  "description": "Simulador 3D de planta, subestaci\u00f3n y f\u00e1brica. Migraci\u00f3n D34.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prestart": "npm run build",
+    "start": "node scripts/serve.mjs",
+    "pretest": "npm run build",
+    "test": "node --test tests/assets.test.mjs",
+    "test:browser": "node tests/browser.cjs",
+    "verify:package": "node scripts/verify-package.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

@@ -1,0 +1,11 @@
+import fs from 'node:fs';import path from 'node:path';import{fileURLToPath}from'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const order=JSON.parse(read('src/order.json')),payload=fs.readFileSync(path.join(root,'assets/personnel/scene-data.json.gz')).toString('base64');
+const app='const PERSONNEL_GZIP_BASE64='+JSON.stringify(payload)+';\n'+order.map(p=>'\n// SOURCE: src/'+p+'\n'+read('src/'+p)).join('\n'),vendor=read('vendor/three.js'),css=read('src/styles/app.css'),template=read('src/index.template.html');
+for(const key of ['APP_STYLE','VENDOR_SCRIPT','APP_SCRIPT'])if(!template.includes('<!--'+key+'-->'))throw new Error('Missing marker '+key);
+const render=(style,vend,code)=>template.replace('<!--APP_STYLE-->',()=>style).replace('<!--VENDOR_SCRIPT-->',()=>vend).replace('<!--APP_SCRIPT-->',()=>code);
+for(const d of ['build','dist'])fs.mkdirSync(path.join(root,d),{recursive:true});
+fs.writeFileSync(path.join(root,'build/app.js'),app);
+fs.writeFileSync(path.join(root,'index.html'),render('<link rel="stylesheet" href="src/styles/app.css">','<script src="vendor/three.js"></script>','<script src="build/app.js"></script>'));
+fs.writeFileSync(path.join(root,'dist/ABRIR_SIMULADOR.html'),render('<style>'+css+'</style>','<script>'+vendor+'</script>','<script>'+app+'</script>'));
+console.log('Built index.html, build/app.js and dist/ABRIR_SIMULADOR.html');
