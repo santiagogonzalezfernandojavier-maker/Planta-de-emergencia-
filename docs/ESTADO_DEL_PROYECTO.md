@@ -114,3 +114,7 @@ Cambios:
 - «Explorar instalación» muestra solo la visita guiada (se oculta cabecera, zonas, pie y todo el HUD de mantenimiento). Esc / «Salir» / «Volver al menú» regresan al menú y cierran el motor de mantenimiento.
 - Al terminar la visita, «Ver el despiece» (Enter / → / A): la cámara se aleja, la pantalla se funde a negro («Preparando el despiece…») y el despiece aparece con desvanecimiento. Al cerrar el despiece se entra al simulador (comportamiento existente de la presentación).
 - El mantenimiento queda individual: se inicia solo desde «Mantenimiento práctico».
+
+## v9.1 · Visita solo de la planta y sin protector
+- La visita guiada queda en 8 paradas, solo la planta de emergencia (se quitaron subestación y CCM); luego «Ver el despiece».
+- Se quita el panel (ducto/difusor del radiador, 140 triángulos de la geometría estática combinada) que tapaba el radiador. Se reaplica cada 1.5 s durante el primer minuto y al empezar a caminar, porque la geometría combinada se reconstruye después de la carga.
