@@ -84,3 +84,9 @@ Cambios:
 - Comprobado: mecanismo de bajada y subida con un reloj simulado; menú y controles sin regresiones. No comprobado: fps reales en GPU integrada, ni en proyector.
 - Los visores secundarios (inspector y presentación de anatomía) tienen su propia resolución fija y no participan del ajuste automático.
 - Pendiente para más fluidez: reducir llamadas de dibujo (materiales compartidos + unión de mallas estáticas) si la medición real en el equipo de presentación lo exige.
+
+## v5 · Controles de videojuego
+- Un clic en la escena captura el ratón: moverlo gira la cámara sin arrastrar (Esc lo libera).
+- Shift = correr (3.0 m/s contra 1.65 m/s caminando).
+- Control de consola (mapeo estándar): palanca izquierda mover, derecha mirar, A usar, B agacharse, Y mochila, X diario, Start menú, L3/RB/RT correr.
+- Verificado en Chrome headless: giro con ratón, ratio de correr ~1.7x, B alterna agachado, sin errores JS.
