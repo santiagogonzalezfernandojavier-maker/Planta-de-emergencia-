@@ -57,19 +57,31 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (function(){const st=document.createElement('style');st.textContent=`
  .game-ui #gameToast{top:auto!important;bottom:65px!important;left:auto!important;right:15px!important;transform:none!important;font-size:10px!important;padding:5px 9px!important;letter-spacing:.2px!important;max-width:240px}#work26 #fpTarget{top:auto!important;bottom:74px;left:50%;background:#10232b99;font:11px system-ui;padding:4px 9px;max-width:280px;opacity:.8}#fpTarget:empty{display:none}#work26 #fpNav{font-size:10px;padding:5px 8px;top:62px;opacity:.65;max-width:175px;border:0}#work26 .w-top{padding:5px 9px!important;background:#0a1e26b0!important;min-height:28px!important}#work26 .w-top strong{font-size:11px!important;letter-spacing:.5px!important}#work26 .w-top small{font-size:9px;letter-spacing:0}#work26 .w-top button{font-size:10px!important;min-height:29px!important;padding:5px 8px!important}#work26 .w-feedback{display:none!important}#work26 .w-feedback[data-error=true]{display:block!important;left:12px!important;bottom:68px!important;transform:none!important;width:min(350px,calc(100% - 24px))!important;font-size:10px!important;padding:6px 9px!important;max-height:60px!important}#work26 .w-feedback::before{display:none!important}#work26 .fp-hud{left:12px;transform:none;width:auto;max-width:calc(100% - 115px);bottom:12px;padding:5px 7px;gap:4px;background:#0a1e28a8;border:1px solid #5c77785c;border-radius:7px;justify-content:flex-start}#work26 .fp-hud>div{min-width:0;margin-right:8px}#work26 .fp-hud b{font-size:9px;font-family:system-ui;font-weight:500;color:#c2d1ce}#work26 .fp-hud small{display:none}#work26 .fp-hud button{font:10px system-ui!important;text-transform:none!important;letter-spacing:0!important;min-height:29px!important;padding:5px 7px!important;background:#19333eaa;border-color:#49676a;border-radius:4px}#turnPad34{position:absolute;bottom:12px;right:12px;display:flex;gap:5px;z-index:41}#turnPad34 button{font:20px system-ui;color:#d5e7e0;background:#152d38b0;border:1px solid #557075;border-radius:6px;width:39px;height:35px;touch-action:none}body:not(.walking31) #turnPad34{display:none}.explore34 #wFocus,.explore34 #fpBag,.explore34 #fpJournal,.explore34 #fpNav,.explore34 #work26 .w-side,.explore34 #work26 .w-dot{display:none!important}#ccm34panel{position:absolute;right:12px;top:104px;z-index:38;padding:7px 10px;display:flex;gap:10px;align-items:center;background:#152c34b8;color:#c9d9d4;font:10px system-ui;border:1px solid #4f6b6c;border-radius:6px}#ccm34panel[hidden]{display:none}#ccm34panel button{font:10px system-ui;background:#253e47;color:#d5e4df;border:1px solid #547077;border-radius:4px;padding:5px 8px}@media(max-width:700px){#work26 .fp-hud{max-width:calc(100% - 20px);bottom:56px;left:10px;flex-wrap:wrap}#work26 .fp-hud>div{width:auto}#work26 .fp-hud button{flex:0 0 auto}#ccm34panel{top:150px;max-width:65%;font-size:9px}#work26 #fpTarget{bottom:160px}#work26 .w-feedback{bottom:170px!important}}`;document.head.append(st);$('nav33menu').hidden=true;$('nav33toggle').setAttribute('aria-expanded','false');})();
 
-(async()=>{try{await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
+(async()=>{try{
+ /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
+ try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v3 · el menú espera tu elección</small>');}catch(_){}
+ await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
     Si elige la presentación de anatomía, el recorrido espera a la siguiente vez que salga del menú. */
  const launchMenu=$('gameLaunch');let walkStarted=false;
- const startWalk=()=>{if(walkStarted)return;walkStarted=true;launchMenu.removeEventListener('close',startWalkAfterMenu);Maintenance.open();Maintenance.begin('guided');};
- /* Cierre del menú por otra vía (por ejemplo Esc): también se entra al recorrido, salvo que se haya abierto la presentación de anatomía. */
- const startWalkAfterMenu=()=>{if(!launchMenu.open&&!window.plantPresentationActive)startWalk();};
- if(launchMenu.open||window.gameMenuActive){
+ const startWalk=()=>{if(walkStarted)return;walkStarted=true;launchMenu.removeEventListener('close',reopenIfNoChoice);launchMenu.removeEventListener('cancel',keepMenuOnEsc,true);Maintenance.open();Maintenance.begin('guided');};
+ /* El menú no desaparece sin una elección: Esc no lo cierra y, si algo lo cerrara, se vuelve a abrir (salvo que se haya abierto la presentación de anatomía). */
+ const keepMenuOnEsc=e=>{if(!walkStarted){e.preventDefault();e.stopImmediatePropagation();}};
+ const reopenIfNoChoice=()=>{if(walkStarted||window.plantPresentationActive)return;setTimeout(()=>{if(!walkStarted&&!launchMenu.open&&!window.plantPresentationActive){GameInterface.openMenu();launchMenu.focus({preventScroll:true});}},0);};
+ const installGuards=()=>{
   /* Mismo orden que el arranque anterior: primero se cierra el menú con la opción elegida y después empieza el recorrido; en una misión, el recorrido va antes que la misión. */
   const enter=$('gameEnter'),enterAction=enter.onclick;
-  enter.onclick=e=>{enterAction.call(enter,e);startWalk();};
-  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted){enterAction.call(enter,e);startWalk();}missionAction.call(b,e);};});
-  launchMenu.addEventListener('close',startWalkAfterMenu);
- }else startWalk();
+  /* Si el menú ya se había cerrado antes (p. ej. con Esc), «Explorar» no prepara la cámara de emergencia; se hace aquí antes de iniciar el recorrido. */
+  const goEmergency=()=>document.querySelector('#viewbar [data-nav="emergency"]')?.click();
+  const choose=(action,self,e)=>{if(walkStarted){action.call(self,e);return;}const had=GameInterface.state().hasEntered;action.call(self,e);if(had)goEmergency();startWalk();};
+  enter.onclick=e=>choose(enterAction,enter,e);
+  const cont=$('gameContinue'),contAction=cont.onclick;cont.onclick=e=>choose(contAction,cont,e);
+  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted)choose(enterAction,enter,e);missionAction.call(b,e);};});
+  launchMenu.addEventListener('cancel',keepMenuOnEsc,true);launchMenu.addEventListener('close',reopenIfNoChoice);
+ };
+ if(launchMenu.open||window.gameMenuActive)installGuards();
+ else if(GameInterface.state().hasEntered)startWalk();
+ else{GameInterface.openMenu();installGuards();}
  }catch(e){document.documentElement.classList.add('ready32');document.body.classList.add('ready32');const ebox=document.createElement('div');ebox.textContent='No fue posible iniciar el recorrido. Abre este HTML extraído del ZIP con Edge o Chrome.';ebox.style='position:fixed;inset:20px;z-index:100000;background:#11252c;color:white;padding:30px';document.body.append(ebox);console.error(e);}})();

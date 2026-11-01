@@ -58,3 +58,15 @@ Causa medida de «los controles no responden» en equipos lentos: caminar y gira
 - Un control con foco (lista, deslizador, casilla) ya no bloquea el teclado del recorrido; solo se respetan los campos de texto (`window.walkInput`). Clic en la escena devuelve el foco al lienzo. En modo recorrido no se encontró ningún control enfocable, así que esto es una protección y no la causa principal.
 - Comprobado en Chrome con fotogramas simulados: a 5 fps el giro pasó de 0.64 a 1.65 rad/s (teórico 1.6); a 2 fps caminando en 8 direcciones hubo 0 posiciones inválidas.
 - No comprobado: el comportamiento en una GPU real, el bloqueo del puntero (tecla F / «Mirar con ratón») y pantallas táctiles.
+
+## Cambio posterior: menú de inicio blindado (v3)
+
+Una persona reportó que, aun con el arreglo anterior, el simulador la llevaba directo al recorrido sin mostrar el menú. No se reprodujo con una prueba normal, pero se identificaron y cerraron las vías por las que el menú podía saltarse:
+
+- `showModal()` dejaba el foco en «Explorar instalación», así que un Enter, espacio o clic accidental al abrir lo activaba. Ahora el foco queda en el propio diálogo.
+- Esc cerraba el menú y, con el arreglo anterior, entraba al recorrido. Ahora Esc no cierra el menú antes de elegir; si el navegador lo cerrara (Chrome no deja cancelar el segundo Esc seguido), se reabre solo.
+- «Continuar» cuenta como elección y arranca el recorrido igual que «Explorar».
+- Si el menú se cierra antes de elegir y luego se elige «Explorar», se prepara la cámara de emergencia antes de iniciar el recorrido.
+- Etiqueta visible «v3 · el menú espera tu elección» al pie del menú, para confirmar qué archivo se está abriendo.
+- Error latente corregido en `src/00-core_scene.js`: el tiempo por fotograma podía salir negativo tras reabrir el menú (reloj adelantado unos ms) y, con el reloj de la simulación en cero, rompía el trazado de los flujos (`getPointAt(null)`). Ahora `dt >= 0`.
+- Comprobado en Chrome: Enter, espacio, E, W y Esc×2 no sacan del menú; Explorar, misión y anatomía funcionan sin errores de JavaScript; el giro sigue a velocidad real con 5 fps.
