@@ -70,3 +70,17 @@ Una persona reportó que, aun con el arreglo anterior, el simulador la llevaba d
 - Etiqueta visible «v3 · el menú espera tu elección» al pie del menú, para confirmar qué archivo se está abriendo.
 - Error latente corregido en `src/00-core_scene.js`: el tiempo por fotograma podía salir negativo tras reabrir el menú (reloj adelantado unos ms) y, con el reloj de la simulación en cero, rompía el trazado de los flujos (`getPointAt(null)`). Ahora `dt >= 0`.
 - Comprobado en Chrome: Enter, espacio, E, W y Esc×2 no sacan del menú; Explorar, misión y anatomía funcionan sin errores de JavaScript; el giro sigue a velocidad real con 5 fps.
+
+## Cambio posterior: calidad automática y fluidez (v4)
+
+Objetivo: que el simulador sea fluido en una laptop con gráficos integrados conectada a un proyector (equipo de presentación indicado por la persona usuaria).
+
+Medición (Chrome sin GPU, solo para dimensionar; no son cuadros por segundo reales): recorrido por la planta ≈ 630 llamadas de dibujo y 650 mil triángulos; patio ≈ 700 y 860 mil; CCM ≈ 83 y 19 mil. Hay ≈ 1160 mallas con ≈ 640 materiales distintos, lo que impide unirlas en lotes sin rehacer materiales. Las sombras ya son estáticas (`shadowMap.autoUpdate=false`).
+
+Cambios:
+- El tope fijo de 30 fps (`src/00-core_scene.js`) pasa a ser configurable (`window.frameCapMs`), por defecto 60.
+- Nuevo modo **Automática** (predeterminado) en el selector de calidad (`src/40-protections_ccm_performance.js`): mide los fps reales por ventanas de 1 s; si caen por debajo del 85 % del objetivo baja la resolución del visor principal (mínimo 50 %) y, si aun así no alcanza, el tope pasa a 30 fps; si sobra rendimiento sube la resolución en pasos de 10 % y puede reintentar 60 fps (máx. 2 veces). Se ignoran pausas aisladas (menú, otra pestaña).
+- Tecla **F3**: contador con fps, resolución y tope, para medir en el equipo real.
+- Comprobado: mecanismo de bajada y subida con un reloj simulado; menú y controles sin regresiones. No comprobado: fps reales en GPU integrada, ni en proyector.
+- Los visores secundarios (inspector y presentación de anatomía) tienen su propia resolución fija y no participan del ajuste automático.
+- Pendiente para más fluidez: reducir llamadas de dibujo (materiales compartidos + unión de mallas estáticas) si la medición real en el equipo de presentación lo exige.
