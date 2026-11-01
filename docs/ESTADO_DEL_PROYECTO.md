@@ -90,3 +90,8 @@ Cambios:
 - Shift = correr (3.0 m/s contra 1.65 m/s caminando).
 - Control de consola (mapeo estándar): palanca izquierda mover, derecha mirar, A usar, B agacharse, Y mochila, X diario, Start menú, L3/RB/RT correr.
 - Verificado en Chrome headless: giro con ratón, ratio de correr ~1.7x, B alterna agachado, sin errores JS.
+
+## v6 · Mirar sin clic y siguiente objetivo
+- Al caminar, mover el ratón sin pulsar nada gira la cámara; llevarlo al borde de la pantalla sigue girando. El clic sigue capturando el ratón por completo.
+- Al terminar una actividad, el mensaje y la flecha de objetivo apuntan a la siguiente («✔ Hecho · Siguiente: …» con equipo y distancia).
+- v5.1: si el navegador bloquea la API de gamepad (SecurityError), se ignora el control en lugar de romper el ciclo de dibujo.
