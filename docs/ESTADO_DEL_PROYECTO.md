@@ -103,3 +103,9 @@ Cambios:
 - Menú: una frase por opción y orden sugerido. Etiqueta de versión oculta (se ve al final del glosario).
 - Texto de objetivo y botones más grandes para proyector; se oculta el texto viejo «Arrastrar/Shift/Rueda» al caminar.
 - Pendiente: nombres de equipos en subestación y fábrica; modo presentación guiado.
+
+## v8 · Visita guiada y «qué se arregla»
+- «Explorar instalación» inicia una visita guiada de 10 paradas (planta: motor, radiador, alternador, batería, tablero de control, transferencia, secuencia de falla de red; luego subestación y CCM). Avanza con Enter/→/clic/botón A; Esc o «Salir» termina. Al final: «Hacer mantenimiento», «Repetir» o «Volver al menú».
+- Mantenimiento: tarjeta «ARREGLANDO n/12» (pieza, qué hacemos, por qué importa) y aro pulsante «AQUÍ» sobre el componente de la actividad. Tras terminar muestra «✔ LISTO» y lo aprendido.
+- El recorrido entra a subestación/CCM por la misma ruta que el menú «Zonas» (suspend33 + vista + enterZone).
+- Pendiente: probar en laptop real; modo presentación automático (apagón + transferencia narrados).

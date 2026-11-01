@@ -57922,7 +57922,9 @@ if(k==='exhaust')extra('Cámaras y tubo perforado','Las cámaras y perforaciones
  let suspended33=false,suspendedPause33=true,plantPose34=null;
  function suspend33(){if(!active)return;if(suspended33){stopWalk();return;}plantPose34={position:walk.pos.clone(),yaw:walk.yaw,pitch:walk.pitch,crouch:walk.crouch};if(walk.bag)setBag(false);stopWalk();suspendedPause33=paused;paused=false;suspended33=true;for(const cut of ductCuts)cut.o.geometry=cut.original;for(const [g,v]of practiceVisibility)g.visible=v;service.visible=false;ui.hidden=true;document.body.classList.remove('practice26');}
  function resume33(){if(!active){open();begin('guided');return;}if(!suspended33)return;suspended33=false;paused=suspendedPause33;for(const g of practiceVisibility.keys())g.visible=false;service.visible=true;cameraPreset('basement');ui.hidden=false;document.body.classList.add('practice26','walking31');walk.on=true;walk.zone='plant';document.body.classList.remove('explore34');if(plantPose34){walk.pos.copy(plantPose34.position);walk.yaw=plantPose34.yaw;walk.pitch=plantPose34.pitch;walk.crouch=plantPose34.crouch;}walk.bag=false;walk.journal=false;walk.keys.clear();draw();focus();}
- const oldUI=renderUI;renderUI=function(...a){oldUI(...a);update();};window.Maintenance={suspend33,resume33,open,begin,select,act,next,focus,runTest,recordReading,close,hint,answerQuiz,retry,state:()=>({cutTriangles:ductCuts.reduce((sum,x)=>sum+x.removed,0),active,index,step,done,tool,locked,testing,finished,records:records.slice(),attempts,quality:'D34',mode:trainMode,quiz:{...qOK},hints:hintLevel,stats:{...stat},needed:needed()}),targetScreen:id=>{const o=targets.get(id);if(!o)return null;const p=o.getWorldPosition(new T.Vector3()).project(camera),r=canvas.getBoundingClientRect();return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};}};
+ const oldUI=renderUI;renderUI=function(...a){oldUI(...a);update();};window.WalkCam={enter:z=>enterZone34(z),set(p,yaw,pitch){walk.pos.set(p[0],p[1],p[2]);walk.yaw=yaw;walk.pitch=pitch;applyWalk(0);},clean(){walk.journal=false;walk.bag=false;ui.classList.remove('fp-journal','fp-bag');},zone:()=>walk.zone};
+window.MaintInfo={get:i=>defs[i]?{title:defs[i][0],pos:defs[i][3],what:defs[i][5],place:placeName(i),why:info[i]&&info[i].why||'',learn:info[i]&&info[i].learn||'',n:defs.length}:null};
+window.Maintenance={suspend33,resume33,open,begin,select,act,next,focus,runTest,recordReading,close,hint,answerQuiz,retry,state:()=>({cutTriangles:ductCuts.reduce((sum,x)=>sum+x.removed,0),active,index,step,done,tool,locked,testing,finished,records:records.slice(),attempts,quality:'D34',mode:trainMode,quiz:{...qOK},hints:hintLevel,stats:{...stat},needed:needed()}),targetScreen:id=>{const o=targets.get(id);if(!o)return null;const p=o.getWorldPosition(new T.Vector3()).project(camera),r=canvas.getBoundingClientRect();return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};}};
 })();
 
 (function(){
@@ -58112,7 +58114,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v7 · ayudas para principiantes</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v8 · visita guiada + qué se arregla</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58205,7 +58207,7 @@ window.openGlossary=()=>{try{document.exitPointerLock?.();}catch(e){}const v=$$(
 // Menú: frase por botón y orden sugerido
 const menu=$$('gameLaunch');
 if(menu){
- const desc={gameEnter:'Recorre la planta en primera persona. Empieza aquí.',gameTraining:'Provoca una falla de red y mira cómo responde el generador.',gameAnatomy:'Ve la planta pieza por pieza, con cada parte explicada.'};
+ const desc={gameEnter:'Visita guiada: te explicamos cada parte de la planta. Empieza aquí.',gameTraining:'Provoca una falla de red y mira cómo responde el generador.',gameAnatomy:'Ve la planta pieza por pieza, con cada parte explicada.'};
  const add=(b,t)=>{if(b&&!b.querySelector('.g-desc'))b.insertAdjacentHTML('beforeend','<small class="g-desc">'+t+'</small>');};
  for(const id in desc)add($$(id),desc[id]);
  [...menu.querySelectorAll('.g-entry-actions button')].forEach(b=>{if(/Mantenimiento/i.test(b.textContent))add(b,'Tareas de mantenimiento paso a paso, como en la vida real.');});
@@ -58234,7 +58236,7 @@ function show(){
  pollId=setInterval(()=>{try{const l=navigator.getGamepads?navigator.getGamepads():[];for(const g of l)if(g&&g.buttons.some(b=>b.pressed)){hide();return;}}catch(e){clearInterval(pollId);}},150);
 }
 window.WalkWelcome={show,hide,visible:()=>!!el};
-const check=()=>{if(document.body.classList.contains('walking31')&&!window.gameMenuActive&&!(menu&&menu.open))show();};
+const check=()=>{if(document.body.classList.contains('walking31')&&!window.gameMenuActive&&!(menu&&menu.open)){if(tourIntent&&window.Tour){tourIntent=false;seen=true;window.Tour.start();}else show();}};
 new MutationObserver(check).observe(document.body,{attributes:true,attributeFilter:['class']});
 
 // Nombres de los equipos flotando sobre la planta (tecla N o botón «Nombres»)
@@ -58250,5 +58252,79 @@ requestAnimationFrame(tagLoop);
 function setTags(v){tagsOn=v;const b=$$('fpTags');if(b){b.setAttribute('aria-pressed',String(v));b.textContent='Nombres · N: '+(v?'sí':'no');}}
 window.WalkTags={toggle:()=>setTags(!tagsOn),bind(){const b=$$('fpTags');if(b){b.onclick=()=>setTags(!tagsOn);setTags(tagsOn);}},state:()=>tagsOn};
 window.addEventListener('keydown',e=>{if(e.code!=='KeyN'||e.ctrlKey||e.metaKey||e.altKey||!document.body.classList.contains('walking31')||(window.WalkWelcome&&WalkWelcome.visible()))return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;setTags(!tagsOn);});
+
+// ===== Recorrido guiado («Explorar instalación») =====
+const stops=[
+ {z:'plant',p:[1.4,1.58,4.9],t:[1.2,1.2,0],title:'Bienvenido a la planta de emergencia',text:'Cuando se va la luz de la red, esta planta produce electricidad para que la fábrica no se detenga. Vamos a conocer sus partes, una por una.'},
+ {z:'plant',p:[-.8,1.58,3.1],t:[-.8,1.2,.85],title:'Motor diésel',text:'Es el corazón de la planta. Quema diésel y hace girar un eje, igual que el motor de un camión, pero aquí lo que mueve es el alternador.'},
+ {z:'plant',p:[-2.0,1.58,2.4],t:[-2.3,1.3,0],title:'Radiador',text:'Enfría el motor. Si se llena de polvo, el motor se sobrecalienta y se apaga justo cuando más se necesita.'},
+ {z:'plant',p:[1.3,1.58,3.1],t:[1.3,1.0,.85],title:'Alternador',text:'Recibe el giro del motor y lo convierte en electricidad (480 V). Funciona como la dínamo de una bicicleta, pero enorme.'},
+ {z:'plant',p:[.4,1.58,2.8],t:[.25,.9,.9],title:'Batería de arranque',text:'Da el impulso inicial para encender el motor. Si la batería falla, el generador no arranca aunque tenga combustible.'},
+ {z:'plant',p:[2.5,1.58,3.0],t:[2.47,1.3,1.1],title:'Tablero de control del grupo',text:'Es el cerebro: vigila la red, ordena el arranque cuando falta la luz y cuida la temperatura y la presión del motor.'},
+ {z:'plant',p:[3.7,1.58,2.7],t:[3.7,1.5,.4],title:'Tablero de transferencia',text:'Es el selector: pasa la fábrica de la red al generador, y de regreso, sin que las dos fuentes estén conectadas al mismo tiempo.'},
+ {z:'plant',p:[1.4,1.58,4.9],t:[1.2,1.2,0],title:'¿Qué pasa cuando se va la luz?',text:'1) La red falla. 2) El control lo detecta. 3) El motor arranca. 4) Al estabilizarse, la transferencia conecta la fábrica al generador. 5) Al volver la red, se regresa y el motor se enfría y se apaga.'},
+ {z:'yard',p:[14,8.3,5.4],t:[16.5,9.8,-.5],title:'Subestación',text:'Aquí entra la electricidad de la red en media tensión (13.8 kV). Hay interruptores, transformadores y protecciones. Esta zona nunca se toca con el equipo energizado.'},
+ {z:'ccm',title:'Centro de control de motores (CCM)',text:'Es el tablero de la fábrica: reparte la electricidad a cada motor y lo protege de sobrecargas y cortocircuitos.'}];
+let tour=null,glideId=0,padPrev={};
+const body=document.body;
+const tc=document.createElement('div');tc.id='tourCard';tc.hidden=true;document.body.append(tc);
+const cs=document.createElement('style');cs.textContent=`
+body.touring #work26 .w-top,body.touring #fpNav,body.touring .fp-hud,body.touring .fp-touch,body.touring #fpTarget,body.touring #fpCross,body.touring #fixCard,body.touring #fixRing{display:none!important}
+#tourCard{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:2147482000;width:min(820px,94vw);background:#0b1722f4;border:1px solid #2b5362;border-top:4px solid #efc474;border-radius:10px;padding:18px 24px;color:#edf5f5;font-family:system-ui,Segoe UI,Arial,sans-serif;box-shadow:0 14px 44px #000a}
+#tourCard .tc-n{font:700 12px ui-monospace,Consolas,monospace;letter-spacing:2px;color:#efc474}
+#tourCard h3{margin:4px 0 6px;font-size:24px;color:#fff!important;text-transform:none!important;letter-spacing:normal!important}#tourCard p{margin:0;font-size:17px;line-height:1.5;color:#d6e6e8}
+#tourCard .tc-b{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
+#tourCard button{background:#12303d;border:1px solid #2b5362;color:#e9fffb;border-radius:6px;padding:9px 16px;font:700 14px system-ui,Segoe UI,Arial,sans-serif;cursor:pointer}
+#tourCard button.pri{background:#efc474;color:#10202a;border-color:#efc474}#tourCard .tc-k{margin-left:auto;color:#7f9ca3;font-size:12px}
+@media(min-width:1500px){#tourCard h3{font-size:30px}#tourCard p{font-size:21px}#tourCard button{font-size:16px}}
+#fixCard{position:fixed;left:14px;top:206px;z-index:31;width:min(340px,40vw);background:#0b1722f0;border:1px solid #2b5362;border-left:4px solid #efc474;border-radius:8px;padding:11px 14px;color:#edf5f5;font-family:system-ui,Segoe UI,Arial,sans-serif;font-size:14px;line-height:1.4}
+#fixCard .fx-h{display:flex;justify-content:space-between;gap:8px;font:700 11px ui-monospace,Consolas,monospace;letter-spacing:1.5px;color:#efc474}
+#fixCard .fx-h button{background:none;border:0;color:#9fc5cb;font-size:14px;cursor:pointer;padding:0 4px}
+#fixCard b.fx-t{display:block;font-size:17px;margin:3px 0 6px}#fixCard .fx-r{margin-top:6px;color:#cfe2e4}#fixCard .fx-r i{font-style:normal;font-weight:700;color:#efc474}
+#fixCard.ok{border-left-color:#5fd6a0}
+#fixRing{position:fixed;z-index:29;width:84px;height:84px;margin:-42px 0 0 -42px;border:4px solid #efc474;border-radius:50%;pointer-events:none;box-shadow:0 0 18px #efc474aa;animation:fxp 1.2s ease-in-out infinite;display:none}
+#fixRing b{position:absolute;left:50%;top:-30px;transform:translateX(-50%);background:#efc474;color:#10202a;font:800 12px system-ui,Arial,sans-serif;padding:3px 8px;border-radius:4px;white-space:nowrap}
+@keyframes fxp{0%,100%{transform:scale(.88);opacity:.85}50%{transform:scale(1.12);opacity:1}}
+`;document.head.append(cs);
+function enterZ(z){if(z==='plant'){try{Maintenance.resume33();}catch(e){}if(WalkCam.zone()!=='plant')WalkCam.enter('plant');}else{try{Maintenance.suspend33();}catch(e){}document.querySelector('#viewbar [data-nav="'+z+'"]')?.click();WalkCam.enter(z);}body.classList.add('touring');}
+function aim(p,t){const dx=t[0]-p[0],dy=t[1]-p[1],dz=t[2]-p[2];return {yaw:Math.atan2(-dx,-dz),pitch:Math.max(-1.25,Math.min(1.25,Math.atan2(dy,Math.hypot(dx,dz))))};}
+function glide(p,t){cancelAnimationFrame(glideId);const s=Walk31.state(),a=aim(p,t);let dy=a.yaw-s.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const f=s.position,t0=performance.now(),ms=1100;
+ const step=now=>{const k=Math.min(1,(now-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;WalkCam.set([f[0]+(p[0]-f[0])*e,p[1],f[2]+(p[2]-f[2])*e],s.yaw+dy*e,s.pitch+(a.pitch-s.pitch)*e);if(k<1)glideId=requestAnimationFrame(step);};glideId=requestAnimationFrame(step);}
+function render(){const st=stops[tour.i];const last=tour.i>=stops.length;
+ if(last){tc.innerHTML='<div class="tc-n">FIN DEL RECORRIDO</div><h3>Ya conoces la instalación</h3><p>¿Qué quieres hacer ahora?</p><div class="tc-b"><button class="pri" id="tcMant">Hacer mantenimiento</button><button id="tcRep">Repetir recorrido</button><button id="tcMenu">Volver al menú</button></div>';
+  $$('tcMant').onclick=()=>exitTour(true);$$('tcRep').onclick=()=>goStop(0);$$('tcMenu').onclick=()=>{exitTour(false);window.GameInterface&&GameInterface.openMenu(true);};return;}
+ tc.innerHTML='<div class="tc-n">PARADA '+(tour.i+1)+' DE '+stops.length+'</div><h3>'+st.title+'</h3><p>'+st.text+'</p><div class="tc-b"><button id="tcPrev"'+(tour.i?'':' disabled')+'>◀ Anterior</button><button class="pri" id="tcNext">Siguiente ▶</button><button id="tcExit">Salir del recorrido</button><span class="tc-k">Enter / → siguiente · ← anterior · Esc salir</span></div>';
+ $$('tcPrev').onclick=()=>goStop(tour.i-1);$$('tcNext').onclick=()=>goStop(tour.i+1);$$('tcExit').onclick=()=>exitTour(false);}
+function goStop(i){if(!tour)return;i=Math.max(0,Math.min(stops.length,i));tour.i=i;if(i<stops.length){const st=stops[i];
+  if(WalkCam.zone()!==st.z){enterZ(st.z);WalkCam.clean();body.classList.add('touring');if(st.p){const a=aim(st.p,st.t);WalkCam.set(st.p,a.yaw,a.pitch);}}
+  else if(st.p)glide(st.p,st.t);}
+ render();}
+function startTour(){if(tour)return;try{document.exitPointerLock?.();}catch(e){}tour={i:0};body.classList.add('touring');WalkCam.clean();tc.hidden=false;
+ if(WalkCam.zone()!=='plant')enterZ('plant');const st=stops[0],a=aim(st.p,st.t);WalkCam.set(st.p,a.yaw,a.pitch);WalkCam.clean();render();}
+function exitTour(toMaint){if(!tour)return;cancelAnimationFrame(glideId);tour=null;tc.hidden=true;if(WalkCam.zone()!=='plant')enterZ('plant');body.classList.remove('touring');}
+window.Tour={start:startTour,exit:()=>exitTour(false),active:()=>!!tour,goto:goStop};
+window.addEventListener('keydown',e=>{if(!tour||e.ctrlKey||e.metaKey||e.altKey)return;const c=e.code;
+ if(c==='Enter'||c==='Space'||c==='ArrowRight'||c==='NumpadEnter'){if(tour.i<stops.length)goStop(tour.i+1);}
+ else if(c==='ArrowLeft'||c==='Backspace'){goStop(tour.i-1);}
+ else if(c==='Escape'){exitTour(false);}
+ else return;e.preventDefault();e.stopImmediatePropagation();},true);
+setInterval(()=>{if(!tour)return;try{const l=navigator.getGamepads?navigator.getGamepads():[];const g=[...l].find(x=>x&&x.connected);if(!g)return;const b=i=>!!(g.buttons[i]&&g.buttons[i].pressed);
+ const now={n:b(0)||b(5),p:b(1)||b(4),x:b(9)};if(now.n&&!padPrev.n&&tour.i<stops.length)goStop(tour.i+1);if(now.p&&!padPrev.p)goStop(tour.i-1);if(now.x&&!padPrev.x)exitTour(false);padPrev=now;}catch(e){}},120);
+let tourIntent=false;const ge=$$('gameEnter');if(ge)ge.addEventListener('click',e=>{if(e.isTrusted)tourIntent=true;},true);
+
+// ===== Mantenimiento: qué se arregla ahora =====
+const fx=document.createElement('div');fx.id='fixCard';fx.hidden=true;document.body.append(fx);
+const ring=document.createElement('div');ring.id='fixRing';ring.innerHTML='<b>AQUÍ</b>';document.body.append(ring);
+let fxKey='',fxMin=false;const rv=new T.Vector3();
+function fixLoop(){requestAnimationFrame(fixLoop);let st=null,ms=null;try{st=Walk31.state();ms=Maintenance.state();}catch(e){}
+ const on=document.body.classList.contains('walking31')&&!tour&&st&&st.active&&st.zone==='plant'&&ms&&ms.active&&!ms.finished&&!st.journal&&!st.bag&&!(window.WalkWelcome&&WalkWelcome.visible());
+ fx.hidden=!on;if(!on){ring.style.display='none';return;}
+ const info=window.MaintInfo.get(ms.index);if(!info){fx.hidden=true;return;}
+ const key=ms.index+'|'+ms.done+'|'+fxMin;if(key!==fxKey){fxKey=key;fx.classList.toggle('ok',!!ms.done);
+  fx.innerHTML='<div class="fx-h"><span>'+(ms.done?'✔ LISTO':'ARREGLANDO')+' · '+(ms.index+1)+'/'+info.n+'</span><button id="fxMin" title="Mostrar u ocultar">'+(fxMin?'＋':'–')+'</button></div><b class="fx-t">'+info.title+'</b>'+(fxMin?'':'<div class="fx-r"><i>Pieza:</i> '+info.place+'</div><div class="fx-r"><i>Qué hacemos:</i> '+info.what+'</div><div class="fx-r"><i>Por qué importa:</i> '+(ms.done&&info.learn?info.learn:info.why)+'</div>');
+  $$('fxMin').onclick=()=>{fxMin=!fxMin;};}
+ const w=innerWidth,h=innerHeight,cp=st.position;rv.set(info.pos[0],info.pos[1],info.pos[2]).project(camera);const d=Math.hypot(info.pos[0]-cp[0],info.pos[2]-cp[2]);
+ const vis=!ms.done&&rv.z<1&&Math.abs(rv.x)<.95&&Math.abs(rv.y)<.9&&d<14;ring.style.display=vis?'block':'none';if(vis){ring.style.left=((rv.x+1)/2*w)+'px';ring.style.top=((1-rv.y)/2*h)+'px';}}
+requestAnimationFrame(fixLoop);
 })();
 </script></body></html>
