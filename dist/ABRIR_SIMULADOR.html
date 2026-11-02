@@ -58118,7 +58118,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.10 · agarre de herramientas</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.11 · porta herramientas y animaciones</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58792,11 +58792,11 @@ const DUR={mano:.45,linterna:.9,pano:1.1,llave:1.4,cepillo:1.7,multi:1.1,candado
 function stepNear(){const s=step();if(!s)return false;const {d,a}=aimInfo(s);return d<2.6&&a<.45;}
 function aimInfo(s){const wp=new T.Vector3(s.p[0],s.p[1],s.p[2]),to=wp.clone().sub(camera.position),d=to.length(),fwd=new T.Vector3();camera.getWorldDirection(fwd);return{d,a:to.normalize().angleTo(fwd)};}
 function wrong(msg){errs++;stepErrs++;streak=0;sfx('err');say(msg,'bad');kick.err=1;paintBar();paintPanel();}
-function begin(){if(!on||choice||hold)return;const s=step();if(!s)return;const {d,a}=aimInfo(s);
+function begin(){if(!on||choice||hold||beltWant)return;const s=step();if(!s)return;const {d,a}=aimInfo(s);
  if(d>2.6){say('Acércate más: estás a '+d.toFixed(1)+' m.','bad');return;}
  if(a>.32){say('Mira hacia la señal amarilla y vuelve a pulsar.','bad');return;}
  if(tool!==s.tool){wrong(s.tool==='mano'?'Aquí necesitas las manos libres: pulsa Q para guardar lo que llevas.':'Con eso no. Aquí necesitas: '+TL[s.tool]+'. Mantén Q para sacarla de tu porta herramientas.');return;}
- hold={s,t:0,dur:DUR[tool]||.6,tick:0};el.ring.style.display='block';el.cross.style.display='none';}
+ hold={s,t:0,dur:DUR[tool]||.6,tick:0};if(tool==='cuaderno')lastLines=0;el.ring.style.display='block';el.cross.style.display='none';}
 function cancel(msg){if(!hold)return;hold=null;el.ring.style.display='none';if(msg)say(msg,'bad');}
 function complete(s){hold=null;el.ring.style.display='none';streak++;stepErrs=0;sfx('ok');say('✔ '+s.ok,'ok');kick.ok=1;
  try{if(streak>=3)HUD.float('🔥 Racha ×'+streak);else HUD.float('+5');}catch(e){}
@@ -58888,11 +58888,15 @@ function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMate
  else if(k==='repuesto'){add(cz(.04,.04,.1,24),m('#d9d2b6',.85,0),0,0,-.07);add(cz(.042,.042,.012,24),dark,0,0,-.014);add(cz(.042,.042,.012,24),dark,0,0,-.126);
   for(let i=0;i<5;i++)add(new T.TorusGeometry(.0405,.0013,4,24),m('#8e8a74',.9,0),0,0,-.04-i*.017);add(cz(.014,.014,.014,12),steel,0,0,-.134);}
  else if(k==='cuaderno'){add(new T.BoxGeometry(.088,.016,.12),m('#1b3d6b',.8,0),0,-.02,-.06);add(new T.BoxGeometry(.081,.011,.113),m('#f6f1dc',.95,0),.002,-.017,-.06);
-  add(new T.BoxGeometry(.006,.018,.12),dark,.032,-.02,-.06);add(new T.BoxGeometry(.088,.0015,.004),yel,0,-.0115,-.09);add(cz(.0025,.0025,.12,5),m('#b3261e',.8,0),-.025,-.0105,-.06);}
+  add(new T.BoxGeometry(.006,.018,.12),dark,.032,-.02,-.06);add(new T.BoxGeometry(.088,.0015,.004),yel,0,-.0115,-.09);add(cz(.0025,.0025,.12,5),m('#b3261e',.8,0),-.025,-.0105,-.06);g.userData.lines=[];for(let i=0;i<6;i++){const ln=add(new T.BoxGeometry(.062,.0007,.0032),m('#10233f',.6,0),.003,-.0109,-.02-i*.0155);ln.visible=false;g.userData.lines.push(ln);}}
+ else if(k==='lapiz'){add(cz(.0055,.0055,.13,10),yel,0,0,-.05);add(cz(.0055,.0012,.022,10),m('#c9a27a',.8,0),0,0,-.126);add(cz(.0062,.0062,.014,10),m('#d98a96',.8,0),0,0,.02);}
+ else if(k==='sonda'){add(cz(.0075,.0075,.11,10),dark,0,0,-.04);add(cz(.0075,.0018,.045,10),steel,0,0,-.118);add(cz(.0018,.0018,.14,6),red,0,0,.09);}
  return g;}
 let propG=null,propK='';
 // Cómo se agarra cada herramienta: el mango queda atravesado en la palma, bajo los dedos curvados, y la parte útil apunta hacia delante y hacia dentro.
-const GRIP={def:{s:.62,rx:.35,ry:1.0,p:[.006,-.03,-.012]},cepillo:{s:.62,rx:.3,ry:.95,p:[.006,-.03,-.01]},llave:{s:.7,rx:.3,ry:1.05,p:[.006,-.03,.0]},linterna:{s:.7,rx:.2,ry:1.05,p:[.006,-.03,.0]},multi:{s:.65,rx:.1,ry:.6,p:[.0,-.036,-.02]},cuaderno:{s:.7,rx:-.2,ry:.3,rz:0,p:[.0,-.04,-.03]},pano:{s:.7,rx:0,ry:.4,p:[.0,-.034,-.03]},candado:{s:.7,rx:.2,ry:.8,p:[.0,-.034,-.02]},repuesto:{s:.62,rx:.2,ry:1.2,p:[.0,-.04,-.02]}};
+const GRIP={lapiz:{s:1,rx:.35,ry:.8,p:[.004,-.03,-.012]},sonda:{s:.9,rx:.3,ry:.75,p:[.004,-.03,-.012]},def:{s:.62,rx:.35,ry:1.0,p:[.006,-.03,-.012]},cepillo:{s:.62,rx:.3,ry:.95,p:[.006,-.03,-.01]},llave:{s:.7,rx:.3,ry:1.05,p:[.006,-.03,.0]},linterna:{s:.7,rx:.2,ry:1.05,p:[.006,-.03,.0]},multi:{s:.65,rx:.1,ry:.6,p:[.0,-.036,-.02]},cuaderno:{s:.7,rx:-.2,ry:.3,rz:0,p:[.0,-.04,-.03]},pano:{s:.7,rx:0,ry:.4,p:[.0,-.034,-.03]},candado:{s:.7,rx:.2,ry:.8,p:[.0,-.034,-.02]},repuesto:{s:.62,rx:.2,ry:1.2,p:[.0,-.04,-.02]}};
+const SM={x:0,y:0,z:0},SL={x:0,y:0,z:0};let LP=null,LPK='',lastLines=0;
+function setLeft(k){if(k===LPK||!hands)return;LPK=k;if(LP){hands.remove(LP);LP=null;}if(!k)return;LP=prop(k);const c=k==='cuaderno';LP.scale.setScalar(c?1.7:1.5);LP.rotation.set(c?1.2:1.1,c?.22:.2,c?.04:0);hands.add(LP);lastLines=0;}
 function setProp(k){if(!HR||k===propK)return;propK=k;if(propG){HR.remove(propG);propG=null;}if(k==='mano')return;propG=prop(k);const gp=GRIP[k]||GRIP.def;propG.scale.setScalar(gp.s);propG.rotation.set(gp.rx,gp.ry,gp.rz||0);propG.position.set(gp.p[0],gp.p[1],gp.p[2]);HR.add(propG);}
 
 // ---- Porta herramientas puesto en la cadera. Mantén Q: sube a la vista; rueda del ratón, flechas o LB/RB cambian; al soltar Q sacas la herramienta marcada. ----
@@ -58918,10 +58922,11 @@ function updateBelt(dt,show){if(!beltG)return;beltG.visible=show;if(!show){el.ta
  beltG.position.set(0,-.60+beltOpen*.31,-.52);beltG.rotation.x=-.5-beltOpen*.3;
  POUCH.forEach((po,i)=>{po.pr.visible=po.k!==tool;const sel=beltWant&&i===hsel;po.pr.position.y+=((sel?.045:0)-po.pr.position.y)*Math.min(1,dt*14);po.g.position.z+=((sel?.03:.004)-po.g.position.z)*Math.min(1,dt*14);});
  const s=step(),hint=!!(s&&stepErrs>=2&&tool!==s.tool&&s.tool!=='mano');const b=el.tags.children[0];
- let idx=-1,txt='';if(beltOpen>.5&&beltWant){idx=hsel;const tb=TOOLS.find(t=>t[0]===POUCH[idx].k);txt='<i>◀ ▶</i>'+tb[1];}else if(hint){idx=POUCH.findIndex(p=>p.k===s.tool);const tb=TOOLS.find(t=>t[0]===s.tool);txt='<i>Q</i>'+tb[1];}
- for(let j=1;j<el.tags.children.length;j++)el.tags.children[j].style.display='none';
- if(idx>=0){const v=new T.Vector3();POUCH[idx].g.getWorldPosition(v);v.y+=.07;v.project(camera);b.innerHTML=txt;b.style.display='block';b.style.left=((v.x+1)/2*innerWidth)+'px';b.style.top=((1-v.y)/2*innerHeight-4)+'px';b.className=hint&&!beltWant?'need':'sel';el.tags.style.display='block';}else el.tags.style.display='none';}
-function beltOpenNow(){if(beltWant)return;beltWant=1;hsel=selIndex(tool==='mano'?POUCH[0]&&POUCH[0].k:tool);}
+ const open=beltOpen>.5&&beltWant,kids=el.tags.children;for(let j=0;j<kids.length;j++)kids[j].style.display='none';const v=new T.Vector3();
+ if(open){POUCH.forEach((po,i)=>{const b=kids[TOOLS.findIndex(t=>t[0]===po.k)];po.g.getWorldPosition(v);const q=v.clone().project(camera);b.style.display='block';b.style.left=((q.x+1)/2*innerWidth)+'px';b.style.top=((1-q.y)/2*innerHeight-34-(i%2?28:0))+'px';b.className=i===hsel?'sel':'';});el.tags.style.display='block';}
+ else if(hint){const i=POUCH.findIndex(p=>p.k===s.tool),b=kids[TOOLS.findIndex(t=>t[0]===s.tool)];if(i>=0&&b){POUCH[i].g.getWorldPosition(v);v.project(camera);b.style.display='block';b.style.left=((v.x+1)/2*innerWidth)+'px';b.style.top=((1-v.y)/2*innerHeight-34)+'px';b.className='need';el.tags.style.display='block';}}
+ else el.tags.style.display='none';}
+function beltOpenNow(){if(beltWant)return;beltWant=1;try{say('Elige con 2–9, la rueda o las flechas · E confirma · Q cierra','ok');}catch(e){}hsel=selIndex(tool==='mano'?POUCH[0]&&POUCH[0].k:tool);}
 function beltRelease(){if(!beltWant)return;beltWant=0;const k=POUCH[hsel]&&POUCH[hsel].k;if(k&&k!==tool)setTool(k);}
 // ---- Tapete de herramientas junto a la bolsa del piso: te agachas y tomas con la mira la que necesitas ----
 const MAT=[.15,3.98],PK_POS=[.15,1.0,4.55];let matG=null,pk=null,pkAim=-1,pkPrev=null;const PKI=[];
@@ -58960,13 +58965,29 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  phase+=dt*(5+sp*7);const bob=Math.sin(phase)*.012*sp,sway=Math.cos(phase*.5)*.01*sp,idle=Math.sin(now/900)*.003;
  kick.ok=Math.max(0,kick.ok-dt*3.2);kick.err=Math.max(0,kick.err-dt*3);kick.draw=Math.max(0,kick.draw-dt*3.2);
  const push=Math.sin(kick.ok*Math.PI)*.07,dip=Math.sin(kick.draw*Math.PI)*.22,shake=Math.sin(kick.err*32)*.02*kick.err;
- let hx=0,hy=0,hz=0,hr=0;if(hold){const k=now/1000;if(tool==='cepillo'){hx=Math.sin(k*24)*.04;hz=Math.sin(k*24)*.012;}else if(tool==='pano'){hx=Math.sin(k*18)*.05;hy=Math.sin(k*9)*.01;}else if(tool==='llave'){hr=Math.sin(k*13)*.4;hz=-.03;}else if(tool==='linterna'){hx=Math.sin(k*3)*.03;hz=-.03;}else{hz=-.05+Math.sin(k*10)*.01;}}
- const hasModel=tool!=='mano';
+ const k=now/1000,pg=hold?Math.min(1,hold.t/hold.dur):0;let tx=0,ty=0,tz=0,tr=0,ox=0,oy=0,oz=0,orr=0;
+ if(hold){
+  if(tool==='cepillo'){ox=Math.sin(k*24)*.04;oz=Math.sin(k*24)*.012;}
+  else if(tool==='pano'){ox=Math.sin(k*18)*.05;oy=Math.sin(k*9)*.01;}
+  else if(tool==='llave'){orr=Math.sin(k*13)*.4;tz=-.03;}
+  else if(tool==='linterna'){ox=Math.sin(k*3)*.03;tz=-.03;}
+  else if(tool==='cuaderno'){tx=-.27;ty=-.02;tz=-.03;ox=Math.sin(k*15)*.014;oy=Math.cos(k*9.5)*.008;oz=Math.sin(k*3)*.004;orr=Math.sin(k*15)*.08;}
+  else if(tool==='multi'){tx=-.1;tz=-.1;ox=Math.sin(k*25)*.003;oy=Math.sin(k*17)*.003;}
+  else if(tool==='candado'){tz=-.06;orr=Math.sin(k*7)*.18;oz=Math.sin(k*14)*.01;}
+  else if(tool==='repuesto'){tz=-.05;orr=Math.sin(k*5)*.6;}
+  else if(tool==='mano'){const tw=hold.s&&/Gira|Retira|Insert|Abre/i.test(hold.s.t);if(tw){orr=Math.sin(k*6)*.6;tz=-.06;}else{tz=-.09+Math.sin(k*10)*.015;}}
+  else{tz=-.05+Math.sin(k*10)*.01;}
+ }
+ const sm=Math.min(1,dt*10);SM.x+=(tx-SM.x)*sm;SM.y+=(ty-SM.y)*sm;SM.z+=(tz-SM.z)*sm;
+ const hx=SM.x+ox,hy=SM.y+oy,hz=SM.z+oz,hr=orr;
+ const hasModel=tool!=='mano',leftK=(tool==='cuaderno'||tool==='multi')?tool:'',rightK=tool==='cuaderno'?'lapiz':tool==='multi'?'sonda':tool;
+ const sl=Math.min(1,dt*8);SL.x+=((leftK?.1:0)-SL.x)*sl;SL.y+=((leftK?.12:0)-SL.y)*sl;SL.z+=((leftK?.05:0)-SL.z)*sl;
  HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.09:0),HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
- HL.position.set(HPL.x-sway,HPL.y+bob*.8-idle-dip*.7,HPL.z);HL.rotation.set(.95,.1,0);
- pose(HR,hasModel?(tool==='cuaderno'||tool==='pano'?.6:1.0):.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.3+(tool==='cuaderno'?.3:0));
+ HL.position.set(HPL.x-sway+SL.x,HPL.y+bob*.8-idle-dip*.7+SL.y,HPL.z+SL.z);HL.rotation.set(.95+(leftK?.25:0),.1+(leftK?.3:0),leftK?.12:0);
+ pose(HR,hasModel?(tool==='cuaderno'||tool==='multi'?.85:tool==='pano'?.6:1.0):.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,leftK?.7:.3);
+ setProp(rightK);setLeft(leftK);
+ if(LP){LP.position.set(HL.position.x+(LPK==='cuaderno'?.012:.0),HL.position.y+(LPK==='cuaderno'?.06:.05),HL.position.z-.01);const ln=LP.userData.lines;if(ln){if(hold&&tool==='cuaderno'){lastLines=Math.max(lastLines,pg);}const n=lastLines*6;ln.forEach((l,i)=>{const f=Math.max(0,Math.min(1,n-i));l.visible=f>0;l.scale.x=Math.max(.02,f);l.position.x=.003-.031*(1-f);});}}
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
- setProp(tool);
  if(false&&heldG&&heldBase){heldG.position.set(heldBase.p.x+sway+hx+shake,heldBase.p.y+bob+idle-dip+hy,heldBase.p.z+hz-push);heldG.rotation.set(heldBase.r.x,heldBase.r.y,heldBase.r.z+hr);}
 }
 requestAnimationFrame(animate);
@@ -58976,20 +58997,22 @@ window.addEventListener('keydown',e=>{if(!on)return;
  if(choice){if(/^Digit[1-9]$/.test(e.code)){const b=$$('rtOpts')&&$$('rtOpts').children[+e.code.slice(5)-1];if(b){e.preventDefault();e.stopImmediatePropagation();b.click();}}return;}
  if(el.intro.style.display==='grid'||el.end.style.display==='grid')return;
  if(pk){if(/^(KeyW|KeyA|KeyS|KeyD|ArrowUp|ArrowDown|Space|ShiftLeft)$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();}if(e.code==='ArrowLeft'){e.preventDefault();e.stopImmediatePropagation();pickStep(-1);}else if(e.code==='ArrowRight'){e.preventDefault();e.stopImmediatePropagation();pickStep(1);}else if(e.code==='KeyE'||e.code==='Enter'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)pickTake();}else if(e.code==='Escape'||e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();closePick();}return;}
- if(/^Digit[1-9]$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();const tt=TOOLS[+e.code.slice(5)-1];if(tt)setTool(tt[0]);}
- else if(e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)beltOpenNow();}
+ if(/^Digit[1-9]$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();const tt=TOOLS[+e.code.slice(5)-1];if(tt){setTool(tt[0]);beltWant=0;}}
+ else if(e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat){if(beltWant)beltRelease();else beltOpenNow();}}
+ else if(beltWant&&(e.code==='KeyE'||e.code==='Enter'||e.code==='Space')){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)beltRelease();}
+ else if(beltWant&&e.code==='Escape'){beltWant=0;}
  else if(beltWant&&(e.code==='ArrowLeft'||e.code==='ArrowRight')){e.preventDefault();e.stopImmediatePropagation();beltStep(e.code==='ArrowLeft'?-1:1);}
  else if(e.code==='KeyG'){e.preventDefault();e.stopImmediatePropagation();if(tool!=='mano'){setTool('mano');say('Guardaste la herramienta: manos libres.','ok');}}
  else if(e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat){let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!(stepNear()))openPick();else begin();}}
 },true);
-window.addEventListener('keyup',e=>{if(on&&e.code==='KeyQ'){e.stopImmediatePropagation();beltRelease();}if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
+window.addEventListener('keyup',e=>{if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
 window.addEventListener('wheel',e=>{if(on&&beltWant){e.preventDefault();e.stopImmediatePropagation();beltStep(e.deltaY>0?1:-1);}},{capture:true,passive:false});
 window.addEventListener('pointerup',()=>{if(on&&hold&&!choice)cancel();},true);
-window.addEventListener('pointerdown',e=>{if(!on||choice||e.button!==0)return;if(document.pointerLockElement&&e.target===document.pointerLockElement){e.preventDefault();e.stopImmediatePropagation();if(pk)pickTake();else{let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!stepNear())openPick();else begin();}}},true);
+window.addEventListener('pointerdown',e=>{if(!on||choice||e.button!==0)return;if(document.pointerLockElement&&e.target===document.pointerLockElement){e.preventDefault();e.stopImmediatePropagation();if(beltWant)beltRelease();else if(pk)pickTake();else{let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!stepNear())openPick();else begin();}}},true);
 let pv={a:0,l:0,r:0};setInterval(()=>{if(!on)return;let g=null;try{const l=navigator.getGamepads?navigator.getGamepads():[];for(const x of l)if(x){g=x;break;}}catch(e){return;}if(!g)return;
  const a=g.buttons[0]&&g.buttons[0].pressed?1:0,l=g.buttons[4]&&g.buttons[4].pressed?1:0,r=g.buttons[5]&&g.buttons[5].pressed?1:0,i=TOOLS.findIndex(t=>t[0]===tool);
- if(a&&!pv.a&&pk){pickTake();}else if(a&&!pv.a){if(choice){const b=document.activeElement;b&&b.click&&b.click();}else begin();}if(!a&&pv.a&&hold)cancel();
- if(l&&!pv.l)beltOpenNow();if(!l&&pv.l)beltRelease();if(beltWant&&r&&!pv.r)beltStep(1);pv={a,l,r};},90);
+ if(a&&!pv.a&&beltWant){beltRelease();}else if(a&&!pv.a&&pk){pickTake();}else if(a&&!pv.a){if(choice){const b=document.activeElement;b&&b.click&&b.click();}else begin();}if(!a&&pv.a&&hold)cancel();
+ if(l&&!pv.l){if(beltWant)beltRelease();else beltOpenNow();}if(beltWant&&r&&!pv.r)beltStep(1);pv={a,l,r};},90);
 // La rutina empieza sola cuando el recorrido en planta arranca desde el menú (a menos que se haya elegido la práctica clásica).
 window.RutinaMantenimiento={start,leave,begin,state:()=>({on,tarea:ti,paso:si,errores:errs,estrellas:tscore.slice()}),skip:()=>{if(!on)return;si=TASKS[ti].steps.length;finishTask();}};
 setInterval(()=>{if(on||window.__rutinaClasica)return;let w=null,m=null;try{w=Walk31.state();m=Maintenance.state();}catch(e){}

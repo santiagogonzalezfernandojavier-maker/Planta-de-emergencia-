@@ -187,3 +187,7 @@ Cambios:
 ## v12.10 — Agarre de herramientas
 - Cada herramienta tiene su postura en `GRIP` (escala, giro y posición): el mango queda atravesado en la palma bajo los dedos cerrados y la parte útil apunta hacia delante y hacia dentro. Con herramienta, los dedos cierran por completo (libreta y paño, a medias).
 - Mangas y puños sin tapas visibles (cilindros abiertos y largos), para que el antebrazo salga por abajo de la pantalla.
+
+## v12.11 — Porta herramientas más fácil y una animación por actividad
+- Q abre y cierra el porta herramientas (ya no hay que mantenerla). Al abrirse muestra todas las herramientas con su número; 2–9 eligen directo, rueda o flechas mueven la selección, E/Enter/clic confirman, Esc o Q cierran. Con LB abre, RB cambia, A confirma.
+- Animaciones por actividad: libreta (la izquierda la sostiene, la derecha escribe con lápiz y van apareciendo renglones), multímetro (la izquierda lo sostiene y la derecha apoya la punta), candado (giro corto y empuje), repuesto (giro lento), manos (girar o presionar según el paso), además de cepillo, paño, llave y linterna.
