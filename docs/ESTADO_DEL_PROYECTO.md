@@ -139,3 +139,4 @@ Cambios:
 - v11.3: sonido sintetizado (motor según rpm, alarma al perder la red, arranque, relevador de transferencia, pasos). Respeta el botón ♪.
 - v11.4: el panel de misión sale solo durante una misión (título, tiempo, 3 objetivos, resultado y botón Elegir misión); pantalla de planta sin ese panel el resto del tiempo.
 - v11.5: señal amarilla «Ve a: …» con distancia sobre el siguiente objetivo del mantenimiento; flecha en el borde si está fuera de pantalla.
+- v11.6: la calidad automática ya no baja de 80 % de resolución, empieza a la resolución real de la pantalla y puede subir hasta 125-150 % si la laptop va sobrada (antes se veía borroso de lejos).
