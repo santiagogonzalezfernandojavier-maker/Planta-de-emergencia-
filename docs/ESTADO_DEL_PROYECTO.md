@@ -118,3 +118,7 @@ Cambios:
 ## v9.1 · Visita solo de la planta y sin protector
 - La visita guiada queda en 8 paradas, solo la planta de emergencia (se quitaron subestación y CCM); luego «Ver el despiece».
 - Se quita el panel (ducto/difusor del radiador, 140 triángulos de la geometría estática combinada) que tapaba el radiador. Se reaplica cada 1.5 s durante el primer minuto y al empezar a caminar, porque la geometría combinada se reconstruye después de la carga.
+
+## v10 · Despiece directo
+- Se elimina la visita guiada. «Despiece de la planta» (antes «Explorar instalación») abre el despiece con entrada suave (desvanecimiento). El botón «Anatomía» se oculta porque hacía lo mismo.
+- Orden sugerido en el menú: Despiece → Misión → Mantenimiento.
