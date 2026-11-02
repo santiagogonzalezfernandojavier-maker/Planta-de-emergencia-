@@ -120,17 +120,18 @@ function paintBar(){const s=step();[...el.bar.children].forEach(b=>{b.classList.
 function paintPanel(){const t=TASKS[ti];if(!t)return;
  el.panel.innerHTML='<div class="cb-p"><div class="rt-k"><span>TAREA '+(ti+1)+' DE '+TASKS.length+'</span><span>'+(streak>=2?'🔥 racha ×'+streak:'')+'</span></div><h3>'+t.n+'</h3><ol>'+t.steps.map((x,i)=>'<li class="'+(i<si?'done':i===si?'cur':'')+'">'+x.t+'</li>').join('')+'</ol><div class="rt-w">'+t.why+'</div><div class="cb-dots">'+TASKS.map((_,i)=>'<i class="'+(i<ti?'on':'')+(i===ti?' cur':'')+'"></i>').join('')+'</div><button class="rt-x" id="rtExit">Salir</button></div>';
  $$('rtExit').onclick=()=>leave(true);
- const s=step();window.__rutinaTarget=s?{pos:s.p,label:s.at,verb:'Aquí: '}:null;paintBar();}
+ const s=step();window.__rutinaTarget=s?(tool!==s.tool&&s.tool!=='mano'?{pos:[MAT[0],.2,MAT[1]],label:'Tapete de herramientas',verb:'Ve al '}:{pos:s.p,label:s.at,verb:'Aquí: '}):null;paintBar();}
 function stars(e){return e===0?3:e<=1?2:1;}
 function finishTask(){stepErrs=0;const sc=stars(errs);tscore.push(sc);try{HUD.award(20*sc,'tarea '+(ti+1));}catch(e){}errs=0;ti++;si=0;
  if(ti>=TASKS.length){showEnd();return;}paintPanel();}
 const DUR={mano:.45,linterna:.9,pano:1.1,llave:1.4,cepillo:1.7,multi:1.1,candado:.8,repuesto:1.0,cuaderno:.8};
+function stepNear(){const s=step();if(!s)return false;const {d,a}=aimInfo(s);return d<2.6&&a<.45;}
 function aimInfo(s){const wp=new T.Vector3(s.p[0],s.p[1],s.p[2]),to=wp.clone().sub(camera.position),d=to.length(),fwd=new T.Vector3();camera.getWorldDirection(fwd);return{d,a:to.normalize().angleTo(fwd)};}
 function wrong(msg){errs++;stepErrs++;streak=0;sfx('err');say(msg,'bad');kick.err=1;paintBar();paintPanel();}
 function begin(){if(!on||choice||hold)return;const s=step();if(!s)return;const {d,a}=aimInfo(s);
  if(d>2.6){say('Acércate más: estás a '+d.toFixed(1)+' m.','bad');return;}
  if(a>.32){say('Mira hacia la señal amarilla y vuelve a pulsar.','bad');return;}
- if(tool!==s.tool){wrong('Con eso no. Aquí necesitas: '+TL[s.tool]+'.');return;}
+ if(tool!==s.tool){wrong(s.tool==='mano'?'Aquí necesitas las manos libres: pulsa Q para guardar lo que llevas.':'Con eso no. Aquí necesitas: '+TL[s.tool]+'. Ve al tapete de herramientas (junto a la bolsa) y pulsa E.');return;}
  hold={s,t:0,dur:DUR[tool]||.6,tick:0};el.ring.style.display='block';el.cross.style.display='none';}
 function cancel(msg){if(!hold)return;hold=null;el.ring.style.display='none';if(msg)say(msg,'bad');}
 function complete(s){hold=null;el.ring.style.display='none';streak++;stepErrs=0;sfx('ok');say('✔ '+s.ok,'ok');kick.ok=1;
@@ -155,7 +156,7 @@ function showEnd(){window.__rutinaTarget=null;const tot=tscore.reduce((a,b)=>a+b
 function leave(menu){on=false;hold=null;if(hands)hands.visible=false;choice=null;window.__rutinaTarget=null;document.body.classList.remove('rutina-on');el.panel.style.display=el.bar.style.display=el.msg.style.display=el.choice.style.display=el.intro.style.display='none';
  try{Maintenance.close();}catch(e){}if(menu){try{GameInterface.openMenu(true);}catch(e){}}}
 function start(){ui();on=true;ti=0;si=0;errs=0;stepErrs=0;streak=0;hold=null;tscore=[];tool='mano';choice=null;document.body.classList.add('rutina-on');paintPanel();el.panel.style.display='block';el.bar.style.display='flex';setTool('mano');
- el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Vas a hacer, en orden, el mantenimiento preventivo del grupo electrógeno. Sigue la señal amarilla.</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> caminar · <b>Ratón</b> mirar · <kbd>Q</kbd> mantenida: ver tu cinturón · <kbd>1</kbd>–<kbd>9</kbd> sacar herramienta · <kbd>E</kbd> o clic para usarla · <kbd>Esc</kbd> soltar el ratón</p><p class="rt-why">Cada paso pide una herramienta distinta: las herramientas están en tu cinturón, abajo; si te equivocas dos veces, se marca la correcta. Si te equivocas pierdes estrellas, pero siempre puedes seguir.</p><button class="rt-go" id="rtGo">Empezar</button></div>';
+ el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Vas a hacer, en orden, el mantenimiento preventivo del grupo electrógeno. Sigue la señal amarilla.</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> caminar · <b>Ratón</b> mirar · <kbd>E</kbd> o clic: usar lo que llevas en la mano, o agacharte a elegir en el tapete de herramientas · <kbd>Esc</kbd> soltar el ratón</p><p class="rt-why">Cada paso pide una herramienta distinta: las herramientas están sobre un tapete junto a la bolsa del piso (cerca de donde empiezas). Acércate, pulsa E, agáchate, mira la que quieras y toma con E o clic. Q guarda lo que llevas. Empiezas con las manos vacías. Si te equivocas pierdes estrellas, pero siempre puedes seguir.</p><button class="rt-go" id="rtGo">Empezar</button></div>';
  el.intro.style.display='grid';$$('rtGo').focus();$$('rtGo').onclick=()=>{el.intro.style.display='none';};}
 
 // ---- Manos en primera persona (guantes naranja) que sostienen la herramienta elegida ----
@@ -187,7 +188,7 @@ function setProp(k){if(!HR||k===propK)return;propK=k;if(propG){HR.remove(propG);
 
 // ---- Cinturón de herramientas en 3D (abajo en tu vista). Mantén Q para levantarlo y ver los nombres; 1-9 sacan la herramienta. ----
 let beltG=null,beltOpen=0,beltWant=0;const POUCH=[];
-function buildBelt(){if(beltG||!hands)return;beltG=new T.Group();beltG.name='Cinturón de herramientas';camera.add(beltG);
+function buildBelt(){return;if(beltG||!hands)return;beltG=new T.Group();beltG.name='Cinturón de herramientas';camera.add(beltG);
  const mat=(c,r=.8,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false});
  const put=(geo,m,x,y,z,ord)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);o.renderOrder=ord;o.frustumCulled=false;beltG.add(o);return o;};
  put(new T.BoxGeometry(1.0,.03,.05),mat('#6b4423'),0,0,0,996);put(new T.BoxGeometry(1.0,.004,.052),mat('#d1a468'),0,.018,0,997);
@@ -198,13 +199,37 @@ function buildBelt(){if(beltG||!hands)return;beltG=new T.Group();beltG.name='Cin
   const fl=new T.Mesh(new T.BoxGeometry(.078,.016,.048),mat('#8c6a3e'));fl.position.set(0,.03,.02);fl.renderOrder=999;fl.frustumCulled=false;g.add(fl);
   POUCH.push({k:t[0],g,pr});});
  beltG.rotation.x=-.45;}
-function updateBelt(dt,show){if(!beltG)return;beltG.visible=show;if(!show)return;
+function updateBelt(dt,show){el.tags.style.display='none';return;if(!beltG)return;beltG.visible=show;if(!show)return;
  beltOpen+=(beltWant-beltOpen)*Math.min(1,dt*10);
  beltG.position.set(0,-.37+beltOpen*.22,-.52-beltOpen*.0);beltG.rotation.x=-.45-beltOpen*.35;
  POUCH.forEach(po=>{po.pr.visible=po.k!==tool;});
  // nombres sobre cada bolsillo cuando está levantado (o la pista tras dos errores)
  const s=step(),hint=!!(s&&stepErrs>=2&&tool!==s.tool);const showTags=beltOpen>.55||hint;el.tags.style.display=showTags?'block':'none';
  if(showTags){const v=new T.Vector3(),W=innerWidth,H=innerHeight;POUCH.forEach((po,i)=>{const b=el.tags.children[i];po.g.getWorldPosition(v);v.y+=0;v.project(camera);const on=beltOpen>.55||(hint&&po.k===s.tool);b.style.display=on?'block':'none';if(on){b.style.left=((v.x+1)/2*W)+'px';b.style.top=((1-v.y)/2*H-26)+'px';b.classList.toggle('sel',po.k===tool);b.classList.toggle('need',hint&&po.k===s.tool);}});}}
+
+// ---- Tapete de herramientas junto a la bolsa del piso: te agachas y tomas con la mira la que necesitas ----
+const MAT=[.15,3.98],PK_POS=[.15,1.0,4.55];let matG=null,pk=null,pkAim=-1,pkPrev=null;const PKI=[];
+function buildMat(){if(matG)return;matG=new T.Group();matG.name='Tapete de herramientas';
+ const mm=new T.Mesh(new T.BoxGeometry(1.6,.012,.5),new T.MeshStandardMaterial({color:'#1f2a33',roughness:.9}));mm.position.set(MAT[0],.006,MAT[1]);matG.add(mm);
+ const ed=new T.Mesh(new T.BoxGeometry(1.6,.013,.02),new T.MeshStandardMaterial({color:'#ffc400',roughness:.7}));ed.position.set(MAT[0],.007,MAT[1]+.24);matG.add(ed);
+ TOOLS.forEach((t,i)=>{if(t[0]==='mano')return;const o=prop(t[0]);o.traverse(m=>{if(m.isMesh){m.renderOrder=0;m.material=m.material.clone();m.material.depthTest=true;m.castShadow=false;}});
+  const n=TOOLS.length-1,j=PKI.length;o.scale.setScalar(1.9);o.rotation.set(-Math.PI/2*0,0,0);o.position.set(MAT[0]-.67+j*(1.34/(n-1)),.05,MAT[1]+.02);o.rotation.y=Math.PI/2*0;matG.add(o);PKI.push({k:t[0],o});});
+ scene.add(matG);matG.visible=false;}
+function matWorld(i){const v=new T.Vector3();PKI[i].o.getWorldPosition(v);return v;}
+function nearMat(w){return w&&Math.hypot(w.position[0]-MAT[0],w.position[2]-MAT[1])<1.9;}
+function openPick(){if(pk||!on||choice||hold)return;let w=null;try{w=Walk31.state();}catch(e){}if(!nearMat(w)){say('Acércate al tapete de herramientas junto a la bolsa del piso.','bad');return;}
+ buildMat();pkPrev={p:w.position.slice(),yaw:w.yaw,pitch:w.pitch};pk={};matG.visible=true;try{Walk31.setCrouch(true);WalkCam.set([MAT[0],PK_POS[1],PK_POS[2]],0,-.68);}catch(e){}
+ say('Mira la herramienta que necesitas y pulsa E o clic','ok');sfx('ok');}
+function closePick(take){if(!pk)return;pk=null;matG.visible=false;try{Walk31.setCrouch(false);}catch(e){}el.tags.style.display='none';
+ if(pkPrev){try{WalkCam.set([pkPrev.p[0],1.65-.07,pkPrev.p[2]],pkPrev.yaw,0);}catch(e){}}
+ if(take&&take!==tool){setTool(take);}}
+function pickTick(){if(!pk)return;let w=null;try{w=Walk31.state();}catch(e){}if(w){if(Math.hypot(w.position[0]-MAT[0],w.position[2]-PK_POS[2])>.05){try{WalkCam.set([MAT[0],PK_POS[1],PK_POS[2]],w.yaw,w.pitch);}catch(e){}}}
+ const fwd=new T.Vector3();camera.getWorldDirection(fwd);let best=-1,ba=.2;PKI.forEach((it,i)=>{const to=matWorld(i).sub(camera.position).normalize(),a=to.angleTo(fwd);if(a<ba){ba=a;best=i;}});
+ if(pk.kb!=null){best=pk.kb;}pkAim=best;PKI.forEach((it,i)=>{const sc=i===best?2.5:1.9;it.o.scale.setScalar(it.o.scale.x+(sc-it.o.scale.x)*.3);it.o.position.y=.05+(i===best?.05:0);});
+ const b=el.tags.children[0];if(best>=0){const v=matWorld(best);v.y+=.12;v.project(camera);const tb=TOOLS.find(t=>t[0]===PKI[best].k);b.innerHTML='<i>E</i>'+tb[1];b.style.display='block';b.style.left=((v.x+1)/2*innerWidth)+'px';b.style.top=((1-v.y)/2*innerHeight-8)+'px';b.className='sel';el.tags.style.display='block';for(let j=1;j<el.tags.children.length;j++)el.tags.children[j].style.display='none';}
+ else{el.tags.style.display='none';}}
+function pickTake(){if(!pk)return;if(pkAim<0){say('Apunta a una herramienta.','bad');return;}const k=PKI[pkAim].k;closePick(k);}
+function pickStep(d){if(!pk)return;const n=PKI.length;pk.kb=pk.kb==null?(pkAim>=0?pkAim:0):pk.kb;pk.kb=(pk.kb+d+n)%n;}
 function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL);camera.add(hands);
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
 const HPR=new T.Vector3(.25,-.07,-.55),HPL=new T.Vector3(-.25,-.09,-.55);
@@ -212,8 +237,8 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  if(!on){if(hands)hands.visible=false;el.cross&&(el.cross.style.display='none');return;}
  if(!hands){buildHands();buildBelt();}if(!beltG)buildBelt();let w=null;try{w=Walk31.state();}catch(e){}
  const showUI=!(choice||el.intro.style.display==='grid'||el.end.style.display==='grid')&&w&&w.active;
- hands.visible=!!showUI;el.cross.style.display=showUI&&!hold?'block':'none';updateBelt(dt,!!showUI);if(!showUI){el.tags.style.display='none';return;}
- holdTick(dt);if(window.__noanim)return;
+ hands.visible=!!showUI&&!pk;el.cross.style.display=showUI&&!hold?'block':'none';updateBelt(dt,!!showUI);if(!showUI){el.tags.style.display='none';return;}
+ holdTick(dt);pickTick();if(window.__noanim)return;
  let sp=0;if(w&&lastP){sp=Math.min(1,Math.hypot(w.position[0]-lastP[0],w.position[2]-lastP[2])/Math.max(dt,.016)/3);}lastP=w?w.position.slice():null;
  phase+=dt*(5+sp*7);const bob=Math.sin(phase)*.012*sp,sway=Math.cos(phase*.5)*.01*sp,idle=Math.sin(now/900)*.003;
  kick.ok=Math.max(0,kick.ok-dt*3.2);kick.err=Math.max(0,kick.err-dt*3);kick.draw=Math.max(0,kick.draw-dt*3.2);
@@ -233,17 +258,17 @@ window.addEventListener('keydown',e=>{if(!on)return;
  if(el.intro.style.display==='grid'&&(e.code==='Enter'||e.code==='Space')){e.preventDefault();e.stopImmediatePropagation();el.intro.style.display='none';return;}
  if(choice){if(/^Digit[1-9]$/.test(e.code)){const b=$$('rtOpts')&&$$('rtOpts').children[+e.code.slice(5)-1];if(b){e.preventDefault();e.stopImmediatePropagation();b.click();}}return;}
  if(el.intro.style.display==='grid'||el.end.style.display==='grid')return;
- if(/^Digit[1-9]$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();setTool(TOOLS[+e.code.slice(5)-1][0]);}
- else if(e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();beltWant=1;}
- else if(e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)begin();}
+ if(pk){if(/^(KeyW|KeyA|KeyS|KeyD|ArrowUp|ArrowDown|Space|ShiftLeft)$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();}if(e.code==='ArrowLeft'){e.preventDefault();e.stopImmediatePropagation();pickStep(-1);}else if(e.code==='ArrowRight'){e.preventDefault();e.stopImmediatePropagation();pickStep(1);}else if(e.code==='KeyE'||e.code==='Enter'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)pickTake();}else if(e.code==='Escape'||e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();closePick();}return;}
+ if(e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();if(tool!=='mano'){setTool('mano');say('Guardaste la herramienta: manos libres.','ok');}}
+ else if(e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat){let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!(stepNear()))openPick();else begin();}}
 },true);
-window.addEventListener('keyup',e=>{if(on&&e.code==='KeyQ'){e.stopImmediatePropagation();beltWant=0;}if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
+window.addEventListener('keyup',e=>{if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
 window.addEventListener('pointerup',()=>{if(on&&hold&&!choice)cancel();},true);
-window.addEventListener('pointerdown',e=>{if(!on||choice||e.button!==0)return;if(document.pointerLockElement&&e.target===document.pointerLockElement){e.preventDefault();e.stopImmediatePropagation();begin();}},true);
+window.addEventListener('pointerdown',e=>{if(!on||choice||e.button!==0)return;if(document.pointerLockElement&&e.target===document.pointerLockElement){e.preventDefault();e.stopImmediatePropagation();if(pk)pickTake();else{let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!stepNear())openPick();else begin();}}},true);
 let pv={a:0,l:0,r:0};setInterval(()=>{if(!on)return;let g=null;try{const l=navigator.getGamepads?navigator.getGamepads():[];for(const x of l)if(x){g=x;break;}}catch(e){return;}if(!g)return;
  const a=g.buttons[0]&&g.buttons[0].pressed?1:0,l=g.buttons[4]&&g.buttons[4].pressed?1:0,r=g.buttons[5]&&g.buttons[5].pressed?1:0,i=TOOLS.findIndex(t=>t[0]===tool);
- if(a&&!pv.a){if(choice){const b=document.activeElement;b&&b.click&&b.click();}else begin();}if(!a&&pv.a&&hold)cancel();
- if(l&&!pv.l)setTool(TOOLS[(i+TOOLS.length-1)%TOOLS.length][0]);if(r&&!pv.r)setTool(TOOLS[(i+1)%TOOLS.length][0]);pv={a,l,r};},90);
+ if(a&&!pv.a&&pk){pickTake();}else if(a&&!pv.a){if(choice){const b=document.activeElement;b&&b.click&&b.click();}else begin();}if(!a&&pv.a&&hold)cancel();
+ if(pk){if(l&&!pv.l)pickStep(-1);if(r&&!pv.r)pickStep(1);}else{if(l&&!pv.l){let w=null;try{w=Walk31.state();}catch(x){}if(nearMat(w)&&!stepNear())openPick();}}pv={a,l,r};},90);
 // La rutina empieza sola cuando el recorrido en planta arranca desde el menú (a menos que se haya elegido la práctica clásica).
 window.RutinaMantenimiento={start,leave,begin,state:()=>({on,tarea:ti,paso:si,errores:errs,estrellas:tscore.slice()}),skip:()=>{if(!on)return;si=TASKS[ti].steps.length;finishTask();}};
 setInterval(()=>{if(on||window.__rutinaClasica)return;let w=null,m=null;try{w=Walk31.state();m=Maintenance.state();}catch(e){}

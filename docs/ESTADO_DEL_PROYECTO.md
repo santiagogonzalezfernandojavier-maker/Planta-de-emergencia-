@@ -152,3 +152,8 @@ Cambios:
 ## v12.2 — Cinturón de herramientas en 3D
 - Se quitó la barra HTML de botones. Las herramientas están en un cinturón físico abajo de la vista; mantener Q lo levanta y muestra los nombres; 1–9 sacan la herramienta a la mano.
 - Tras dos errores se marca la herramienta correcta sobre su bolsillo.
+
+## v12.3 — Tapete de herramientas (sustituye al cinturón)
+- Sin menús ni cinturón. Las herramientas están sobre un tapete junto a la bolsa del piso. Cerca del tapete, E o clic: el técnico se agacha, mira la herramienta (aparece solo su nombre) y la toma con E o clic. Flechas o LB/RB cambian la selección, Q/Esc cierra.
+- Q fuera del tapete guarda la herramienta (manos libres). El marcador amarillo manda al tapete cuando la herramienta no es la del paso.
+- Walk31.setCrouch añadido para agacharse por código.
