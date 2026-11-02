@@ -58118,7 +58118,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.9 · manos realistas</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.10 · agarre de herramientas</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58842,7 +58842,7 @@ function handData(){if(HDATA)return HDATA;const bin=atob(window.__HAND_GLB),u=ne
  return HDATA={geo,IB,nodes,Wb,rel,chains};}
 function glove(side){const D=handData(),g=new T.Group(),
  tag=o=>{o.renderOrder=1000;o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;return o;},
- mm=(c,r=.8,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
+ mm=(c,r=.8,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false,side:T.DoubleSide}),
  vcm=new T.MeshStandardMaterial({vertexColors:true,roughness:.68,metalness:0,depthTest:false});
  const bones=D.nodes.map((n,i)=>{const b=new T.Bone();D.Wb[i].decompose(b.position,b.quaternion,b.scale);return b;}),arm=new T.Group();
  const inv=[];for(let i=0;i<25;i++)inv.push(new T.Matrix4().fromArray(D.IB,i*16));
@@ -58852,9 +58852,9 @@ function glove(side){const D=handData(),g=new T.Group(),
  // puño del guante y manga con franja reflectante
  const dir=new T.Vector3(side*.45,-.65,.6).normalize(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),dir);
  const S=(geo,mat,p)=>{const m=tag(new T.Mesh(geo,mat));m.quaternion.copy(q);m.position.copy(p);return m;};
- g.add(S(new T.CylinderGeometry(.034,.031,.055,20),mm('#4a4f56',.85),new T.Vector3(0,0,.062).addScaledVector(dir,.012)));
- g.add(S(new T.CylinderGeometry(.049,.039,.4,20),mm('#2f5886',.9),new T.Vector3(0,0,.062).addScaledVector(dir,.24)));
- g.add(S(new T.CylinderGeometry(.0405,.0405,.014,20),mm('#d6dcdf',.3,.5),new T.Vector3(0,0,.062).addScaledVector(dir,.12)));
+ g.add(S(new T.CylinderGeometry(.034,.031,.055,20,1,true),mm('#4a4f56',.85),new T.Vector3(0,0,.062).addScaledVector(dir,.012)));
+ g.add(S(new T.CylinderGeometry(.062,.039,.9,20,1,true),mm('#2f5886',.9),new T.Vector3(0,0,.062).addScaledVector(dir,.46)));
+ g.add(S(new T.CylinderGeometry(.0455,.0455,.014,20,1,true),mm('#d6dcdf',.3,.5),new T.Vector3(0,0,.062).addScaledVector(dir,.12)));
  // cinemática: cada dedo es una cadena; al curvar se recalcula la pose de cada hueso
  const ang=c=>[[.18,.4,.55,0],[0,.9,1.1,.75,0],[0,.95,1.15,.8,0],[0,.95,1.12,.78,0],[0,.9,1.05,.72,0]].map(a=>a.map(x=>x*c));
  const R=new T.Matrix4(),ax=new T.Vector3(),Wp=[];
@@ -58891,7 +58891,9 @@ function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMate
   add(new T.BoxGeometry(.006,.018,.12),dark,.032,-.02,-.06);add(new T.BoxGeometry(.088,.0015,.004),yel,0,-.0115,-.09);add(cz(.0025,.0025,.12,5),m('#b3261e',.8,0),-.025,-.0105,-.06);}
  return g;}
 let propG=null,propK='';
-function setProp(k){if(!HR||k===propK)return;propK=k;if(propG){HR.remove(propG);propG=null;}if(k==='mano')return;propG=prop(k);propG.scale.setScalar(.7);propG.position.set(0,-.012,-.03);HR.add(propG);}
+// Cómo se agarra cada herramienta: el mango queda atravesado en la palma, bajo los dedos curvados, y la parte útil apunta hacia delante y hacia dentro.
+const GRIP={def:{s:.62,rx:.35,ry:1.0,p:[.006,-.03,-.012]},cepillo:{s:.62,rx:.3,ry:.95,p:[.006,-.03,-.01]},llave:{s:.7,rx:.3,ry:1.05,p:[.006,-.03,.0]},linterna:{s:.7,rx:.2,ry:1.05,p:[.006,-.03,.0]},multi:{s:.65,rx:.1,ry:.6,p:[.0,-.036,-.02]},cuaderno:{s:.7,rx:-.2,ry:.3,rz:0,p:[.0,-.04,-.03]},pano:{s:.7,rx:0,ry:.4,p:[.0,-.034,-.03]},candado:{s:.7,rx:.2,ry:.8,p:[.0,-.034,-.02]},repuesto:{s:.62,rx:.2,ry:1.2,p:[.0,-.04,-.02]}};
+function setProp(k){if(!HR||k===propK)return;propK=k;if(propG){HR.remove(propG);propG=null;}if(k==='mano')return;propG=prop(k);const gp=GRIP[k]||GRIP.def;propG.scale.setScalar(gp.s);propG.rotation.set(gp.rx,gp.ry,gp.rz||0);propG.position.set(gp.p[0],gp.p[1],gp.p[2]);HR.add(propG);}
 
 // ---- Porta herramientas puesto en la cadera. Mantén Q: sube a la vista; rueda del ratón, flechas o LB/RB cambian; al soltar Q sacas la herramienta marcada. ----
 let beltG=null,beltOpen=0,beltWant=0,hsel=0,hselT=0;const POUCH=[];
@@ -58960,9 +58962,9 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  const push=Math.sin(kick.ok*Math.PI)*.07,dip=Math.sin(kick.draw*Math.PI)*.22,shake=Math.sin(kick.err*32)*.02*kick.err;
  let hx=0,hy=0,hz=0,hr=0;if(hold){const k=now/1000;if(tool==='cepillo'){hx=Math.sin(k*24)*.04;hz=Math.sin(k*24)*.012;}else if(tool==='pano'){hx=Math.sin(k*18)*.05;hy=Math.sin(k*9)*.01;}else if(tool==='llave'){hr=Math.sin(k*13)*.4;hz=-.03;}else if(tool==='linterna'){hx=Math.sin(k*3)*.03;hz=-.03;}else{hz=-.05+Math.sin(k*10)*.01;}}
  const hasModel=tool!=='mano';
- HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.16:0),HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
+ HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.09:0),HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
  HL.position.set(HPL.x-sway,HPL.y+bob*.8-idle-dip*.7,HPL.z);HL.rotation.set(.95,.1,0);
- pose(HR,hasModel?1:.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.3+(tool==='cuaderno'?.3:0));
+ pose(HR,hasModel?(tool==='cuaderno'||tool==='pano'?.6:1.0):.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.3+(tool==='cuaderno'?.3:0));
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
  setProp(tool);
  if(false&&heldG&&heldBase){heldG.position.set(heldBase.p.x+sway+hx+shake,heldBase.p.y+bob+idle-dip+hy,heldBase.p.z+hz-push);heldG.rotation.set(heldBase.r.x,heldBase.r.y,heldBase.r.z+hr);}

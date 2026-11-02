@@ -183,3 +183,7 @@ Cambios:
 - Las manos son ahora una malla con esqueleto (generic-hand de immersive-web/webxr-input-profiles, licencia W3C Software; ver docs/LICENCIA_manos_webxr_input_profiles.md), 1360 vértices y 25 huesos, pintada como guante de trabajo (naranja por el dorso, oscuro en la palma). Los datos van en `src/65-manos_datos.js` (GLB en base64 + ejes de flexión calculados). La mano izquierda es la derecha en espejo.
 - La cinemática de dedos (`setCurl`) recalcula la pose de cada hueso de la cadena; el cierre va hacia la palma.
 - La herramienta en mano se reduce a 0.7 y la mano derecha sube al sostenerla.
+
+## v12.10 — Agarre de herramientas
+- Cada herramienta tiene su postura en `GRIP` (escala, giro y posición): el mango queda atravesado en la palma bajo los dedos cerrados y la parte útil apunta hacia delante y hacia dentro. Con herramienta, los dedos cierran por completo (libreta y paño, a medias).
+- Mangas y puños sin tapas visibles (cilindros abiertos y largos), para que el antebrazo salga por abajo de la pantalla.
