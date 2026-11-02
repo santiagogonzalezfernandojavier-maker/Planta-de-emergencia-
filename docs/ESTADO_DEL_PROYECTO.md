@@ -178,3 +178,8 @@ Cambios:
 ## v12.8 — Guantes de una sola pieza
 - Cada dedo es un tubo continuo (`fingerTube`) con perfil cónico y colores por vértice (naranja arriba, agarre oscuro abajo); la flexión se calcula en cada fotograma, sin esferas en las juntas. La palma es una esfera aplastada con degradado de color. El pulgar usa el mismo método.
 - El cierre ahora dobla hacia la palma (antes doblaba hacia el dorso). La mano derecha sube un poco al llevar una herramienta.
+
+## v12.9 — Manos realistas
+- Las manos son ahora una malla con esqueleto (generic-hand de immersive-web/webxr-input-profiles, licencia W3C Software; ver docs/LICENCIA_manos_webxr_input_profiles.md), 1360 vértices y 25 huesos, pintada como guante de trabajo (naranja por el dorso, oscuro en la palma). Los datos van en `src/65-manos_datos.js` (GLB en base64 + ejes de flexión calculados). La mano izquierda es la derecha en espejo.
+- La cinemática de dedos (`setCurl`) recalcula la pose de cada hueso de la cadena; el cierre va hacia la palma.
+- La herramienta en mano se reduce a 0.7 y la mano derecha sube al sostenerla.
