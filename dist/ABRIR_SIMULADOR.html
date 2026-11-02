@@ -58123,7 +58123,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.12 · sin mensajes de error</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.13 · posición natural de las manos</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58854,19 +58854,20 @@ function glove(side){const D=handData(),g=new T.Group(),
  const mesh=tag(new T.SkinnedMesh(D.geo,vcm));arm.add(mesh);bones.forEach(b=>arm.add(b));mesh.bind(new T.Skeleton(bones,inv),new T.Matrix4());
  const hw=new T.Group();hw.matrixAutoUpdate=false;hw.matrix.makeBasis(new T.Vector3(0,1,0),new T.Vector3(0,0,1),new T.Vector3(1,0,0));
  arm.position.set(-.0331,-.0267,-.0057);hw.add(arm);const outer=new T.Group();outer.add(hw);outer.scale.x=side;g.add(outer);
- // puño del guante y manga con franja reflectante
- const dir=new T.Vector3(side*.45,-.65,.6).normalize(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),dir);
- const S=(geo,mat,p)=>{const m=tag(new T.Mesh(geo,mat));m.quaternion.copy(q);m.position.copy(p);return m;};
- g.add(S(new T.CylinderGeometry(.034,.031,.055,20,1,true),mm('#4a4f56',.85),new T.Vector3(0,0,.062).addScaledVector(dir,.012)));
- g.add(S(new T.CylinderGeometry(.062,.039,.9,20,1,true),mm('#2f5886',.9),new T.Vector3(0,0,.062).addScaledVector(dir,.46)));
- g.add(S(new T.CylinderGeometry(.0455,.0455,.014,20,1,true),mm('#d6dcdf',.3,.5),new T.Vector3(0,0,.062).addScaledVector(dir,.12)));
+ // antebrazo (puño del guante + manga con franja): cuelga de «hands», no de la mano, para que siempre salga natural desde abajo
+ const arm2=new T.Group(),up=(geo,len)=>{geo.translate(0,len/2,0);return geo;};
+ const AM=(geo,mat)=>{const m=new T.Mesh(geo,mat);m.renderOrder=999;m.frustumCulled=false;m.castShadow=false;arm2.add(m);return m;};
+ AM(up(new T.CylinderGeometry(.033,.0345,.07,20,1,true),.07),mm('#4a4f56',.85)).position.y=-.012;
+ AM(up(new T.CylinderGeometry(.0585,.041,1.1,20,1,true),1.1),mm('#2f5886',.9)).position.y=.05;
+ AM(up(new T.CylinderGeometry(.0465,.0465,.016,20,1,true),.016),mm('#d6dcdf',.3,.5)).position.y=.2;
+ g.userData.arm=arm2;g.userData.side=side;
  // cinemática: cada dedo es una cadena; al curvar se recalcula la pose de cada hueso
  const ang=c=>[[.18,.4,.55,0],[0,.9,1.1,.75,0],[0,.95,1.15,.8,0],[0,.95,1.12,.78,0],[0,.9,1.05,.72,0]].map(a=>a.map(x=>x*c));
  const R=new T.Matrix4(),ax=new T.Vector3(),Wp=[];
  let last=-9;
  g.userData.setCurl=c=>{if(Math.abs(c-last)<.004)return;last=c;const A=ang(c);
   D.chains.forEach((ch,f)=>{for(let k=0;k<ch.length;k++){const i=ch[k];let M=k===0?D.Wb[i].clone():Wp[ch[k-1]].clone().multiply(D.rel[i]);const a=window.__HAND_AX[i],th=A[f][k]||0;if(th){ax.set(a[0],a[1],a[2]);R.makeRotationAxis(ax,th);M.multiply(R);}Wp[i]=M;M.decompose(bones[i].position,bones[i].quaternion,bones[i].scale);}});};
- g.userData.setCurl(.3);g.scale.setScalar(1.15);g.userData.fingers=[];g.userData.th=new T.Group();return g;}
+ g.userData.setCurl(.3);g.scale.setScalar(1.25);g.userData.fingers=[];g.userData.th=new T.Group();return g;}
 function pose(g,curl){if(g.userData.setCurl)g.userData.setCurl(Math.max(0,Math.min(1.1,curl)));}
 
 function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
@@ -58956,9 +58957,11 @@ function pickTick(){if(!pk)return;let w=null;try{w=Walk31.state();}catch(e){}if(
  else{el.tags.style.display='none';}}
 function pickTake(){if(!pk)return;if(pkAim<0){say('Apunta a una herramienta.','bad');return;}const k=PKI[pkAim].k;closePick(k);}
 function pickStep(d){if(!pk)return;const n=PKI.length;pk.kb=pk.kb==null?(pkAim>=0?pkAim:0):pk.kb;pk.kb=(pk.kb+d+n)%n;}
-function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL);camera.add(hands);
+const AUP=new T.Vector3(0,1,0),AWP=new T.Vector3(),ADIR=new T.Vector3();
+function placeArm(h){const a=h.userData.arm;if(!a)return;h.updateMatrix();AWP.set(0,0,.07).applyMatrix4(h.matrix);a.position.copy(AWP);ADIR.set(h.userData.side*.34,-.84,.42).normalize();a.quaternion.setFromUnitVectors(AUP,ADIR);}
+function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL,HR.userData.arm,HL.userData.arm);camera.add(hands);
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
-const HPR=new T.Vector3(.2,-.21,-.46),HPL=new T.Vector3(-.2,-.23,-.46);
+const HPR=new T.Vector3(.24,-.17,-.5),HPL=new T.Vector3(-.24,-.18,-.5);
 function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-tt)/1000||0);tt=now;
  if(on&&window.__bag32)window.__bag32.visible=false;
  if(!on){if(hands)hands.visible=false;el.cross&&(el.cross.style.display='none');return;}
@@ -58987,10 +58990,10 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  const hx=SM.x+ox,hy=SM.y+oy,hz=SM.z+oz,hr=orr;
  const hasModel=tool!=='mano',leftK=(tool==='cuaderno'||tool==='multi')?tool:'',rightK=tool==='cuaderno'?'lapiz':tool==='multi'?'sonda':tool;
  const sl=Math.min(1,dt*8);SL.x+=((leftK?.1:0)-SL.x)*sl;SL.y+=((leftK?.12:0)-SL.y)*sl;SL.z+=((leftK?.05:0)-SL.z)*sl;
- HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.09:0),HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
- HL.position.set(HPL.x-sway+SL.x,HPL.y+bob*.8-idle-dip*.7+SL.y,HPL.z+SL.z);HL.rotation.set(.95+(leftK?.25:0),.1+(leftK?.3:0),leftK?.12:0);
+ HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.08:0),HPR.z+hz-push);HR.rotation.set(.55,-.14,-1.0+hr);
+ HL.position.set(HPL.x-sway+SL.x,HPL.y+bob*.8-idle-dip*.7+SL.y,HPL.z+SL.z);HL.rotation.set(.55+(leftK?.5:0),.14+(leftK?.2:0),leftK?.45:1.0);
  pose(HR,hasModel?(tool==='cuaderno'||tool==='multi'?.85:tool==='pano'?.6:1.0):.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,leftK?.7:.3);
- setProp(rightK);setLeft(leftK);
+ setProp(rightK);setLeft(leftK);placeArm(HR);placeArm(HL);
  if(LP){LP.position.set(HL.position.x+(LPK==='cuaderno'?.012:.0),HL.position.y+(LPK==='cuaderno'?.06:.05),HL.position.z-.01);const ln=LP.userData.lines;if(ln){if(hold&&tool==='cuaderno'){lastLines=Math.max(lastLines,pg);}const n=lastLines*6;ln.forEach((l,i)=>{const f=Math.max(0,Math.min(1,n-i));l.visible=f>0;l.scale.x=Math.max(.02,f);l.position.x=.003-.031*(1-f);});}}
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
  if(false&&heldG&&heldBase){heldG.position.set(heldBase.p.x+sway+hx+shake,heldBase.p.y+bob+idle-dip+hy,heldBase.p.z+hz-push);heldG.rotation.set(heldBase.r.x,heldBase.r.y,heldBase.r.z+hr);}

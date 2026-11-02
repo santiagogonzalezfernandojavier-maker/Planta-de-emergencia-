@@ -195,3 +195,8 @@ Cambios:
 ## v12.12 — Sin mensajes de error en pantalla
 - Al inicio del archivo 00 se interceptan `error`, `unhandledrejection`, `console.warn` y `console.error`: no se imprimen, se guardan en `window.__errLog` (hasta 300 entradas, con pila) para depurar. Se probó con un `null.textContent` provocado a propósito.
 - Recorridos probados sin errores: menú, funcionamiento (todos los botones del panel), despiece, zonas, rutina completa de 14 tareas, porta herramientas, barrido de todos los botones de cada pantalla. El error que vio el usuario no se pudo reproducir (queda en `__errLog` si vuelve a ocurrir).
+
+## v12.13 — Posición natural de las manos
+- Postura de reposo como en un juego en primera persona: manos abajo y a los lados, palmas hacia dentro con el pulgar arriba (giro de ∓1.0 rad sobre el eje del dedo), cabeceo suave de 0.55 rad.
+- El antebrazo (puño, manga y franja) ya no cuelga de la mano: cuelga del grupo `hands` y se recoloca cada fotograma (`placeArm`) en la muñeca, con dirección fija desde abajo hacia fuera. Así sale natural sin importar cómo gire la mano.
+- Posiciones HPR/HPL a (±0.24, -0.17, -0.5), escala del guante 1.25, la mano derecha sube 0.08 al llevar herramienta.
