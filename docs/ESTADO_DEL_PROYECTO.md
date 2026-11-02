@@ -140,3 +140,10 @@ Cambios:
 - v11.4: el panel de misión sale solo durante una misión (título, tiempo, 3 objetivos, resultado y botón Elegir misión); pantalla de planta sin ese panel el resto del tiempo.
 - v11.5: señal amarilla «Ve a: …» con distancia sobre el siguiente objetivo del mantenimiento; flecha en el borde si está fuera de pantalla.
 - v11.6: la calidad automática ya no baja de 80 % de resolución, empieza a la resolución real de la pantalla y puede subir hasta 125-150 % si la laptop va sobrada (antes se veía borroso de lejos).
+
+## v12 · Rutina de mantenimiento preventivo
+- Nuevo `src/70-rutina_mantenimiento.js`: 14 tareas reales (permiso, bloqueo y etiquetado, aislar arranque, fugas, aceite, refrigerante, combustible y agua, bandas, filtro de aire, radiador, batería y cargador, tierra, cierre, prueba de transferencia), unos 35 pasos.
+- Cada paso pide una herramienta (barra 1-9, LB/RB en control), tiene señal amarilla de destino, preguntas rápidas con explicación y estrellas por tarea (pierdes una por error). Al final: resumen y botón para ver la prueba de transferencia.
+- Arranca sola al elegir «Mantenimiento» en el menú; el motor anterior sigue corriendo oculto debajo.
+- Ayuda de puntería también en el motor anterior (cono de ~16°), por el problema del candado.
+- Probado de punta a punta con un script que recorre los 37 pasos. Pendiente: probar en laptop real (ritmo, textos, posiciones de los puntos de fuga, combustible y bandas, que son aproximadas).

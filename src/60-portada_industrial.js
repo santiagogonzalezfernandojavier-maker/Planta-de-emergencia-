@@ -214,6 +214,15 @@ setInterval(()=>{try{const t=typeof eduTest!=='undefined'&&eduTest;document.body
  const el=document.createElement('div');el.id='wayMark';el.innerHTML='<div class="wm-box"><span class="wm-ar">▼</span><span class="wm-t"></span><span class="wm-d"></span></div>';document.body.append(el);
  const ar=el.querySelector('.wm-ar'),tt=el.querySelector('.wm-t'),dd=el.querySelector('.wm-d');const v=new T.Vector3();let lastKey='';
  function loop(){requestAnimationFrame(loop);
+  const rt=window.__rutinaTarget;
+  if(rt&&document.body.classList.contains('rutina-on')){let w=null;try{w=Walk31.state();}catch(e){}
+   if(!w||!w.active||document.querySelector('dialog[open]')){el.style.display='none';return;}
+   const cp=w.position,d=Math.hypot(rt.pos[0]-cp[0],rt.pos[2]-cp[2]);v.set(rt.pos[0],rt.pos[1]+.25,rt.pos[2]).project(camera);
+   const W=innerWidth,H=innerHeight,behind=v.z>1;let x=v.x,y=v.y;if(behind){x=-x;y=-y;}const inside=!behind&&Math.abs(x)<.88&&Math.abs(y)<.8;
+   tt.textContent=rt.verb+rt.label;dd.textContent=d<2.3?'· usa la herramienta':Math.round(d)+' m';el.style.display='block';el.classList.toggle('on-screen',inside);
+   if(inside){el.style.left=((x+1)/2*W)+'px';el.style.top=Math.max(110,((1-y)/2*H)-60)+'px';ar.textContent='▼';ar.style.transform='';}
+   else{const k=Math.max(Math.abs(x)/.84,Math.abs(y)/.72)||1;const ex=x/k,ey=y/k;el.style.left=((ex+1)/2*W)+'px';el.style.top=((1-ey)/2*H)+'px';ar.textContent='➤';ar.style.transform='rotate('+Math.atan2(-ey,ex)+'rad)';}
+   return;}
   let st=null,ms=null;try{st=Walk31.state();ms=Maintenance.state();}catch(e){}
   const on=document.body.classList.contains('walking31')&&st&&st.active&&st.zone==='plant'&&ms&&ms.active&&!ms.finished&&!st.journal&&!st.bag&&!(window.WalkWelcome&&WalkWelcome.visible())&&!document.querySelector('dialog[open]');
   if(!on){el.style.display='none';return;}
