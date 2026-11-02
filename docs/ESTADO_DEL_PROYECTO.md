@@ -191,3 +191,7 @@ Cambios:
 ## v12.11 — Porta herramientas más fácil y una animación por actividad
 - Q abre y cierra el porta herramientas (ya no hay que mantenerla). Al abrirse muestra todas las herramientas con su número; 2–9 eligen directo, rueda o flechas mueven la selección, E/Enter/clic confirman, Esc o Q cierran. Con LB abre, RB cambia, A confirma.
 - Animaciones por actividad: libreta (la izquierda la sostiene, la derecha escribe con lápiz y van apareciendo renglones), multímetro (la izquierda lo sostiene y la derecha apoya la punta), candado (giro corto y empuje), repuesto (giro lento), manos (girar o presionar según el paso), además de cepillo, paño, llave y linterna.
+
+## v12.12 — Sin mensajes de error en pantalla
+- Al inicio del archivo 00 se interceptan `error`, `unhandledrejection`, `console.warn` y `console.error`: no se imprimen, se guardan en `window.__errLog` (hasta 300 entradas, con pila) para depurar. Se probó con un `null.textContent` provocado a propósito.
+- Recorridos probados sin errores: menú, funcionamiento (todos los botones del panel), despiece, zonas, rutina completa de 14 tareas, porta herramientas, barrido de todos los botones de cada pantalla. El error que vio el usuario no se pudo reproducir (queda en `__errLog` si vuelve a ocurrir).

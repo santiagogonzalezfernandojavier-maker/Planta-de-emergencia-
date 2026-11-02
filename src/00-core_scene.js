@@ -1,3 +1,8 @@
+// Los avisos y errores internos no se muestran al usuario: se guardan en window.__errLog para poder revisarlos.
+(function(){window.__errLog=[];const keep=(k,m,st)=>{try{if(window.__errLog.length<300)window.__errLog.push({t:Date.now(),k,m:String(m),s:st||''});}catch(e){}};
+window.addEventListener('error',e=>{keep('error',e.message,(e.error&&e.error.stack)||'');e.preventDefault();return true;},true);
+window.addEventListener('unhandledrejection',e=>{keep('promise',(e.reason&&e.reason.message)||e.reason,e.reason&&e.reason.stack);e.preventDefault();});
+console.warn=(...a)=>keep('warn',a.join(' '));console.error=(...a)=>keep('error-log',a.join(' '));})();
 
 const $=id=>document.getElementById(id),T=THREE;
 const TYPES={diesel:['Diésel','La inyección introduce combustible en aire comprimido caliente; se representa encendido por compresión.'],petrol:['Gasolina','La mezcla aire-combustible se enciende mediante una bujía.'],ng:['Gas natural','Una línea de gas y un regulador alimentan el mezclador; el encendido usa bujías.'],lpg:['Gas LP','El depósito suministra gas a través de regulación; el motor usa encendido por chispa.'],bi:['Bicombustible','Selecciona gasolina o LP antes de iniciar. Se representa alimentación alternativa, no mezcla simultánea.']};
