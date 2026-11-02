@@ -76,7 +76,7 @@ const CSS=`body.rutina-on #work26,body.rutina-on #fixCard,body.rutina-on #fixRin
 #rtPanel .rt-w{margin-top:8px;font:13px/1.35 "Segoe Print","Bradley Hand ITC","Comic Sans MS",cursive;background:#ffe27a;color:#3b3200;padding:8px 10px;transform:rotate(-1.2deg);box-shadow:0 3px 6px #0004}
 #rtPanel .cb-dots{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}#rtPanel .cb-dots i{width:12px;height:12px;border-radius:50%;background:#d1ccb0;display:block}#rtPanel .cb-dots i.on{background:#ffc400}#rtPanel .cb-dots i.cur{box-shadow:0 0 0 2px #1b3d6b}
 #rtPanel .rt-x{position:absolute;right:16px;bottom:16px;background:#fffbe8;border:1px solid #a9a37f;color:#5a543c;font:700 11px Bahnschrift,Arial,sans-serif;padding:3px 8px;cursor:pointer}
-#rtBar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:40;display:none;gap:5px;padding:12px 14px 8px;background:linear-gradient(#5b3b1e,#3a2410);border-radius:12px 12px 6px 6px;border:2px solid #20130a;box-shadow:inset 0 2px 0 #8b5e33,0 8px 18px #000a}
+#rtBar{display:none!important;position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:40;display:none;gap:5px;padding:12px 14px 8px;background:linear-gradient(#5b3b1e,#3a2410);border-radius:12px 12px 6px 6px;border:2px solid #20130a;box-shadow:inset 0 2px 0 #8b5e33,0 8px 18px #000a}
 #rtBar::before{content:"";position:absolute;left:6px;right:6px;top:5px;height:0;border-top:2px dashed #c79a5b}
 #rtBar button{position:relative;width:78px;height:86px;padding:8px 2px 4px;background:linear-gradient(#2c1a0b,#1a0f06);border:2px solid #120a04;border-radius:5px 5px 16px 16px;color:#e9d9bf;font:700 11px Bahnschrift,Arial,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;transition:transform .12s}
 #rtBar button svg{width:38px;height:38px;stroke:#f4f1e4;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s;margin-bottom:auto}
@@ -85,6 +85,10 @@ const CSS=`body.rutina-on #work26,body.rutina-on #fixCard,body.rutina-on #fixRin
 #rtBar button.sel{transform:translateY(-12px);border-color:#ffc400;background:linear-gradient(#5a4a10,#2b2208);box-shadow:0 0 14px #ffc40088}#rtBar button.sel svg{transform:translateY(-10px) scale(1.3);stroke:#ffc400}
 #rtBar button.need svg{animation:rtp 1s infinite;stroke:#ffc400}
 @keyframes rtp{50%{opacity:.4}}
+#rtTags{position:fixed;inset:0;z-index:40;pointer-events:none;display:none}
+#rtTags b{position:absolute;transform:translate(-50%,-100%);background:#0b0b0af0;color:#f4f1e4;border:2px solid #3a3720;padding:2px 8px;font:700 13px Bahnschrift,Arial,sans-serif;white-space:nowrap}
+#rtTags b i{font-style:normal;background:#ffc400;color:#000;padding:0 5px;margin-right:6px;border-radius:3px}
+#rtTags b.sel{border-color:#ffc400;color:#ffc400}#rtTags b.need{animation:rtp 1s infinite;border-color:#ffc400}
 #rtRing{position:fixed;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;z-index:42;display:none;background:conic-gradient(#ffc400 calc(var(--p,0)*1%),#0008 0);-webkit-mask:radial-gradient(circle,transparent 30px,#000 31px);mask:radial-gradient(circle,transparent 30px,#000 31px)}
 #rtCross{position:fixed;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #000a;z-index:41;display:none}
 #rtMsg{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);z-index:41;display:none;max-width:min(680px,90vw);padding:10px 18px;font:700 clamp(15px,1.3vw,19px) Bahnschrift,"Segoe UI",Arial,sans-serif;text-align:center}
@@ -105,13 +109,13 @@ function ui(){
  const mk=(id,tag='div')=>{const e=document.createElement(tag);e.id=id;document.body.append(e);return e;};
  el.panel=mk('rtPanel');el.bar=mk('rtBar');el.msg=mk('rtMsg');el.choice=mk('rtChoice');el.end=mk('rtEnd');el.intro=mk('rtIntro');
  el.bar.innerHTML=TOOLS.map((t,i)=>'<button data-t="'+t[0]+'"><i>'+(i+1)+'</i><svg viewBox="0 0 40 40">'+ICON[t[0]]+'</svg>'+t[1]+'</button>').join('');
- el.ring=mk('rtRing');el.cross=mk('rtCross');
+ el.tags=mk('rtTags');el.tags.innerHTML=TOOLS.map((t,i)=>'<b data-t="'+t[0]+'"><i>'+(i+1)+'</i>'+t[1]+'</b>').join('');el.ring=mk('rtRing');el.cross=mk('rtCross');
  el.bar.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setTool(b.dataset.t);});
 }
 const step=()=>TASKS[ti]&&TASKS[ti].steps[si];
 function sfx(k){try{window.HUD&&HUD.sfx(k);}catch(e){}}
 function say(t,kind){el.msg.textContent=t;el.msg.className=kind||'ok';el.msg.style.display='block';clearTimeout(msgT);msgT=setTimeout(()=>{el.msg.style.display='none';},kind==='bad'?3600:2600);}
-function setTool(k){if(!TL[k])return;if(k!==tool)kick.draw=1;tool=k;try{const m=TOOLS.find(t=>t[0]===k)[2];Maintenance.select&&Maintenance.select(m);}catch(e){}paintBar();}
+function setTool(k){if(!TL[k])return;if(k!==tool){kick.draw=1;try{if(on&&el.msg)say('En mano: '+TL[k],'ok');}catch(e){}}tool=k;try{const m=TOOLS.find(t=>t[0]===k)[2];Maintenance.select&&Maintenance.select(m);}catch(e){}paintBar();}
 function paintBar(){const s=step();[...el.bar.children].forEach(b=>{b.classList.toggle('sel',b.dataset.t===tool);b.classList.toggle('need',!!(s&&stepErrs>=2&&s.tool===b.dataset.t&&tool!==s.tool));});}
 function paintPanel(){const t=TASKS[ti];if(!t)return;
  el.panel.innerHTML='<div class="cb-p"><div class="rt-k"><span>TAREA '+(ti+1)+' DE '+TASKS.length+'</span><span>'+(streak>=2?'🔥 racha ×'+streak:'')+'</span></div><h3>'+t.n+'</h3><ol>'+t.steps.map((x,i)=>'<li class="'+(i<si?'done':i===si?'cur':'')+'">'+x.t+'</li>').join('')+'</ol><div class="rt-w">'+t.why+'</div><div class="cb-dots">'+TASKS.map((_,i)=>'<i class="'+(i<ti?'on':'')+(i===ti?' cur':'')+'"></i>').join('')+'</div><button class="rt-x" id="rtExit">Salir</button></div>';
@@ -151,7 +155,7 @@ function showEnd(){window.__rutinaTarget=null;const tot=tscore.reduce((a,b)=>a+b
 function leave(menu){on=false;hold=null;if(hands)hands.visible=false;choice=null;window.__rutinaTarget=null;document.body.classList.remove('rutina-on');el.panel.style.display=el.bar.style.display=el.msg.style.display=el.choice.style.display=el.intro.style.display='none';
  try{Maintenance.close();}catch(e){}if(menu){try{GameInterface.openMenu(true);}catch(e){}}}
 function start(){ui();on=true;ti=0;si=0;errs=0;stepErrs=0;streak=0;hold=null;tscore=[];tool='mano';choice=null;document.body.classList.add('rutina-on');paintPanel();el.panel.style.display='block';el.bar.style.display='flex';setTool('mano');
- el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Vas a hacer, en orden, el mantenimiento preventivo del grupo electrógeno. Sigue la señal amarilla.</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> caminar · <b>Ratón</b> mirar · <kbd>1</kbd>–<kbd>9</kbd> elegir herramienta · <kbd>E</kbd> o clic para usarla · <kbd>Esc</kbd> soltar el ratón</p><p class="rt-why">Cada paso pide una herramienta distinta: la correcta se marca con «AQUÍ» en la barra de abajo. Si te equivocas pierdes estrellas, pero siempre puedes seguir.</p><button class="rt-go" id="rtGo">Empezar</button></div>';
+ el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Vas a hacer, en orden, el mantenimiento preventivo del grupo electrógeno. Sigue la señal amarilla.</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> caminar · <b>Ratón</b> mirar · <kbd>Q</kbd> mantenida: ver tu cinturón · <kbd>1</kbd>–<kbd>9</kbd> sacar herramienta · <kbd>E</kbd> o clic para usarla · <kbd>Esc</kbd> soltar el ratón</p><p class="rt-why">Cada paso pide una herramienta distinta: las herramientas están en tu cinturón, abajo; si te equivocas dos veces, se marca la correcta. Si te equivocas pierdes estrellas, pero siempre puedes seguir.</p><button class="rt-go" id="rtGo">Empezar</button></div>';
  el.intro.style.display='grid';$$('rtGo').focus();$$('rtGo').onclick=()=>{el.intro.style.display='none';};}
 
 // ---- Manos en primera persona (guantes naranja) que sostienen la herramienta elegida ----
@@ -162,7 +166,7 @@ function glove(side){const g=new T.Group(),m=c=>{const x=new T.MeshStandardMater
  const fingers=[];for(let i=0;i<4;i++){const j=new T.Group();j.position.set(-.032+i*.021,0,-.05);const a=tag(new T.Mesh(new T.CapsuleGeometry(.0105,.034,3,8),gm));a.rotation.x=Math.PI/2;a.position.z=-.02;j.add(a);const j2=new T.Group();j2.position.z=-.04;const b=tag(new T.Mesh(new T.CapsuleGeometry(.0095,.03,3,8),gm));b.rotation.x=Math.PI/2;b.position.z=-.016;j2.add(b);j.add(j2);g.add(j);fingers.push([j,j2]);}
  const th=new T.Group();th.position.set(side*.047,0,-.01);const t1=tag(new T.Mesh(new T.CapsuleGeometry(.012,.034,3,8),gm));t1.rotation.x=Math.PI/2;t1.position.z=-.022;th.add(t1);th.rotation.y=-side*.5;g.add(th);
  const cuff=tag(new T.Mesh(new T.BoxGeometry(.092,.040,.03),cm));cuff.position.z=.063;g.add(cuff);
- const sl=tag(new T.Mesh(new T.CapsuleGeometry(.036,.30,4,10),sm)),dir=new T.Vector3(side*.45,-.65,.6).normalize();sl.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir);sl.position.set(0,0,.07).addScaledVector(dir,.2);g.add(sl);
+ const sl=tag(new T.Mesh(new T.CapsuleGeometry(.026,.26,4,10),sm)),dir=new T.Vector3(side*.45,-.65,.6).normalize();sl.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir);sl.position.set(0,0,.07).addScaledVector(dir,.17);g.add(sl);
  g.userData={fingers,th};return g;}
 function pose(g,curl){g.userData.fingers.forEach(([a,b],i)=>{a.rotation.x=curl*(.9+i*.03);b.rotation.x=curl*1.1;});g.userData.th.rotation.x=curl*.35;}
 
@@ -180,14 +184,35 @@ function prop(k){const g=new T.Group(),m=(c,r=.6,me=.1)=>new T.MeshStandardMater
  return g;}
 let propG=null,propK='';
 function setProp(k){if(!HR||k===propK)return;propK=k;if(propG){HR.remove(propG);propG=null;}if(k==='mano')return;propG=prop(k);propG.position.set(0,-.005,-.06);HR.add(propG);}
+
+// ---- Cinturón de herramientas en 3D (abajo en tu vista). Mantén Q para levantarlo y ver los nombres; 1-9 sacan la herramienta. ----
+let beltG=null,beltOpen=0,beltWant=0;const POUCH=[];
+function buildBelt(){if(beltG||!hands)return;beltG=new T.Group();beltG.name='Cinturón de herramientas';camera.add(beltG);
+ const mat=(c,r=.8,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false});
+ const put=(geo,m,x,y,z,ord)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);o.renderOrder=ord;o.frustumCulled=false;beltG.add(o);return o;};
+ put(new T.BoxGeometry(1.0,.03,.05),mat('#6b4423'),0,0,0,996);put(new T.BoxGeometry(1.0,.004,.052),mat('#d1a468'),0,.018,0,997);
+ put(new T.BoxGeometry(.05,.04,.055),mat('#d9b44a',.4,.8),0,0,.005,997);
+ TOOLS.forEach((t,i)=>{const x=-.40+i*.1;const g=new T.Group();g.position.set(x,-.02,0);beltG.add(g);
+  const pr=prop(t[0]);pr.rotation.x=Math.PI/2;pr.scale.setScalar(.6);pr.position.set(0,.045,.02);pr.traverse(o=>{if(o.isMesh)o.renderOrder=998;});g.add(pr);
+  const po=new T.Mesh(new T.BoxGeometry(.075,.06,.045),mat('#7a5a34'));po.position.set(0,.0,.02);po.renderOrder=999;po.frustumCulled=false;g.add(po);
+  const fl=new T.Mesh(new T.BoxGeometry(.078,.016,.048),mat('#8c6a3e'));fl.position.set(0,.03,.02);fl.renderOrder=999;fl.frustumCulled=false;g.add(fl);
+  POUCH.push({k:t[0],g,pr});});
+ beltG.rotation.x=-.45;}
+function updateBelt(dt,show){if(!beltG)return;beltG.visible=show;if(!show)return;
+ beltOpen+=(beltWant-beltOpen)*Math.min(1,dt*10);
+ beltG.position.set(0,-.37+beltOpen*.22,-.52-beltOpen*.0);beltG.rotation.x=-.45-beltOpen*.35;
+ POUCH.forEach(po=>{po.pr.visible=po.k!==tool;});
+ // nombres sobre cada bolsillo cuando está levantado (o la pista tras dos errores)
+ const s=step(),hint=!!(s&&stepErrs>=2&&tool!==s.tool);const showTags=beltOpen>.55||hint;el.tags.style.display=showTags?'block':'none';
+ if(showTags){const v=new T.Vector3(),W=innerWidth,H=innerHeight;POUCH.forEach((po,i)=>{const b=el.tags.children[i];po.g.getWorldPosition(v);v.y+=0;v.project(camera);const on=beltOpen>.55||(hint&&po.k===s.tool);b.style.display=on?'block':'none';if(on){b.style.left=((v.x+1)/2*W)+'px';b.style.top=((1-v.y)/2*H-26)+'px';b.classList.toggle('sel',po.k===tool);b.classList.toggle('need',hint&&po.k===s.tool);}});}}
 function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL);camera.add(hands);
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
 const HPR=new T.Vector3(.25,-.07,-.55),HPL=new T.Vector3(-.25,-.09,-.55);
 function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-tt)/1000||0);tt=now;
  if(!on){if(hands)hands.visible=false;el.cross&&(el.cross.style.display='none');return;}
- if(!hands)buildHands();let w=null;try{w=Walk31.state();}catch(e){}
+ if(!hands){buildHands();buildBelt();}if(!beltG)buildBelt();let w=null;try{w=Walk31.state();}catch(e){}
  const showUI=!(choice||el.intro.style.display==='grid'||el.end.style.display==='grid')&&w&&w.active;
- hands.visible=!!showUI;el.cross.style.display=showUI&&!hold?'block':'none';if(!showUI){return;}
+ hands.visible=!!showUI;el.cross.style.display=showUI&&!hold?'block':'none';updateBelt(dt,!!showUI);if(!showUI){el.tags.style.display='none';return;}
  holdTick(dt);if(window.__noanim)return;
  let sp=0;if(w&&lastP){sp=Math.min(1,Math.hypot(w.position[0]-lastP[0],w.position[2]-lastP[2])/Math.max(dt,.016)/3);}lastP=w?w.position.slice():null;
  phase+=dt*(5+sp*7);const bob=Math.sin(phase)*.012*sp,sway=Math.cos(phase*.5)*.01*sp,idle=Math.sin(now/900)*.003;
@@ -209,9 +234,10 @@ window.addEventListener('keydown',e=>{if(!on)return;
  if(choice){if(/^Digit[1-9]$/.test(e.code)){const b=$$('rtOpts')&&$$('rtOpts').children[+e.code.slice(5)-1];if(b){e.preventDefault();e.stopImmediatePropagation();b.click();}}return;}
  if(el.intro.style.display==='grid'||el.end.style.display==='grid')return;
  if(/^Digit[1-9]$/.test(e.code)){e.preventDefault();e.stopImmediatePropagation();setTool(TOOLS[+e.code.slice(5)-1][0]);}
+ else if(e.code==='KeyQ'){e.preventDefault();e.stopImmediatePropagation();beltWant=1;}
  else if(e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)begin();}
 },true);
-window.addEventListener('keyup',e=>{if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
+window.addEventListener('keyup',e=>{if(on&&e.code==='KeyQ'){e.stopImmediatePropagation();beltWant=0;}if(on&&e.code==='KeyE'){e.stopImmediatePropagation();if(hold)cancel();}},true);
 window.addEventListener('pointerup',()=>{if(on&&hold&&!choice)cancel();},true);
 window.addEventListener('pointerdown',e=>{if(!on||choice||e.button!==0)return;if(document.pointerLockElement&&e.target===document.pointerLockElement){e.preventDefault();e.stopImmediatePropagation();begin();}},true);
 let pv={a:0,l:0,r:0};setInterval(()=>{if(!on)return;let g=null;try{const l=navigator.getGamepads?navigator.getGamepads():[];for(const x of l)if(x){g=x;break;}}catch(e){return;}if(!g)return;
