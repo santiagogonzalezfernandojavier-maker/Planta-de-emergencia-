@@ -171,3 +171,6 @@ Cambios:
 
 ## v12.6 — Guantes de trabajo
 - Las manos de piel se descartaron (se veían inquietantes). Ahora son guantes de mecánico: dedos largos y cónicos en tres falanges, protecciones oscuras en nudillos, pulgar en el lado interior, puño gris y manga azul con franja reflectante. Reposo con dedos casi relajados.
+
+## v12.7 — Manos levantadas
+- Los guantes estaban acostados y planos. Ahora van levantados (cabeceo ~54°), con los dedos más abiertos y en reposo semicurvados, como en las referencias (vista del dorso con antebrazos subiendo desde abajo).
