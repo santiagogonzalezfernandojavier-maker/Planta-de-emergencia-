@@ -74,6 +74,13 @@ body.game-ui #gameTelemetry .metric:first-child,body.game-ui #gameTelemetry .met
 .ca-spec b{font:400 26px Impact,Bahnschrift,sans-serif;color:var(--ind-y);letter-spacing:1px}
 @media(max-height:820px){#coverArt{max-height:46vh}.ca-spec b{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.ca-fan,.ca-bolt{animation:none}}
+#wayMark{position:fixed;left:0;top:0;z-index:30;pointer-events:none;display:none;transform:translate(-50%,-50%);text-align:center;font-family:Bahnschrift,"Segoe UI",Arial,sans-serif}
+#wayMark .wm-box{white-space:nowrap;display:inline-flex;align-items:center;gap:10px;background:#ffc400;color:#000;padding:6px 12px;font-weight:800;font-size:clamp(14px,1.2vw,18px);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);box-shadow:0 0 0 2px #000}
+#wayMark .wm-ar{display:inline-block;font-size:26px;line-height:1;transition:transform .12s}
+#wayMark .wm-d{font-weight:600;font-size:.85em;opacity:.8}
+#wayMark.on-screen .wm-ar{animation:wmBob 1s ease-in-out infinite}
+@keyframes wmBob{50%{transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){#wayMark.on-screen .wm-ar{animation:none}}
 @media(prefers-reduced-motion:reduce){dialog#gameLaunch .g-entry-actions button{transition:none}}
 `;
 document.head.append(st);
@@ -201,6 +208,27 @@ document.head.append(st);
 
 // El panel de misión solo aparece mientras hay una misión en curso, y al terminar muestra el resultado y «Elegir misión»
 setInterval(()=>{try{const t=typeof eduTest!=='undefined'&&eduTest;document.body.classList.toggle('mission-on',!!t);document.body.classList.toggle('mission-done',!!(t&&t.done));}catch(e){}},300);
+
+// Señal «ve hacia aquí»: marca flotante sobre el siguiente objetivo; si está fuera de pantalla, una flecha en el borde indica hacia dónde girar.
+(function(){
+ const el=document.createElement('div');el.id='wayMark';el.innerHTML='<div class="wm-box"><span class="wm-ar">▼</span><span class="wm-t"></span><span class="wm-d"></span></div>';document.body.append(el);
+ const ar=el.querySelector('.wm-ar'),tt=el.querySelector('.wm-t'),dd=el.querySelector('.wm-d');const v=new T.Vector3();let lastKey='';
+ function loop(){requestAnimationFrame(loop);
+  let st=null,ms=null;try{st=Walk31.state();ms=Maintenance.state();}catch(e){}
+  const on=document.body.classList.contains('walking31')&&st&&st.active&&st.zone==='plant'&&ms&&ms.active&&!ms.finished&&!st.journal&&!st.bag&&!(window.WalkWelcome&&WalkWelcome.visible())&&!document.querySelector('dialog[open]');
+  if(!on){el.style.display='none';return;}
+  const idx=ms.done?ms.index+1:ms.index,info=window.MaintInfo&&MaintInfo.get(idx);if(!info){el.style.display='none';return;}
+  const cp=st.position,d=Math.hypot(info.pos[0]-cp[0],info.pos[2]-cp[2]);
+  v.set(info.pos[0],info.pos[1]+.5,info.pos[2]).project(camera);
+  const w=innerWidth,h=innerHeight,behind=v.z>1;let x=v.x,y=v.y;if(behind){x=-x;y=-y;}
+  const inside=!behind&&Math.abs(x)<.88&&Math.abs(y)<.8;
+  const key=idx+'|'+Math.round(d*2);if(key!==lastKey){lastKey=key;tt.textContent=(ms.done?'Siguiente: ':'Ve a: ')+info.place;dd.textContent=d<1.6?'¡ya llegaste!':Math.round(d)+' m';}
+  el.style.display='block';el.classList.toggle('on-screen',inside);
+  if(inside){if(d<1.6){el.style.display='none';return;}el.style.left=((x+1)/2*w)+'px';el.style.top=Math.max(150,((1-y)/2*h)-70)+'px';ar.textContent='▼';ar.style.transform='';}
+  else{const k=Math.max(Math.abs(x)/.84,Math.abs(y)/.72)||1;const ex=x/k,ey=y/k;el.style.left=((ex+1)/2*w)+'px';el.style.top=((1-ey)/2*h)+'px';const ang=Math.atan2(-ey,ex);ar.textContent='➤';ar.style.transform='rotate('+ang+'rad)';}
+ }
+ requestAnimationFrame(loop);
+})();
 const menu=$$('gameLaunch');
 if(!menu)return;
 // Aviso de teclas bajo los botones

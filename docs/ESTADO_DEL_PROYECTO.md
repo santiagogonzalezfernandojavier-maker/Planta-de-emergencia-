@@ -138,3 +138,4 @@ Cambios:
 - v11.2: la portada muestra un dibujo del grupo electrógeno (radiador, motor, alternador, tablero) en lugar del diagrama de rutas.
 - v11.3: sonido sintetizado (motor según rpm, alarma al perder la red, arranque, relevador de transferencia, pasos). Respeta el botón ♪.
 - v11.4: el panel de misión sale solo durante una misión (título, tiempo, 3 objetivos, resultado y botón Elegir misión); pantalla de planta sin ese panel el resto del tiempo.
+- v11.5: señal amarilla «Ve a: …» con distancia sobre el siguiente objetivo del mantenimiento; flecha en el borde si está fuera de pantalla.
