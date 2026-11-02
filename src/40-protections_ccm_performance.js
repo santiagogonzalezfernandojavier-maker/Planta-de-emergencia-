@@ -70,7 +70,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.4 · porta herramientas puesto</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.5 · funcionamiento y manos</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -81,6 +81,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
  const keepMenuOnEsc=e=>{if(!walkStarted){e.preventDefault();e.stopImmediatePropagation();}};
  const reopenIfNoChoice=()=>{if(walkStarted||window.plantPresentationActive)return;setTimeout(()=>{if(!walkStarted&&!launchMenu.open&&!window.plantPresentationActive){GameInterface.openMenu();launchMenu.focus({preventScroll:true});}},0);};
  const installGuards=()=>{
+  window.__menuChoiceMade=()=>{if(!walkStarted){walkStarted=true;launchMenu.removeEventListener('close',reopenIfNoChoice);launchMenu.removeEventListener('cancel',keepMenuOnEsc,true);}};
   /* Mismo orden que el arranque anterior: primero se cierra el menú con la opción elegida y después empieza el recorrido; en una misión, el recorrido va antes que la misión. */
   const enter=$('gameEnter'),enterAction=enter.onclick;
   /* Si el menú ya se había cerrado antes (p. ej. con Esc), «Explorar» no prepara la cámara de emergencia; se hace aquí antes de iniciar el recorrido. */

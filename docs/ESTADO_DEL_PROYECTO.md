@@ -162,3 +162,9 @@ Cambios:
 - Se oculta la maleta del piso durante la rutina (y su colisión). El tapete queda desactivado.
 - Porta herramientas en la cadera: mantener Q lo sube, rueda/flechas/RB cambian, soltar Q saca la herramienta; G guarda; 1–9 siguen como atajo silencioso. Solo se muestra el nombre de la herramienta marcada.
 - Guantes con nudillos, dedos de tres piezas y puños; herramientas con más detalle (llave combinada, linterna con aros, multímetro con pantalla y puntas, candado con etiqueta, filtro con nervaduras, libreta con liga).
+
+## v12.5 — Funcionamiento de la planta, manos humanas, maleta oculta
+- Segunda opción del menú: «Funcionamiento de la planta» (antes «Elegir una misión»). Vista general con el panel de operación (Arrancar, Detener, Cortar/Restaurar red, Pausar, Reiniciar), panel lateral con estado y valores en vivo, y botón «Pruebas guiadas» que abre las misiones.
+- `window.__menuChoiceMade()` (archivo 40) marca que ya se eligió en el menú, para que la guarda no lo reabra.
+- Manos nuevas: piel, tres falanges, uñas, pulgar del lado interior, antebrazo, reloj en la izquierda y manga remangada.
+- La maleta vieja se oculta cada fotograma mientras dura la rutina (el motor viejo la volvía a mostrar con `focus()`).

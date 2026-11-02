@@ -63,13 +63,13 @@ window.openGlossary=()=>{try{document.exitPointerLock?.();}catch(e){}const v=$$(
 // Menú: frase por botón y orden sugerido
 const menu=$$('gameLaunch');
 if(menu){
- const desc={gameEnter:'Mira la planta pieza por pieza, con cada parte explicada. Empieza aquí.',gameTraining:'Provoca una falla de red y mira cómo responde el generador.'};
+ const desc={gameEnter:'Mira la planta pieza por pieza, con cada parte explicada. Empieza aquí.',gameTraining:'Vista general: controla el grupo, corta la red y mira cómo responde cada componente.'};
  const add=(b,t)=>{if(b&&!b.querySelector('.g-desc'))b.insertAdjacentHTML('beforeend','<small class="g-desc">'+t+'</small>');};
  for(const id in desc)add($$(id),desc[id]);
  [...menu.querySelectorAll('.g-entry-actions button')].forEach(b=>{if(/Mantenimiento/i.test(b.textContent))add(b,'Tareas de mantenimiento paso a paso, como en la vida real.');});
  {const ent=$$('gameEnter');if(ent){const tn=[...ent.childNodes].find(x=>x.nodeType===3);if(tn)tn.textContent='Despiece de la planta ';}const an=$$('gameAnatomy');if(an){an.hidden=true;an.style.display='none';}}
  const box=menu.querySelector('.g-entry-actions');
- if(box&&!menu.querySelector('.g-order')){box.insertAdjacentHTML('afterend','<p class="g-order">¿Primera vez? Sigue este orden: Despiece → Misión → Mantenimiento.</p>');}
+ if(box&&!menu.querySelector('.g-order')){box.insertAdjacentHTML('afterend','<p class="g-order">¿Primera vez? Sigue este orden: Despiece → Funcionamiento → Mantenimiento.</p>');}
  const top=menu.querySelector('.g-launch-top');if(top&&!$$('gameGlossBtn')){top.insertAdjacentHTML('beforeend','<button type="button" class="g-gloss-btn" id="gameGlossBtn">Glosario: ¿qué significan kV, MT, QN, CCM…?</button>');$$('gameGlossBtn').onclick=()=>window.openGlossary();}
 }
 

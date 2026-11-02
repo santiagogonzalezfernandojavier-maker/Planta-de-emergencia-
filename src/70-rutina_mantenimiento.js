@@ -161,29 +161,40 @@ function start(){ui();on=true;try{window.__bag32&&(window.__bag32.visible=false)
 
 // ---- Manos en primera persona (guantes naranja) que sostienen la herramienta elegida ----
 let hands=null,HR=null,HL=null,heldG=null,heldBase=null,phase=0,tt=0,lastP=null;
-function glove(side){const g=new T.Group(),m=(c,r=.8,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
+function glove(side){const g=new T.Group(),m=(c,r=.7,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  tag=o=>{o.renderOrder=1000;o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;return o;};
- const skin=m('#d9791f',.78),skin2=m('#b8620f',.85),pad=m('#262626',.7),cm=m('#2a2a2a',.9),sm=m('#1e3a5c',.9),refl=m('#d8dde0',.35,.4),yel=m('#ffc400',.7);
- const palm=tag(new T.Mesh(new T.BoxGeometry(.088,.030,.098),skin));g.add(palm);
- const back=tag(new T.Mesh(new T.BoxGeometry(.082,.012,.07),pad));back.position.set(0,.02,-.005);g.add(back);
- for(let i=0;i<4;i++){const kn=tag(new T.Mesh(new T.SphereGeometry(.0105,8,6),pad));kn.position.set(-.031+i*.0205,.018,-.046);kn.scale.set(1,.7,1);g.add(kn);}
- const fingers=[],lens=[.040,.046,.043,.034];
- for(let i=0;i<4;i++){const L=lens[i],j=new T.Group();j.position.set(-.031+i*.0205,.0,-.05);
-  const a=tag(new T.Mesh(new T.CapsuleGeometry(.0098,L,3,8),skin));a.rotation.x=Math.PI/2;a.position.z=-L/2-.004;j.add(a);
-  const j2=new T.Group();j2.position.z=-L-.012;
-  const b=tag(new T.Mesh(new T.CapsuleGeometry(.0088,L*.8,3,8),skin));b.rotation.x=Math.PI/2;b.position.z=-L*.4;j2.add(b);
-  const tip=tag(new T.Mesh(new T.SphereGeometry(.0094,8,6),skin2));tip.position.z=-L*.8-.004;tip.scale.set(1,.85,1);j2.add(tip);
-  j.add(j2);g.add(j);fingers.push([j,j2]);}
- const th=new T.Group();th.position.set(side*.046,-.002,-.012);
- const t1=tag(new T.Mesh(new T.CapsuleGeometry(.0115,.036,3,8),skin));t1.rotation.x=Math.PI/2;t1.position.z=-.024;th.add(t1);
- const t2=tag(new T.Mesh(new T.SphereGeometry(.0105,8,6),skin2));t2.position.z=-.050;th.add(t2);th.rotation.y=-side*.55;g.add(th);
- const cuff=tag(new T.Mesh(new T.CylinderGeometry(.043,.046,.05,16),cm));cuff.rotation.x=Math.PI/2;cuff.position.z=.066;g.add(cuff);
- const band=tag(new T.Mesh(new T.TorusGeometry(.053,.0035,6,18),yel));band.position.z=.088;band.visible=false;g.add(band);
+ const skin=m('#d7a07a',.62),skin2=m('#c98e66',.7),nail=m('#e9c3a8',.35),cloth=m('#2f5886',.9),cloth2=m('#3a6a9f',.9),strap=m('#161616',.6),face=m('#cfd4d8',.25,.7),dial=m('#111',.4);
+ const S=(geo,mat,x,y,z,sx=1,sy=1,sz=1)=>{const o=tag(new T.Mesh(geo,mat));o.position.set(x,y,z);o.scale.set(sx,sy,sz);return o;};
+ // palma y dorso: elipsoides suaves
+ g.add(S(new T.SphereGeometry(1,18,12),skin,0,0,0,.046,.018,.052));
+ g.add(S(new T.SphereGeometry(1,14,10),skin,0,.008,-.012,.044,.014,.04));
+ g.add(S(new T.SphereGeometry(1,12,8),skin2,side*-.03,-.012,-.015,.017,.01,.026));// almohadilla de la palma
+ // dedos: índice, medio, anular, meñique (tres falanges)
+ const fingers=[],L=[[.034,.022,.018],[.038,.025,.019],[.035,.023,.018],[.027,.018,.015]],R=[.0104,.0108,.0100,.0088],X=[-.0345,-.0115,.0115,.0335];
+ for(let i=0;i<4;i++){const idx=side>0?i:3-i;const l=L[idx],r=R[idx];const j=new T.Group();j.position.set(side>0?X[i]:-X[3-i]*-1*-1,.002,-.052);j.position.x=side>0?X[i]:-X[i];j.rotation.y=(i-1.5)*.05*(side>0?1:1);
+  const a=S(new T.CapsuleGeometry(r,l[0],4,10),skin,0,0,-l[0]/2,1,1,1);a.rotation.x=Math.PI/2;j.add(a);
+  const j2=new T.Group();j2.position.z=-l[0]-r*.4;const b=S(new T.CapsuleGeometry(r*.93,l[1],4,10),skin,0,0,-l[1]/2);b.rotation.x=Math.PI/2;j2.add(b);
+  const j3=new T.Group();j3.position.z=-l[1]-r*.3;const c=S(new T.CapsuleGeometry(r*.86,l[2],4,10),skin,0,0,-l[2]/2);c.rotation.x=Math.PI/2;j3.add(c);
+  const n=S(new T.BoxGeometry(r*1.35,.0016,l[2]*.65),nail,0,r*.78,-l[2]*.7);j3.add(n);
+  const kn=S(new T.SphereGeometry(r*1.05,8,6),skin2,0,r*.55,0.0);j.add(kn);
+  j2.add(j3);j2.userData.n=j3;j.add(j2);g.add(j);fingers.push([j,j2]);}
+ // pulgar
+ const th=new T.Group();th.position.set(-side*.038,-.004,-.004);
+ const t1=S(new T.CapsuleGeometry(.0128,.03,4,10),skin,0,0,-.016);t1.rotation.x=Math.PI/2;th.add(t1);
+ const t2g=new T.Group();t2g.position.z=-.036;const t2=S(new T.CapsuleGeometry(.0112,.026,4,10),skin,0,0,-.013);t2.rotation.x=Math.PI/2;t2g.add(t2);
+ const tn=S(new T.BoxGeometry(.012,.0016,.014),nail,0,.0105,-.02);t2g.add(tn);th.add(t2g);th.rotation.y=side*.62;th.rotation.z=-side*.25;g.add(th);th.userData.t2=t2g;
+ // muñeca y antebrazo
+ g.add(S(new T.CylinderGeometry(.026,.03,.1,14).rotateX(Math.PI/2),skin,0,0,.09));
  const dir=new T.Vector3(side*.45,-.65,.6).normalize(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),dir);
- const sl=tag(new T.Mesh(new T.CylinderGeometry(.04,.047,.34,14),sm));sl.quaternion.copy(q);sl.position.set(0,0,.09).addScaledVector(dir,.2);g.add(sl);
- const st=tag(new T.Mesh(new T.CylinderGeometry(.0445,.0445,.014,14),refl));st.quaternion.copy(q);st.position.set(0,0,.09).addScaledVector(dir,.1);g.add(st);
+ const fa=S(new T.CylinderGeometry(.034,.027,.3,14),skin,0,0,0);fa.quaternion.copy(q);fa.position.set(0,0,.1).addScaledVector(dir,.15);g.add(fa);
+ // reloj
+ const wp=new T.Vector3(0,0,.1).addScaledVector(dir,.045);const wb=S(new T.CylinderGeometry(.0335,.0335,.018,16),strap,0,0,0);wb.quaternion.copy(q);wb.position.copy(wp);if(side<0)g.add(wb);
+ const wf=S(new T.CylinderGeometry(.017,.017,.006,16),dial,0,0,0);wf.quaternion.copy(q);wf.position.copy(wp).add(new T.Vector3(0,.034,0));if(side<0)g.add(wf);
+ // manga remangada (camisa de trabajo azul) con dobladillo
+ const sl=S(new T.CylinderGeometry(.052,.058,.2,16),cloth,0,0,0);sl.quaternion.copy(q);sl.position.set(0,0,.1).addScaledVector(dir,.36);g.add(sl);
+ const hem=S(new T.TorusGeometry(.052,.01,8,18),cloth2,0,0,0);hem.quaternion.copy(q);hem.position.set(0,0,.1).addScaledVector(dir,.27);hem.rotateX(Math.PI/2);g.add(hem);
  g.userData={fingers,th};return g;}
-function pose(g,curl){g.userData.fingers.forEach(([a,b],i)=>{a.rotation.x=curl*(.9+i*.03);b.rotation.x=curl*1.1;});g.userData.th.rotation.x=curl*.35;}
+function pose(g,curl){g.userData.fingers.forEach(([a,b],i)=>{a.rotation.x=curl*(.95+i*.04);b.rotation.x=curl*1.15;if(b.userData.n)b.userData.n.rotation.x=curl*.85;});g.userData.th.rotation.x=curl*.35;if(g.userData.th.userData.t2)g.userData.th.userData.t2.rotation.x=curl*.5;}
 
 function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  add=(geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const o=new T.Mesh(geo,mat);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.renderOrder=1001;o.frustumCulled=false;g.add(o);return o;},
@@ -269,6 +280,7 @@ function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del 
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
 const HPR=new T.Vector3(.25,-.07,-.55),HPL=new T.Vector3(-.25,-.09,-.55);
 function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-tt)/1000||0);tt=now;
+ if(on&&window.__bag32)window.__bag32.visible=false;
  if(!on){if(hands)hands.visible=false;el.cross&&(el.cross.style.display='none');return;}
  if(!hands){buildHands();buildBelt();}if(!beltG)buildBelt();let w=null;try{w=Walk31.state();}catch(e){}
  const showUI=!(choice||el.intro.style.display==='grid'||el.end.style.display==='grid')&&w&&w.active;
@@ -313,4 +325,46 @@ window.RutinaMantenimiento={start,leave,begin,state:()=>({on,tarea:ti,paso:si,er
 setInterval(()=>{if(on||window.__rutinaClasica)return;let w=null,m=null;try{w=Walk31.state();m=Maintenance.state();}catch(e){}
  if(w&&w.active&&w.zone==='plant'&&m&&m.active&&!m.finished&&!document.querySelector('dialog[open]')&&!window.gameMenuActive&&!window.__rutinaDone){window.__rutinaDone=true;start();}
  if(!w||!w.active)window.__rutinaDone=false;},400);
+})();
+
+// ---- v12.5 · Segunda opción del menú: «Funcionamiento de la planta» (vista general con control y estado de los componentes) ----
+(function(){
+const $$=id=>document.getElementById(id);
+function css(){if($$('funcCss'))return;const st=document.createElement('style');st.id='funcCss';st.textContent=`
+#funcPanel{position:fixed;right:14px;top:132px;z-index:35;width:min(300px,42vw);background:#0b0b0af2;border:2px solid #ffc400;border-left-width:8px;color:#f4f1e4;font:600 13px Bahnschrift,'Segoe UI',Arial,sans-serif;display:none;padding:10px 12px}
+body.func-mode #funcPanel{display:block}
+#funcPanel h3{margin:0 0 6px;font:800 15px Bahnschrift,Arial,sans-serif;color:#ffc400;letter-spacing:.03em}
+#funcPanel .fr{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-top:1px solid #ffffff1c}
+#funcPanel .fr b{font-weight:700;color:#fff}#funcPanel .fr span{color:#b7b49f}
+#funcPanel .on{color:#7ee081!important}#funcPanel .off{color:#ff8a7a!important}
+#funcPanel .fb{display:flex;gap:6px;margin-top:8px}#funcPanel button{flex:1;background:#ffc400;color:#000;border:0;font:800 12px Bahnschrift,Arial,sans-serif;padding:7px 4px;cursor:pointer}
+#funcPanel button.ghost{background:#2a2a24;color:#f4f1e4;border:1px solid #5a5638}
+body.func-mode #gameTelemetry{display:none!important}
+`;document.head.appendChild(st);}
+function panel(){css();let p=$$('funcPanel');if(p)return p;p=document.createElement('section');p.id='funcPanel';p.setAttribute('aria-label','Funcionamiento de la planta');
+ p.innerHTML='<h3>FUNCIONAMIENTO DE LA PLANTA</h3><div id="fRows"></div><div class="fb"><button id="fTests">Pruebas guiadas</button><button class="ghost" id="fExit">Salir</button></div>';document.body.appendChild(p);
+ $$('fTests').onclick=()=>{try{$$('gameChooseMission').click();}catch(e){}};
+ $$('fExit').onclick=()=>{document.body.classList.remove('func-mode');try{GameInterface.openMenu(true);}catch(e){try{$$('gameMenuButton').click();}catch(x){}}};return p;}
+const STG={0:'Reposo',1:'Arranque',2:'En marcha',3:'Transferido'};
+function rows(){let r=[];try{const sv=window.__simState&&window.__simState();if(sv){return sv;}}catch(e){}
+ return r;}
+function tick(){if(!document.body.classList.contains('func-mode'))return;const q=n=>{const e=$$(n);return e?e.textContent.trim():'—';};
+ // lee los valores que la interfaz ya muestra (telemetría y estado de la fuente)
+ const live=q('gameLive'),route=q('gameRouteState');
+ const rowsEl=$$('fRows');if(!rowsEl)return;
+ const t=[...document.querySelectorAll('#gameTelemetry .metric')].map(m=>{const l=m.querySelector('small,span,label'),v=m.querySelector('strong,b,output');return [ (l?l.textContent:'').trim(), (v?v.textContent:m.textContent).trim()];});
+ const html=['<div class="fr"><span>Simulación</span><b class="'+(/PAUSA/.test(live)?'off':'on')+'">'+live+'</b></div>','<div class="fr"><span>Estado</span><b>'+route+'</b></div>'].concat(t.filter(x=>x[0]).map(x=>'<div class="fr"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>')).join('');
+ if(rowsEl.dataset.h!==html){rowsEl.dataset.h=html;rowsEl.innerHTML=html;}}
+setInterval(tick,400);
+function enter(){panel();try{window.__menuChoiceMade&&window.__menuChoiceMade();}catch(e){}const dlg=$$('gameLaunch');try{if(dlg&&dlg.open)dlg.close();}catch(e){}
+ document.body.classList.add('func-mode');document.body.classList.remove('mission-on');
+ const nav=document.querySelector('#viewbar [data-nav="emergency"]');if(nav)nav.click();
+ setTimeout(()=>{const pb=document.querySelector('#gameDock [data-act="pause"]');const live=$$('gameLive');if(live&&/PAUSA/.test(live.textContent)&&pb)pb.click();},350);
+}
+function wire(){const b=$$('gameTraining');if(!b||b.dataset.func)return;b.dataset.func='1';
+ const txt=[...b.childNodes].find(n=>n.nodeType===3);if(txt)txt.nodeValue='Funcionamiento de la planta';
+ const d=b.querySelector('.g-desc');if(d)d.textContent='Vista general: controla el grupo, corta la red y mira cómo responde cada componente.';
+ b.onclick=e=>{e.preventDefault();enter();};}
+setInterval(wire,500);
+window.FuncionamientoPlanta={enter};
 })();
