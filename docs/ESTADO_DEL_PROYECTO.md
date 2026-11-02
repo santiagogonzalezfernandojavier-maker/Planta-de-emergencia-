@@ -168,3 +168,6 @@ Cambios:
 - `window.__menuChoiceMade()` (archivo 40) marca que ya se eligió en el menú, para que la guarda no lo reabra.
 - Manos nuevas: piel, tres falanges, uñas, pulgar del lado interior, antebrazo, reloj en la izquierda y manga remangada.
 - La maleta vieja se oculta cada fotograma mientras dura la rutina (el motor viejo la volvía a mostrar con `focus()`).
+
+## v12.6 — Guantes de trabajo
+- Las manos de piel se descartaron (se veían inquietantes). Ahora son guantes de mecánico: dedos largos y cónicos en tres falanges, protecciones oscuras en nudillos, pulgar en el lado interior, puño gris y manga azul con franja reflectante. Reposo con dedos casi relajados.

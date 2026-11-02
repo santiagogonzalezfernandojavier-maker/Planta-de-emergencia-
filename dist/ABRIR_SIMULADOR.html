@@ -58118,7 +58118,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.5 · funcionamiento y manos</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.6 · guantes de trabajo</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58822,37 +58822,39 @@ function start(){ui();on=true;try{window.__bag32&&(window.__bag32.visible=false)
 let hands=null,HR=null,HL=null,heldG=null,heldBase=null,phase=0,tt=0,lastP=null;
 function glove(side){const g=new T.Group(),m=(c,r=.7,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  tag=o=>{o.renderOrder=1000;o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;return o;};
- const skin=m('#d7a07a',.62),skin2=m('#c98e66',.7),nail=m('#e9c3a8',.35),cloth=m('#2f5886',.9),cloth2=m('#3a6a9f',.9),strap=m('#161616',.6),face=m('#cfd4d8',.25,.7),dial=m('#111',.4);
+ const gl=m('#e9a21a',.82),gl2=m('#cf8a0e',.85),pad=m('#1d1d1f',.65),cuffM=m('#565c63',.85),cloth=m('#2f5886',.9),refl=m('#d6dcdf',.3,.5),vel=m('#161819',.95);
  const S=(geo,mat,x,y,z,sx=1,sy=1,sz=1)=>{const o=tag(new T.Mesh(geo,mat));o.position.set(x,y,z);o.scale.set(sx,sy,sz);return o;};
- // palma y dorso: elipsoides suaves
- g.add(S(new T.SphereGeometry(1,18,12),skin,0,0,0,.046,.018,.052));
- g.add(S(new T.SphereGeometry(1,14,10),skin,0,.008,-.012,.044,.014,.04));
- g.add(S(new T.SphereGeometry(1,12,8),skin2,side*-.03,-.012,-.015,.017,.01,.026));// almohadilla de la palma
- // dedos: índice, medio, anular, meñique (tres falanges)
- const fingers=[],L=[[.034,.022,.018],[.038,.025,.019],[.035,.023,.018],[.027,.018,.015]],R=[.0104,.0108,.0100,.0088],X=[-.0345,-.0115,.0115,.0335];
- for(let i=0;i<4;i++){const idx=side>0?i:3-i;const l=L[idx],r=R[idx];const j=new T.Group();j.position.set(side>0?X[i]:-X[3-i]*-1*-1,.002,-.052);j.position.x=side>0?X[i]:-X[i];j.rotation.y=(i-1.5)*.05*(side>0?1:1);
-  const a=S(new T.CapsuleGeometry(r,l[0],4,10),skin,0,0,-l[0]/2,1,1,1);a.rotation.x=Math.PI/2;j.add(a);
-  const j2=new T.Group();j2.position.z=-l[0]-r*.4;const b=S(new T.CapsuleGeometry(r*.93,l[1],4,10),skin,0,0,-l[1]/2);b.rotation.x=Math.PI/2;j2.add(b);
-  const j3=new T.Group();j3.position.z=-l[1]-r*.3;const c=S(new T.CapsuleGeometry(r*.86,l[2],4,10),skin,0,0,-l[2]/2);c.rotation.x=Math.PI/2;j3.add(c);
-  const n=S(new T.BoxGeometry(r*1.35,.0016,l[2]*.65),nail,0,r*.78,-l[2]*.7);j3.add(n);
-  const kn=S(new T.SphereGeometry(r*1.05,8,6),skin2,0,r*.55,0.0);j.add(kn);
+ const seg=(r0,r1,len)=>{const q=new T.CylinderGeometry(r1,r0,len,12);q.rotateX(-Math.PI/2);return q;};// base en z=0, punta hacia -z, más delgada
+ // palma y dorso
+ g.add(S(new T.SphereGeometry(1,20,14),gl,0,0,0,.042,.015,.047));
+ g.add(S(new T.SphereGeometry(1,16,10),gl2,0,.010,-.004,.038,.009,.040));
+ // protecciones de nudillos y de dorso (como en un guante de mecánico)
+ const X=[-.0295,-.0098,.0098,.0295];
+ for(let i=0;i<4;i++)g.add(S(new T.SphereGeometry(1,10,8),pad,X[i]*(side>0?1:-1),.015,-.03,.0085,.004,.013));
+ g.add(S(new T.SphereGeometry(1,12,8),pad,0,.0155,.01,.024,.003,.018));
+ // dedos: largos y ligeramente cónicos, en tres falanges, con apertura natural
+ const L=[[.042,.029,.023],[.046,.032,.024],[.042,.029,.022],[.033,.023,.018]],R=[.0100,.0104,.0098,.0086];
+ const fingers=[];
+ for(let i=0;i<4;i++){const l=L[i],r=R[i];const j=new T.Group();j.position.set(side>0?X[i]:-X[i],.001,-.044);j.rotation.y=(side>0?1:-1)*(-(i-1.5)*.10);
+  const mk=(len,r0,r1,mat)=>{const c=S(seg(r0,r1,len),mat,0,0,-len/2);const jn=S(new T.SphereGeometry(r0,10,8),mat,0,0,0);return[c,jn];};
+  const [a,aj]=mk(l[0],r,r*.92,gl);j.add(a,aj);
+  const j2=new T.Group();j2.position.z=-l[0];const [b,bj]=mk(l[1],r*.92,r*.84,gl);j2.add(b,bj);
+  const j3=new T.Group();j3.position.z=-l[1];const [c,cj]=mk(l[2],r*.84,r*.74,gl);j3.add(c,cj);
+  const tip=S(new T.SphereGeometry(r*.74,10,8),gl2,0,0,-l[2]);j3.add(tip);
+  const dp=S(new T.BoxGeometry(r*1.2,.002,l[1]*.9),pad,0,r*.8,-l[1]*.5);j2.add(dp);
   j2.add(j3);j2.userData.n=j3;j.add(j2);g.add(j);fingers.push([j,j2]);}
- // pulgar
- const th=new T.Group();th.position.set(-side*.038,-.004,-.004);
- const t1=S(new T.CapsuleGeometry(.0128,.03,4,10),skin,0,0,-.016);t1.rotation.x=Math.PI/2;th.add(t1);
- const t2g=new T.Group();t2g.position.z=-.036;const t2=S(new T.CapsuleGeometry(.0112,.026,4,10),skin,0,0,-.013);t2.rotation.x=Math.PI/2;t2g.add(t2);
- const tn=S(new T.BoxGeometry(.012,.0016,.014),nail,0,.0105,-.02);t2g.add(tn);th.add(t2g);th.rotation.y=side*.62;th.rotation.z=-side*.25;g.add(th);th.userData.t2=t2g;
- // muñeca y antebrazo
- g.add(S(new T.CylinderGeometry(.026,.03,.1,14).rotateX(Math.PI/2),skin,0,0,.09));
+ // pulgar en el lado interior de la mano
+ const th=new T.Group();th.position.set(-side*.033,-.003,.004);
+ th.add(S(new T.SphereGeometry(.0128,10,8),gl,0,0,0));th.add(S(seg(.0128,.0112,.034),gl,0,0,-.017));
+ const t2=new T.Group();t2.position.z=-.034;t2.add(S(new T.SphereGeometry(.0112,10,8),gl,0,0,0),S(seg(.0112,.0098,.03),gl,0,0,-.015),S(new T.SphereGeometry(.0098,10,8),gl2,0,0,-.03));th.add(t2);
+ th.rotation.y=side*.5;th.rotation.x=-.15;g.add(th);th.userData.t2=t2;
+ // puño del guante con tira de velcro y manga de la camisa
  const dir=new T.Vector3(side*.45,-.65,.6).normalize(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),dir);
- const fa=S(new T.CylinderGeometry(.034,.027,.3,14),skin,0,0,0);fa.quaternion.copy(q);fa.position.set(0,0,.1).addScaledVector(dir,.15);g.add(fa);
- // reloj
- const wp=new T.Vector3(0,0,.1).addScaledVector(dir,.045);const wb=S(new T.CylinderGeometry(.0335,.0335,.018,16),strap,0,0,0);wb.quaternion.copy(q);wb.position.copy(wp);if(side<0)g.add(wb);
- const wf=S(new T.CylinderGeometry(.017,.017,.006,16),dial,0,0,0);wf.quaternion.copy(q);wf.position.copy(wp).add(new T.Vector3(0,.034,0));if(side<0)g.add(wf);
- // manga remangada (camisa de trabajo azul) con dobladillo
- const sl=S(new T.CylinderGeometry(.052,.058,.2,16),cloth,0,0,0);sl.quaternion.copy(q);sl.position.set(0,0,.1).addScaledVector(dir,.36);g.add(sl);
- const hem=S(new T.TorusGeometry(.052,.01,8,18),cloth2,0,0,0);hem.quaternion.copy(q);hem.position.set(0,0,.1).addScaledVector(dir,.27);hem.rotateX(Math.PI/2);g.add(hem);
- g.userData={fingers,th};return g;}
+ const cuff=S(new T.CylinderGeometry(.043,.039,.05,18),cuffM,0,0,0);cuff.quaternion.copy(q);cuff.position.set(0,0,.075).addScaledVector(dir,.03);g.add(cuff);
+ 
+ const sl=S(new T.CylinderGeometry(.052,.043,.4,18),cloth,0,0,0);sl.quaternion.copy(q);sl.position.set(0,0,.075).addScaledVector(dir,.26);g.add(sl);
+ const st=S(new T.CylinderGeometry(.0445,.0445,.014,18),refl,0,0,0);st.quaternion.copy(q);st.position.set(0,0,.075).addScaledVector(dir,.13);g.add(st);
+ g.scale.setScalar(1.35);g.userData={fingers,th};return g;}
 function pose(g,curl){g.userData.fingers.forEach(([a,b],i)=>{a.rotation.x=curl*(.95+i*.04);b.rotation.x=curl*1.15;if(b.userData.n)b.userData.n.rotation.x=curl*.85;});g.userData.th.rotation.x=curl*.35;if(g.userData.th.userData.t2)g.userData.th.userData.t2.rotation.x=curl*.5;}
 
 function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
@@ -58937,7 +58939,7 @@ function pickTake(){if(!pk)return;if(pkAim<0){say('Apunta a una herramienta.','b
 function pickStep(d){if(!pk)return;const n=PKI.length;pk.kb=pk.kb==null?(pkAim>=0?pkAim:0):pk.kb;pk.kb=(pk.kb+d+n)%n;}
 function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL);camera.add(hands);
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
-const HPR=new T.Vector3(.25,-.07,-.55),HPL=new T.Vector3(-.25,-.09,-.55);
+const HPR=new T.Vector3(.25,-.11,-.55),HPL=new T.Vector3(-.25,-.13,-.55);
 function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-tt)/1000||0);tt=now;
  if(on&&window.__bag32)window.__bag32.visible=false;
  if(!on){if(hands)hands.visible=false;el.cross&&(el.cross.style.display='none');return;}
@@ -58953,7 +58955,7 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  const hasModel=tool!=='mano';
  HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy,HPR.z+hz-push);HR.rotation.set(-.12,.1,hr);
  HL.position.set(HPL.x-sway,HPL.y+bob*.8-idle-dip*.7,HPL.z);HL.rotation.set(-.12,-.1,0);
- pose(HR,hasModel?1:.25+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.25+(tool==='cuaderno'?.3:0));
+ pose(HR,hasModel?1:.14+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.14+(tool==='cuaderno'?.3:0));
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
  setProp(tool);
  if(false&&heldG&&heldBase){heldG.position.set(heldBase.p.x+sway+hx+shake,heldBase.p.y+bob+idle-dip+hy,heldBase.p.z+hz-push);heldG.rotation.set(heldBase.r.x,heldBase.r.y,heldBase.r.z+hr);}
