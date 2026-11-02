@@ -40,12 +40,12 @@ body.walking31 #fpTarget{font-size:17px}
 
 // Glosario
 const terms=[
-['kV / kW / Hz','kilovolt (voltaje alto), kilowatt (potencia) y hertz (frecuencia de la corriente: 60 por segundo).'],
+['kV / kW / Hz','kilovolt (tensión alto), kilowatt (potencia) y hertz (frecuencia de la corriente: 60 por segundo).'],
 ['MT / BT','Media tensión (13.8 kV, la de la subestación) y baja tensión (480 V, la de la fábrica y el generador).'],
 ['Red normal','La compañía eléctrica: la fuente que alimenta la fábrica cuando todo funciona.'],
 ['Grupo G-01','El generador de emergencia: un motor diésel que mueve un alternador para producir electricidad cuando falla la red.'],
 ['Q0','Interruptor de salida del generador (480 V).'],
-['TE','Transformador elevador: sube el voltaje del generador de 480 V a 13.8 kV.'],
+['TE','Transformador elevador: sube el tensión del generador de 480 V a 13.8 kV.'],
 ['QN','Interruptor de la red normal (media tensión).'],
 ['QG','Interruptor del respaldo: conecta el generador a la barra.'],
 ['Barra / QS','La barra común une las dos fuentes; QS es el interruptor de salida hacia la fábrica.'],
@@ -188,10 +188,10 @@ new MutationObserver(()=>{if(document.body.classList.contains('walking31'))remov
   if(s.target)return ['Transferencia en curso','Una fuente se abre antes de que la otra se cierre, para que nunca estén conectadas a la vez. Por un instante la fábrica queda sin energía.'];
   if(stg==='starting')return ['El generador arranca','La batería hace girar el motor de arranque, y este mueve el motor diésel hasta que enciende.'];
   if(stg==='crankpause')return ['Reintento de arranque','El motor no encendió. El control espera unos segundos y vuelve a intentarlo.'];
-  if(stg==='warm')return ['Subiendo de velocidad','El motor ya encendió y gira a '+Math.round(s.rpm)+' rpm. El alternador empieza a dar voltaje y se espera a que voltaje y frecuencia se estabilicen.'];
+  if(stg==='warm')return ['Subiendo de velocidad','El motor ya encendió y gira a '+Math.round(s.rpm)+' rpm. El alternador empieza a dar tensión y se espera a que tensión y frecuencia se estabilicen.'];
   if(src==='gen')return ['El generador alimenta la fábrica','El motor mueve el alternador, y de ahí la energía sube por el transformador elevador, pasa por la barra y llega a la fábrica.'];
   if(stg==='cool')return ['Enfriamiento','La red regresó y la carga volvió a ella. El motor sigue encendido unos minutos sin carga para enfriarse antes de parar.'];
-  if(!g&&stg==='ready')return ['Listo para tomar la carga','Voltaje y frecuencia estables. El control va a abrir el interruptor de la red y cerrar el del generador.'];
+  if(!g&&stg==='ready')return ['Listo para tomar la carga','Tensión y frecuencia estables. El control va a abrir el interruptor de la red y cerrar el del generador.'];
   if(!g)return ['La red falló','La fábrica se quedó sin luz. El control lo detecta y manda arrancar el generador.'];
   return ['Servicio normal','La red alimenta la fábrica. El generador está detenido y listo: si la red falla, arranca solo.'];
  }
