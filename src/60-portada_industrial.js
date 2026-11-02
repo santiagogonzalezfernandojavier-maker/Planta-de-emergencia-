@@ -61,6 +61,16 @@ body.game-ui #gameObjective{display:none!important}
 body.game-ui:not(.show-extra) #viewbar #toggleRail,body.game-ui:not(.show-extra) #viewbar #proFull,body.game-ui:not(.show-extra) #viewbar #dayNightToggle,body.game-ui:not(.show-extra) #viewbar #toggleObjectives,body.game-ui:not(.show-extra) #viewbar #showSingle,body.game-ui:not(.show-extra) #viewbar #cutGeneralButton,body.game-ui:not(.show-extra) #viewbar [data-extra="1"]{display:none!important}
 body.game-ui #gameTelemetry .metric:first-child,body.game-ui #gameTelemetry .metric:last-child{display:none!important}
 #extraBtn{font-weight:700}
+#coverArtBox{display:flex;flex-direction:column;gap:12px}
+#coverArt{width:100%;height:auto;max-height:56vh}
+.ca-fan{transform-box:fill-box;transform-origin:center;animation:caSpin 3.5s linear infinite}
+.ca-bolt{animation:caPulse 2.6s ease-in-out infinite}
+@keyframes caSpin{to{transform:rotate(360deg)}}@keyframes caPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ca-spec{display:flex;gap:10px}
+.ca-spec span{flex:1;border:2px solid var(--ind-line);border-left:6px solid var(--ind-y);padding:6px 10px;font:600 13px Bahnschrift,Arial,sans-serif;color:var(--ind-mut);display:flex;flex-direction:column}
+.ca-spec b{font:400 26px Impact,Bahnschrift,sans-serif;color:var(--ind-y);letter-spacing:1px}
+@media(max-height:820px){#coverArt{max-height:46vh}.ca-spec b{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.ca-fan,.ca-bolt{animation:none}}
 @media(prefers-reduced-motion:reduce){dialog#gameLaunch .g-entry-actions button{transition:none}}
 `;
 document.head.append(st);
@@ -111,6 +121,37 @@ document.head.append(st);
   const m=document.createElement('button');m.id='extraBtn';m.type='button';m.textContent='Más opciones';m.setAttribute('aria-pressed','false');
   m.onclick=()=>{const on=document.body.classList.toggle('show-extra');m.setAttribute('aria-pressed',String(on));m.textContent=on?'Menos opciones':'Más opciones';};
   tools.append(m);}}
+
+// Ilustración de portada: grupo electrógeno (reemplaza el diagrama de rutas)
+{const pane=$$('gameRoutePane');if(pane&&!$$('coverArtBox')){
+ [...pane.children].forEach(c=>{c.style.display='none';});
+ const box=document.createElement('div');box.id='coverArtBox';box.innerHTML=`<svg id="coverArt" viewBox="0 0 560 400" role="img" aria-label="Dibujo del grupo electrógeno: radiador, motor diésel, alternador y tablero de control">
+<defs><pattern id="caHaz" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="7" height="14" fill="#ffc400"/><rect x="7" width="7" height="14" fill="#0b0b0a"/></pattern></defs>
+<g class="ca-bolt"><path d="M292 8 L262 62 H284 L270 104 L316 44 H292 Z" fill="#ffc400"/></g>
+<g stroke="#ffc400" stroke-width="2.5" stroke-linejoin="round" fill="#161510">
+<rect x="40" y="300" width="480" height="22" fill="url(#caHaz)" stroke="none"/><rect x="40" y="300" width="480" height="22" fill="none"/>
+<rect x="56" y="322" width="26" height="22" /><rect x="478" y="322" width="26" height="22"/>
+<rect x="52" y="150" width="86" height="150" fill="#1f1d12"/>
+<g stroke-width="1.6"><path d="M62 166H128M62 182H128M62 198H128M62 214H128M62 230H128M62 246H128M62 262H128M62 278H128"/></g>
+<circle cx="95" cy="225" r="36" fill="#0b0b0a"/><g class="ca-fan" stroke-width="3"><path d="M95 190V260M60 225H130M70 200L120 250M120 200L70 250"/></g>
+<rect x="138" y="170" width="190" height="130" fill="#ffc400"/>
+<rect x="150" y="184" width="166" height="26" fill="#0b0b0a" stroke="none"/><g fill="#ffc400" stroke="none"><rect x="160" y="190" width="14" height="14"/><rect x="186" y="190" width="14" height="14"/><rect x="212" y="190" width="14" height="14"/><rect x="238" y="190" width="14" height="14"/><rect x="264" y="190" width="14" height="14"/><rect x="290" y="190" width="14" height="14"/></g>
+<rect x="150" y="224" width="166" height="62" fill="#e0ac00" stroke="#0b0b0a"/><path d="M150 244H316M150 264H316" stroke="#0b0b0a"/>
+<path d="M170 170V112H190V170M240 170V132H252V170" fill="#161510"/><rect x="164" y="102" width="32" height="12" fill="#161510"/>
+<rect x="328" y="196" width="40" height="104" fill="#1f1d12"/><rect x="368" y="184" width="104" height="116" rx="10" fill="#1f1d12"/>
+<g stroke-width="1.6"><path d="M384 184V300M400 184V300M416 184V300M432 184V300M448 184V300"/></g>
+<rect x="472" y="212" width="22" height="64" fill="#161510"/>
+<rect x="384" y="104" width="96" height="76" fill="#12120f"/><rect x="394" y="114" width="42" height="26" fill="#0b0b0a"/><path d="M398 134l8-10 8 6 10-12 8 10" stroke-width="2" fill="none"/><circle cx="458" cy="124" r="6" fill="#ffc400"/><circle cx="458" cy="146" r="6" fill="#0b0b0a"/><rect x="394" y="150" width="76" height="16" fill="#0b0b0a"/><path d="M402 158H462" stroke-width="2"/>
+</g>
+<g font-family="Bahnschrift,'Segoe UI',Arial,sans-serif" font-size="15" font-weight="700" fill="#f4f1e4">
+<g stroke="#f4f1e4" stroke-width="1.5" fill="none"><path d="M95 150V128"/><path d="M233 322V338"/><path d="M420 322V338"/></g>
+<text x="95" y="120" text-anchor="middle">Radiador</text>
+<text x="233" y="356" text-anchor="middle">Motor diésel</text>
+<text x="432" y="92" text-anchor="middle">Tablero de control</text>
+<text x="420" y="356" text-anchor="middle">Alternador</text>
+</g>
+</svg>
+<div class="ca-spec"><span><b>50 kW</b>potencia</span><span><b>480 V</b>salida</span><span><b>60 Hz</b>frecuencia</span></div>`;pane.prepend(box);}}
 const menu=$$('gameLaunch');
 if(!menu)return;
 // Aviso de teclas bajo los botones

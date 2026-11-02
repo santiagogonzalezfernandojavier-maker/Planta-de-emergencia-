@@ -135,3 +135,4 @@ Cambios:
 - Aviso de Three.js `sigmaRadians` del despiece corregido (0.08 → 0.035).
 - Pendiente: colisión general con otros objetos que el usuario sienta que atraviesa.
 - v11.1: pantalla de planta más limpia (sin panel de misión derecho, sin números ni cadena repetidos en el narrador, sin título tenue, botones poco usados bajo «Más opciones», telemetría de 3 tarjetas).
+- v11.2: la portada muestra un dibujo del grupo electrógeno (radiador, motor, alternador, tablero) en lugar del diagrama de rutas.
