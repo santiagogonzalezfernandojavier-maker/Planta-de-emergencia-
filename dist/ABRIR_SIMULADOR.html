@@ -58116,7 +58116,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v11.2 · portada con generador</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v11.3 · sonido</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58523,6 +58523,49 @@ document.head.append(st);
 </g>
 </svg>
 <div class="ca-spec"><span><b>50 kW</b>potencia</span><span><b>480 V</b>salida</span><span><b>60 Hz</b>frecuencia</span></div>`;pane.prepend(box);}}
+
+// Sonido ambiente sintetizado: motor del generador según rpm, alarma al fallar la red, arranque, relevador de transferencia y pasos.
+(function(){
+ let ac=null,master,eng,engF,engG,engO1,engO2,noise,lastStage=null,lastSource=null,lastGrid=null,stepT=0,lastPos=null,started=false;
+ const muted=()=>{const b=document.getElementById('hudSound');return b&&b.getAttribute('aria-pressed')==='true';};
+ function init(){
+  if(ac)return;try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+  master=ac.createGain();master.gain.value=.9;master.connect(ac.destination);
+  engG=ac.createGain();engG.gain.value=0;engF=ac.createBiquadFilter();engF.type='lowpass';engF.frequency.value=200;
+  engO1=ac.createOscillator();engO1.type='sawtooth';engO2=ac.createOscillator();engO2.type='square';
+  engO1.frequency.value=20;engO2.frequency.value=10;
+  const g2=ac.createGain();g2.gain.value=.5;engO1.connect(engF);engO2.connect(g2);g2.connect(engF);engF.connect(engG);engG.connect(master);engO1.start();engO2.start();
+  const len=ac.sampleRate,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;noise=buf;
+ }
+ function resume(){init();if(ac&&ac.state==='suspended')ac.resume();started=true;}
+ ['pointerdown','keydown'].forEach(t=>window.addEventListener(t,resume,{capture:true}));
+ const tone=(f,t,d,type,v,f2)=>{const n=ac.currentTime+t,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(v||.08,n+.01);g.gain.exponentialRampToValueAtTime(.0001,n+d);o.connect(g);g.connect(master);o.start(n);o.stop(n+d+.02);};
+ const burst=(t,d,v,freq)=>{const n=ac.currentTime+t,src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();src.buffer=noise;f.type='bandpass';f.frequency.value=freq||800;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.0001,n+d);src.connect(f);f.connect(g);g.connect(master);src.start(n);src.stop(n+d+.02);};
+ const alarm=()=>{for(let i=0;i<3;i++){tone(880,i*.32,.2,'square',.05);tone(660,i*.32+.16,.14,'square',.04);}};
+ const crank=()=>{for(let i=0;i<7;i++)tone(70+i*6,i*.22,.18,'sawtooth',.06,50+i*5);burst(0,1.5,.04,300);};
+ const clunk=()=>{tone(110,0,.18,'square',.1,60);burst(0,.12,.12,1800);tone(70,.12,.3,'sine',.12,45);};
+ function loop(){
+  if(!ac||!started)return;
+  const mute=muted();master.gain.value=mute?0:.9;
+  const sv=(typeof s!=='undefined'&&s)?s:null;if(!sv)return;
+  const rpm=sv.rpm||0,t=ac.currentTime;
+  const menuOpen=!!(window.gameMenuActive||window.plantPresentationActive);
+  const inPlant=(typeof campusNav!=='undefined'&&campusNav.mode==='basement')||(window.Walk31&&Walk31.state().active&&Walk31.state().zone==='plant');
+  const loud=menuOpen?.2:(inPlant?1:.35);
+  const k=Math.min(1,rpm/1800);
+  engO1.frequency.setTargetAtTime(14+k*46,t,.15);engO2.frequency.setTargetAtTime(7+k*23,t,.15);
+  engF.frequency.setTargetAtTime(120+k*380,t,.2);
+  engG.gain.setTargetAtTime(rpm>20?(.04+.1*k)*loud:0,t,.25);
+  if(lastStage!==null&&sv.stage!==lastStage){if(sv.stage==='starting')crank();if(sv.stage==='fault')alarm();}
+  if(lastGrid!==null&&sv.grid!==lastGrid&&!sv.grid)alarm();
+  if(lastSource!==null&&sv.source!==lastSource&&(sv.source==='gen'||sv.source==='grid'))clunk();
+  lastStage=sv.stage;lastSource=sv.source;lastGrid=sv.grid;
+  // pasos
+  try{const w=window.Walk31&&Walk31.state();if(w&&w.active&&!menuOpen){const p=w.position;if(lastPos){const d=Math.hypot(p[0]-lastPos[0],p[2]-lastPos[2]);if(d>.02){stepT+=d;if(stepT>.75){stepT=0;burst(0,.07,.05,260);}}}lastPos=p.slice();}else lastPos=null;}catch(e){}
+ }
+ setInterval(loop,100);
+ window.AmbientSound={state:()=>({on:!!ac,gain:engG?engG.gain.value:0})};
+})();
 const menu=$$('gameLaunch');
 if(!menu)return;
 // Aviso de teclas bajo los botones
