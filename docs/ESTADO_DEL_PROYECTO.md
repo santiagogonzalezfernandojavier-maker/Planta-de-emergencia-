@@ -122,3 +122,8 @@ Cambios:
 ## v10 · Despiece directo
 - Se elimina la visita guiada. «Despiece de la planta» (antes «Explorar instalación») abre el despiece con entrada suave (desvanecimiento). El botón «Anatomía» se oculta porque hacía lo mismo.
 - Orden sugerido en el menú: Despiece → Misión → Mantenimiento.
+
+## v10.1 · Funcionamiento en vivo
+- Las misiones ya no abren el recorrido de mantenimiento: van directo a la vista de la planta con la prueba en marcha.
+- Cuadro «Funcionamiento en vivo» (src/50-ayudas_novato.js) en la vista de la planta: explica cada etapa (servicio normal, falla de red, arranque, subida de velocidad, listo, transferencia, generador alimentando, enfriamiento), muestra rpm, voltios y hertz, y dos filas de la ruta de energía (red y generador) que se encienden según el estado. Botón «Cortar la red y ver qué pasa»; tecla V lo oculta o muestra.
+- Probado forzando cada estado del simulador; la secuencia completa en tiempo real no se alcanzó a observar en el entorno de pruebas (muy lento).

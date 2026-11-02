@@ -58114,7 +58114,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v10 · despiece directo</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v10.1 · funcionamiento en vivo</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58132,7 +58132,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
   const choose=(action,self,e)=>{if(walkStarted){action.call(self,e);return;}const had=GameInterface.state().hasEntered;action.call(self,e);if(had)goEmergency();startWalk();};
   enter.onclick=e=>choose(enterAction,enter,e);
   const cont=$('gameContinue'),contAction=cont.onclick;cont.onclick=e=>choose(contAction,cont,e);
-  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted)choose(enterAction,enter,e);missionAction.call(b,e);};});
+  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted){walkStarted=true;launchMenu.removeEventListener('close',reopenIfNoChoice);launchMenu.removeEventListener('cancel',keepMenuOnEsc,true);}missionAction.call(b,e);};});
   launchMenu.addEventListener('cancel',keepMenuOnEsc,true);launchMenu.addEventListener('close',reopenIfNoChoice);
  };
  if(launchMenu.open||window.gameMenuActive)installGuards();
@@ -58145,7 +58145,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 // v7 · Ayudas para quien no conoce el tema: bienvenida con controles, glosario y frases del menú.
 (function(){
 const $$=id=>document.getElementById(id);
-const s=document.createElement('style');s.textContent=`
+const sty0=document.createElement('style');sty0.textContent=`
 #gameLaunch .g-entry-actions button small.g-desc{display:block;margin-top:5px;font-family:system-ui,Segoe UI,Arial,sans-serif;font-size:12.5px;font-weight:500;letter-spacing:.2px;text-transform:none;color:#a9cdd2;line-height:1.35}
 #gameLaunch .g-order{max-width:440px;margin:12px 0 0;font:600 12px/1.45 system-ui,Segoe UI,Arial,sans-serif;color:#efc474}
 #gameLaunch .g-gloss-btn{margin:0 0 0 auto;background:none;border:0;border-bottom:1px dashed #6fb7c0;color:#bfe9ee;font:600 12.5px system-ui,Segoe UI,Arial,sans-serif;padding:2px 0;cursor:pointer}
@@ -58180,7 +58180,7 @@ body.walking31 .fp-hud small{font-size:13px}
 body.walking31 .fp-hud button{font-size:14px;padding:8px 12px}
 body.walking31 #fpTarget{font-size:17px}
 @media(min-width:1500px){body.walking31 #fpNavText{font-size:21px!important}body.walking31 .fp-hud button,body.walking31 .fp-hud small{font-size:15px}}
-`;document.head.append(s);
+`;document.head.append(sty0);
 
 // Glosario
 const terms=[
@@ -58301,5 +58301,67 @@ function removeRadiatorGuard(){
 let guardTries=0;const guardTimer=setInterval(()=>{removeRadiatorGuard();if(++guardTries>=60)clearInterval(guardTimer);},1500);
 removeRadiatorGuard();
 new MutationObserver(()=>{if(document.body.classList.contains('walking31'))removeRadiatorGuard();}).observe(document.body,{attributes:true,attributeFilter:['class']});
+
+// ===== Narración en vivo del funcionamiento (arranque, flujo de energía y transferencia) =====
+(function(){
+ const st=document.createElement('style');st.textContent=`
+#opNarrator{position:fixed;left:14px;top:182px;z-index:33;width:min(330px,31vw);background:#0b1722f2;border:1px solid #2b5362;border-left:4px solid #efc474;border-radius:9px;padding:12px 15px;color:#edf5f5;font-family:system-ui,Segoe UI,Arial,sans-serif;box-shadow:0 10px 32px #0009}
+#opNarrator[hidden]{display:none}
+#opNarrator .on-h{display:flex;justify-content:space-between;align-items:center;font:700 11px ui-monospace,Consolas,monospace;letter-spacing:1.5px;color:#efc474}
+#opNarrator .on-h button{background:none;border:0;color:#9fc5cb;font-size:16px;cursor:pointer;padding:0 4px}
+#opNarrator h4{margin:4px 0 4px;font-size:17px;color:#fff;text-transform:none;letter-spacing:normal}
+#opNarrator p{margin:0;font-size:13.5px;line-height:1.42;color:#d6e6e8}
+#opNarrator .on-m{display:flex;gap:14px;margin:8px 0 6px;font:600 12px ui-monospace,Consolas,monospace;color:#9fc5cb}
+#opNarrator .on-m b{display:block;font-size:17px;color:#fff}
+#opNarrator .on-f{display:grid;gap:5px;margin:8px 0 2px}
+#opNarrator .on-r{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+#opNarrator .on-r span{font:700 11px ui-monospace,Consolas,monospace;padding:3px 7px;border-radius:4px;background:#13242d;color:#58727a;border:1px solid #243d48}
+#opNarrator .on-r span.a1{background:#16405f;color:#cfeaff;border-color:#2e86c1}
+#opNarrator .on-r span.a2{background:#14503f;color:#d2fff0;border-color:#2bbf8f}
+#opNarrator .on-r i{font-style:normal;color:#41606a;font-size:11px}
+#opNarrator .on-b{margin-top:10px;display:flex;gap:8px}
+#opNarrator .on-b button{background:#12303d;border:1px solid #2b5362;color:#e9fffb;border-radius:6px;padding:7px 12px;font:700 13px system-ui,Segoe UI,Arial,sans-serif;cursor:pointer}
+#opNarrator .on-b button.pri{background:#efc474;color:#10202a;border-color:#efc474}
+@media(min-width:1500px){#opNarrator{width:400px;top:190px}#opNarrator h4{font-size:21px}#opNarrator p{font-size:16px}}
+`;document.head.append(st);
+ const box=document.createElement('div');box.id='opNarrator';box.hidden=true;document.body.append(box);
+ let off=false,key='';
+ function describe(){
+  const g=s.grid,stg=s.stage,src=s.source,hz=(s.rpm/30).toFixed(1);
+  if(stg==='fault'||s.fault)return ['Falla','El control detectó una falla y protege al equipo. Revisa la alarma para ver cuál fue.'];
+  if(s.target)return ['Transferencia en curso','Una fuente se abre antes de que la otra se cierre, para que nunca estén conectadas a la vez. Por un instante la fábrica queda sin energía.'];
+  if(stg==='starting')return ['El generador arranca','La batería hace girar el motor de arranque, y este mueve el motor diésel hasta que enciende.'];
+  if(stg==='crankpause')return ['Reintento de arranque','El motor no encendió. El control espera unos segundos y vuelve a intentarlo.'];
+  if(stg==='warm')return ['Subiendo de velocidad','El motor ya encendió y gira a '+Math.round(s.rpm)+' rpm. El alternador empieza a dar voltaje y se espera a que voltaje y frecuencia se estabilicen.'];
+  if(src==='gen')return ['El generador alimenta la fábrica','El motor mueve el alternador, y de ahí la energía sube por el transformador elevador, pasa por la barra y llega a la fábrica.'];
+  if(stg==='cool')return ['Enfriamiento','La red regresó y la carga volvió a ella. El motor sigue encendido unos minutos sin carga para enfriarse antes de parar.'];
+  if(!g&&stg==='ready')return ['Listo para tomar la carga','Voltaje y frecuencia estables. El control va a abrir el interruptor de la red y cerrar el del generador.'];
+  if(!g)return ['La red falló','La fábrica se quedó sin luz. El control lo detecta y manda arrancar el generador.'];
+  return ['Servicio normal','La red alimenta la fábrica. El generador está detenido y listo: si la red falla, arranca solo.'];
+ }
+ function flow(){
+  const gridOn=s.grid&&s.source!=='none',busOn=s.source!=='none',genUp=s.genV>50,genSrc=s.source==='gen';
+  const c=(t,on,k)=>'<span'+(on?' class="'+k+'"':'')+'>'+t+'</span>',a='<i>▸</i>';
+  return '<div class="on-r">'+c('Red 13.8 kV',s.grid,'a1')+a+c('QN',s.grid&&s.source==='grid','a1')+a+c('Barra',busOn,s.source==='gen'?'a2':'a1')+a+c('TP',busOn,s.source==='gen'?'a2':'a1')+a+c('Fábrica',busOn,s.source==='gen'?'a2':'a1')+'</div>'
+   +'<div class="on-r">'+c('Generador',genUp,'a2')+a+c('Q0',genUp,'a2')+a+c('TE',genUp,'a2')+a+c('QG',genSrc,'a2')+a+c('Barra',genSrc,'a2')+'</div>';
+ }
+ function tick(){
+  const blocked=!!(document.getElementById('gameLaunch')?.open||document.getElementById('plantPresentation')?.open||document.getElementById('gameHelp')?.open||window.plantPresentationActive||(window.Walk31&&Walk31.state().active)||(window.Maintenance&&Maintenance.state().active)||document.body.classList.contains('practice26'));
+  const on=!off&&!blocked&&typeof campusNav!=='undefined'&&['basement','emergency','general'].includes(campusNav.mode);
+  box.hidden=!on;if(!on)return;
+  const [t,txt]=describe(),k=t+'|'+Math.round(s.rpm/50)+'|'+Math.round(s.genV/20)+'|'+s.source+'|'+s.stage+'|'+s.grid+'|'+paused;
+  if(k===key)return;key=k;
+  const idle=s.grid&&s.stage==='off'&&s.source==='grid';
+  box.innerHTML='<div class="on-h"><span>FUNCIONAMIENTO EN VIVO'+(paused?' · EN PAUSA':'')+'</span><button id="opHide" title="Ocultar">×</button></div><h4>'+t+'</h4><p>'+txt+'</p>'
+   +'<div class="on-m"><div><b>'+Math.round(s.rpm)+'</b>rpm</div><div><b>'+s.genV.toFixed(0)+'</b>voltios</div><div><b>'+(s.rpm/30).toFixed(1)+'</b>hertz</div></div>'+'<div class="on-f">'+flow()+'</div>'
+   +'<div class="on-b">'+(idle?'<button class="pri" id="opGo">▶ Cortar la red y ver qué pasa</button>':'<button id="opReset">Reiniciar</button>')+'</div>';
+  const h=document.getElementById('opHide');if(h)h.onclick=()=>{off=true;box.hidden=true;};
+  const go=document.getElementById('opGo');if(go)go.onclick=()=>{try{UnidadVII.test('transfer');}catch(e){}key='';};
+  const rs=document.getElementById('opReset');if(rs)rs.onclick=()=>{document.getElementById('reset')?.click();key='';};
+ }
+ setInterval(()=>{try{tick();}catch(e){if(!window.__opErr){window.__opErr=String(e);console.warn('opNarrator',e);}}},250);
+ window.OpNarrator={show:()=>{off=false;key='';},describe,state:()=>!box.hidden};
+ document.addEventListener('keydown',e=>{if(e.code==='KeyV'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName||'')&&!document.querySelector('dialog[open]')){off=!off;key='';}});
+})();
 })();
 </script></body></html>

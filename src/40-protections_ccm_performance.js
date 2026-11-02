@@ -70,7 +70,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v10 · despiece directo</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v10.1 · funcionamiento en vivo</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -88,7 +88,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
   const choose=(action,self,e)=>{if(walkStarted){action.call(self,e);return;}const had=GameInterface.state().hasEntered;action.call(self,e);if(had)goEmergency();startWalk();};
   enter.onclick=e=>choose(enterAction,enter,e);
   const cont=$('gameContinue'),contAction=cont.onclick;cont.onclick=e=>choose(contAction,cont,e);
-  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted)choose(enterAction,enter,e);missionAction.call(b,e);};});
+  launchMenu.querySelectorAll('[data-mission]').forEach(b=>{const missionAction=b.onclick;b.onclick=e=>{if(!walkStarted){walkStarted=true;launchMenu.removeEventListener('close',reopenIfNoChoice);launchMenu.removeEventListener('cancel',keepMenuOnEsc,true);}missionAction.call(b,e);};});
   launchMenu.addEventListener('cancel',keepMenuOnEsc,true);launchMenu.addEventListener('close',reopenIfNoChoice);
  };
  if(launchMenu.open||window.gameMenuActive)installGuards();
