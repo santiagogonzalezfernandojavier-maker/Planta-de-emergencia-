@@ -157,3 +157,8 @@ Cambios:
 - Sin menús ni cinturón. Las herramientas están sobre un tapete junto a la bolsa del piso. Cerca del tapete, E o clic: el técnico se agacha, mira la herramienta (aparece solo su nombre) y la toma con E o clic. Flechas o LB/RB cambian la selección, Q/Esc cierra.
 - Q fuera del tapete guarda la herramienta (manos libres). El marcador amarillo manda al tapete cuando la herramienta no es la del paso.
 - Walk31.setCrouch añadido para agacharse por código.
+
+## v12.4 — Porta herramientas puesto, manos y herramientas rehechas
+- Se oculta la maleta del piso durante la rutina (y su colisión). El tapete queda desactivado.
+- Porta herramientas en la cadera: mantener Q lo sube, rueda/flechas/RB cambian, soltar Q saca la herramienta; G guarda; 1–9 siguen como atajo silencioso. Solo se muestra el nombre de la herramienta marcada.
+- Guantes con nudillos, dedos de tres piezas y puños; herramientas con más detalle (llave combinada, linterna con aros, multímetro con pantalla y puntas, candado con etiqueta, filtro con nervaduras, libreta con liga).

@@ -142,7 +142,7 @@
  target('earthA',[1.2,.24,1.15],.12);target('earthB',[1.5,.24,1.15],.12);target('earthC',[1.8,.24,1.15],.12);line(service,[[1.2,.24,1.15],[1.8,.24,1.15]],.012,mat('#967646',.75));for(const x of [1.2,1.8])cyl(service,.025,.025,[x,.25,1.15],mat('#a3a9aa',.8));
  // D27: accesorios de servicio con geometría de piezas y acabados explícitos.
  const fabric=new T.MeshStandardMaterial({color:'#485c59',roughness:.97}),rubber=new T.MeshStandardMaterial({color:'#222b2d',roughness:.82}),steel=mat('#b6c0c3',.86),yellow=mat('#d9ad3f'),paper=new T.MeshStandardMaterial({color:'#d5bd8d',roughness:.98});
- const bag=new T.Group();service.add(bag);bag.position.set(.15,-.075,3.05);
+ const bag=new T.Group();window.__bag32=bag;service.add(bag);bag.position.set(.15,-.075,3.05);
  box(bag,[.48,.23,.28],[0,.12,0],fabric);for(const x of [-.245,.245]){box(bag,[.018,.17,.19],[x,.11,0],rubber);line(bag,[[x,.04,-.11],[x,.23,-.11],[x,.245,.11],[x,.04,.11]],.004,mat('#92a5a0'));}
  for(const x of [-.11,.11]){line(bag,[[x,.15,-.145],[x,.32,-.06],[x,.32,.06],[x,.15,.145]],.012,rubber);box(bag,[.14,.11,.018],[x,.09,.15],fabric);}
  line(bag,[[-.21,.242,0],[.21,.242,0]],.004,steel);box(bag,[.025,.006,.015],[.12,.25,.012],steel);cabinetLabel20(bag,'G-01',[0,.13,.157],.10,.045,'#dae4df','#253e3b');
@@ -294,7 +294,7 @@
  const turnPad34=document.createElement('div');turnPad34.id='turnPad34';turnPad34.append(turnButton34('ArrowLeft'),turnButton34('ArrowRight'));$('viewer').append(turnPad34);
  function crouch34(){if(!walk.on)return;walk.crouch=!walk.crouch;applyWalk(0);const b=$('fpCrouch');if(b)b.setAttribute('aria-pressed',String(walk.crouch));}
  function personBlocks(x,z){try{const g=Personnel.group.children,zone=walk.zone||'plant';if(!Personnel.group.visible)return false;for(let i=0;i<g.length;i++){const yardPerson=g[i].position.y>3;if(zone==='ccm'||(zone==='yard')!==yardPerson)continue;if(Math.hypot(x-g[i].position.x,z-g[i].position.z)<.5)return true;}}catch(e){}return false;}
- function canStand(x,z){if(personBlocks(x,z))return false;const zoneResult=zoneStand34(x,z);if(zoneResult!==null)return zoneResult;const r=.18;if(x>-.49&&x<.79&&z>2.57&&z<3.53)return false;if(x< -7.5||x>8.45||z< -5.45||z>5.45)return false;return !blockers.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}
+ function canStand(x,z){if(personBlocks(x,z))return false;const zoneResult=zoneStand34(x,z);if(zoneResult!==null)return zoneResult;const r=.18;if(x>-.49&&x<.79&&z>2.57&&z<3.53&&!(window.__bag32&&window.__bag32.visible===false))return false;if(x< -7.5||x>8.45||z< -5.45||z>5.45)return false;return !blockers.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}
  window.__canStand=canStand;
  function reach(id){const o=targets.get(id);if(!o)return Infinity;return o.getWorldPosition(new T.Vector3()).distanceTo(walk.pos);}
  function centerPick(){if(walk.zone&&walk.zone!=='plant')return null;const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(0,0),camera);service.updateWorldMatrix(true,false);for(const o of targets.values())o.updateWorldMatrix(false,false);const direct=ray.intersectObjects(needed().map(id=>targets.get(id)),false)[0]?.object.userData.workTarget;if(direct)return direct;
