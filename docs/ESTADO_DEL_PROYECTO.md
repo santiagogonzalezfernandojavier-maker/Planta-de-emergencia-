@@ -174,3 +174,7 @@ Cambios:
 
 ## v12.7 — Manos levantadas
 - Los guantes estaban acostados y planos. Ahora van levantados (cabeceo ~54°), con los dedos más abiertos y en reposo semicurvados, como en las referencias (vista del dorso con antebrazos subiendo desde abajo).
+
+## v12.8 — Guantes de una sola pieza
+- Cada dedo es un tubo continuo (`fingerTube`) con perfil cónico y colores por vértice (naranja arriba, agarre oscuro abajo); la flexión se calcula en cada fotograma, sin esferas en las juntas. La palma es una esfera aplastada con degradado de color. El pulgar usa el mismo método.
+- El cierre ahora dobla hacia la palma (antes doblaba hacia el dorso). La mano derecha sube un poco al llevar una herramienta.

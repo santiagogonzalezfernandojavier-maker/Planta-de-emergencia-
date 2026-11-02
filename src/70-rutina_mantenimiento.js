@@ -161,42 +161,55 @@ function start(){ui();on=true;try{window.__bag32&&(window.__bag32.visible=false)
 
 // ---- Manos en primera persona (guantes naranja) que sostienen la herramienta elegida ----
 let hands=null,HR=null,HL=null,heldG=null,heldBase=null,phase=0,tt=0,lastP=null;
-function glove(side){const g=new T.Group(),m=(c,r=.7,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
+// Dedo suave: un solo tubo continuo con perfil cónico que se dobla en tres falanges (sin esferas ni juntas visibles).
+function fingerTube(L,r0,r1,cTop,cBot){const RS=14,N=[7,6,5],CAP=4,rings=[];
+ for(let k=0;k<3;k++)for(let i=0;i<N[k];i++)rings.push({k,t:i/N[k],cap:0});
+ rings.push({k:2,t:1,cap:0});for(let c=1;c<=CAP;c++)rings.push({k:2,t:1,cap:1,ph:c/CAP*Math.PI/2});
+ const nv=rings.length*(RS+1),pos=new Float32Array(nv*3),col=new Float32Array(nv*3),idx=[];
+ for(let i=0;i<rings.length-1;i++)for(let j=0;j<RS;j++){const a=i*(RS+1)+j,b=a+1,c=a+RS+1,d=c+1;idx.push(a,c,b,b,c,d);}
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));geo.setAttribute('color',new T.BufferAttribute(col,3));geo.setIndex(idx);
+ const top=new T.Color(cTop),bot=new T.Color(cBot),stitch=new T.Color(cTop).multiplyScalar(.7),tot=L[0]+L[1]+L[2],rAt=s=>r0+(r1-r0)*Math.min(1,s/tot);
+ const tmp=new T.Color();
+ function update(ang){const cum=[0,ang[0],ang[0]+ang[1],ang[0]+ang[1]+ang[2]];let py=0,pz=0,s=0,vi=0;
+  for(let q=0;q<rings.length;q++){const R=rings[q];let a,rad,cy,cz,dy,dz;
+   if(!R.cap){const sm=R.t*R.t*(3-2*R.t);a=R.t>=1?cum[3]:cum[R.k]+ang[R.k]*sm;dy=Math.sin(a);dz=-Math.cos(a);
+    if(q>0){const ds=L[R.k]/N[R.k];py+=dy*ds;pz+=dz*ds;s+=ds;}
+    const bulge=(R.t<.001&&R.k>0)?1.06:1;rad=rAt(s)*bulge;cy=py;cz=pz;}
+   else{a=cum[3];dy=Math.sin(a);dz=-Math.cos(a);const rr=rAt(tot);rad=rr*Math.cos(R.ph);cy=py+dy*rr*Math.sin(R.ph);cz=pz+dz*rr*Math.sin(R.ph);}
+   const ny=Math.cos(a),nz=Math.sin(a);
+   for(let j=0;j<=RS;j++){const th=j/RS*Math.PI*2,ct=Math.cos(th),st=Math.sin(th),ex=rad*1.05*ct,ey=rad*.93*st;
+    pos[vi*3]=ex;pos[vi*3+1]=cy+ny*ey;pos[vi*3+2]=cz+nz*ey;
+    const u=Math.max(0,Math.min(1,(-st-.2)/.5));tmp.copy(top).lerp(bot,u);if(!R.cap&&R.t<.001&&R.k>0)tmp.lerp(stitch,.85);
+    col[vi*3]=tmp.r;col[vi*3+1]=tmp.g;col[vi*3+2]=tmp.b;vi++;}}
+  geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true;geo.computeVertexNormals();}
+ update([0,0,0]);return{geo,update};}
+function glove(side){const g=new T.Group(),m=(c,r=.72,me=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  tag=o=>{o.renderOrder=1000;o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;return o;};
- const gl=m('#e9a21a',.82),gl2=m('#cf8a0e',.85),pad=m('#1d1d1f',.65),cuffM=m('#565c63',.85),cloth=m('#2f5886',.9),refl=m('#d6dcdf',.3,.5),vel=m('#161819',.95);
+ const ORG='#eba11b',DK='#34373c',vcm=new T.MeshStandardMaterial({vertexColors:true,roughness:.7,metalness:0,depthTest:false});
+ const pad=m('#1d1d1f',.6),cuffM=m('#565c63',.85),cloth=m('#2f5886',.9),refl=m('#d6dcdf',.3,.5);
  const S=(geo,mat,x,y,z,sx=1,sy=1,sz=1)=>{const o=tag(new T.Mesh(geo,mat));o.position.set(x,y,z);o.scale.set(sx,sy,sz);return o;};
- const seg=(r0,r1,len)=>{const q=new T.CylinderGeometry(r1,r0,len,12);q.rotateX(-Math.PI/2);return q;};// base en z=0, punta hacia -z, más delgada
- // palma y dorso
- g.add(S(new T.SphereGeometry(1,20,14),gl,0,0,0,.042,.021,.047));
- g.add(S(new T.SphereGeometry(1,16,10),gl2,0,.010,-.004,.038,.009,.040));
- // protecciones de nudillos y de dorso (como en un guante de mecánico)
- const X=[-.0295,-.0098,.0098,.0295];
- for(let i=0;i<4;i++)g.add(S(new T.SphereGeometry(1,10,8),pad,X[i]*(side>0?1:-1),.015,-.03,.0085,.004,.013));
- g.add(S(new T.SphereGeometry(1,12,8),pad,0,.0155,.01,.024,.003,.018));
- // dedos: largos y ligeramente cónicos, en tres falanges, con apertura natural
- const L=[[.042,.029,.023],[.046,.032,.024],[.042,.029,.022],[.033,.023,.018]],R=[.0100,.0104,.0098,.0086];
- const fingers=[];
- for(let i=0;i<4;i++){const l=L[i],r=R[i];const j=new T.Group();j.position.set(side>0?X[i]:-X[i],.001,-.044);j.rotation.y=(side>0?1:-1)*(-(i-1.5)*.17);
-  const mk=(len,r0,r1,mat)=>{const c=S(seg(r0,r1,len),mat,0,0,-len/2);const jn=S(new T.SphereGeometry(r0,10,8),mat,0,0,0);return[c,jn];};
-  const [a,aj]=mk(l[0],r,r*.92,gl);j.add(a,aj);
-  const j2=new T.Group();j2.position.z=-l[0];const [b,bj]=mk(l[1],r*.92,r*.84,gl);j2.add(b,bj);
-  const j3=new T.Group();j3.position.z=-l[1];const [c,cj]=mk(l[2],r*.84,r*.74,gl);j3.add(c,cj);
-  const tip=S(new T.SphereGeometry(r*.74,10,8),gl2,0,0,-l[2]);j3.add(tip);
-  const dp=S(new T.BoxGeometry(r*1.2,.002,l[1]*.9),pad,0,r*.8,-l[1]*.5);j2.add(dp);
-  j2.add(j3);j2.userData.n=j3;j.add(j2);g.add(j);fingers.push([j,j2]);}
- // pulgar en el lado interior de la mano
- const th=new T.Group();th.position.set(-side*.033,-.003,.004);
- th.add(S(new T.SphereGeometry(.0128,10,8),gl,0,0,0));th.add(S(seg(.0128,.0112,.034),gl,0,0,-.017));
- const t2=new T.Group();t2.position.z=-.034;t2.add(S(new T.SphereGeometry(.0112,10,8),gl,0,0,0),S(seg(.0112,.0098,.03),gl,0,0,-.015),S(new T.SphereGeometry(.0098,10,8),gl2,0,0,-.03));th.add(t2);
- th.rotation.y=side*.5;th.rotation.x=-.15;g.add(th);th.userData.t2=t2;
- // puño del guante con tira de velcro y manga de la camisa
+ // palma: esfera aplastada con color de guante arriba y agarre oscuro abajo
+ const pg=new T.SphereGeometry(1,28,18),pc=new Float32Array(pg.attributes.position.count*3),po=new T.Color(ORG),pd=new T.Color(DK),tc=new T.Color();
+ for(let i=0;i<pg.attributes.position.count;i++){const y=pg.attributes.position.getY(i);tc.copy(po).lerp(pd,Math.max(0,Math.min(1,(-y-.1)/.5)));pc[i*3]=tc.r;pc[i*3+1]=tc.g;pc[i*3+2]=tc.b;}
+ pg.setAttribute('color',new T.BufferAttribute(pc,3));
+ g.add(S(pg,vcm,0,0,0,.043,.022,.05));
+ const X=[-.0295,-.0098,.0098,.0295],LEN=[[.042,.029,.023],[.046,.032,.024],[.042,.029,.022],[.033,.023,.018]],RR=[.0100,.0104,.0098,.0086],fingers=[];
+ for(let i=0;i<4;i++){const f=fingerTube(LEN[i],RR[i],RR[i]*.74,ORG,DK),mesh=tag(new T.Mesh(f.geo,vcm));
+  const pv=new T.Group();pv.position.set(side>0?X[i]:-X[i],.002,-.046);pv.rotation.y=(side>0?1:-1)*(-(i-1.5)*.16);pv.add(mesh);g.add(pv);fingers.push({f,w:[.85+i*.05,1.0,.75]});
+  g.add(S(new T.SphereGeometry(1,10,8),pad,pv.position.x,.02,-.03,.0085,.004,.013));}
+ g.add(S(new T.SphereGeometry(1,12,8),pad,0,.021,.008,.024,.004,.018));
+ // pulgar: dos tramos en el lado interior
+ const tf=fingerTube([.034,.03,.0],.0128,.0098,ORG,DK);tf.update([0,0,0]);
+ const th=new T.Group();th.position.set(-side*.034,-.004,.008);th.rotation.y=side*.5;th.rotation.x=-.15;th.add(tag(new T.Mesh(tf.geo,vcm)));g.add(th);
+ // puño del guante con la manga de la camisa
  const dir=new T.Vector3(side*.45,-.65,.6).normalize(),q=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),dir);
  const cuff=S(new T.CylinderGeometry(.043,.039,.05,18),cuffM,0,0,0);cuff.quaternion.copy(q);cuff.position.set(0,0,.075).addScaledVector(dir,.03);g.add(cuff);
- 
  const sl=S(new T.CylinderGeometry(.052,.043,.4,18),cloth,0,0,0);sl.quaternion.copy(q);sl.position.set(0,0,.075).addScaledVector(dir,.26);g.add(sl);
  const st=S(new T.CylinderGeometry(.0445,.0445,.014,18),refl,0,0,0);st.quaternion.copy(q);st.position.set(0,0,.075).addScaledVector(dir,.13);g.add(st);
- g.scale.setScalar(1.2);g.userData={fingers,th};return g;}
-function pose(g,curl){g.userData.fingers.forEach(([a,b],i)=>{a.rotation.x=curl*(.95+i*.04);b.rotation.x=curl*1.15;if(b.userData.n)b.userData.n.rotation.x=curl*.85;});g.userData.th.rotation.x=curl*.35;if(g.userData.th.userData.t2)g.userData.th.userData.t2.rotation.x=curl*.5;}
+ let last=-9;
+ g.userData.setCurl=c=>{if(Math.abs(c-last)<.004)return;last=c;fingers.forEach(o=>o.f.update([-c*o.w[0]*.95,-c*o.w[1]*1.05,-c*o.w[2]*.8]));tf.update([-c*.35,-c*.55,0]);};
+ g.userData.setCurl(.3);g.scale.setScalar(1.2);g.userData.fingers=[];g.userData.th=new T.Group();return g;}
+function pose(g,curl){if(g.userData.setCurl)g.userData.setCurl(Math.max(0,Math.min(1.1,curl)));}
 
 function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  add=(geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const o=new T.Mesh(geo,mat);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.renderOrder=1001;o.frustumCulled=false;g.add(o);return o;},
@@ -294,7 +307,7 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  const push=Math.sin(kick.ok*Math.PI)*.07,dip=Math.sin(kick.draw*Math.PI)*.22,shake=Math.sin(kick.err*32)*.02*kick.err;
  let hx=0,hy=0,hz=0,hr=0;if(hold){const k=now/1000;if(tool==='cepillo'){hx=Math.sin(k*24)*.04;hz=Math.sin(k*24)*.012;}else if(tool==='pano'){hx=Math.sin(k*18)*.05;hy=Math.sin(k*9)*.01;}else if(tool==='llave'){hr=Math.sin(k*13)*.4;hz=-.03;}else if(tool==='linterna'){hx=Math.sin(k*3)*.03;hz=-.03;}else{hz=-.05+Math.sin(k*10)*.01;}}
  const hasModel=tool!=='mano';
- HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy,HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
+ HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.1:0),HPR.z+hz-push);HR.rotation.set(.95,-.1,hr);
  HL.position.set(HPL.x-sway,HPL.y+bob*.8-idle-dip*.7,HPL.z);HL.rotation.set(.95,.1,0);
  pose(HR,hasModel?1:.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,.3+(tool==='cuaderno'?.3:0));
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
