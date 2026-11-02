@@ -127,3 +127,10 @@ Cambios:
 - Las misiones ya no abren el recorrido de mantenimiento: van directo a la vista de la planta con la prueba en marcha.
 - Cuadro «Funcionamiento en vivo» (src/50-ayudas_novato.js) en la vista de la planta: explica cada etapa (servicio normal, falla de red, arranque, subida de velocidad, listo, transferencia, generador alimentando, enfriamiento), muestra rpm, voltios y hertz, y dos filas de la ruta de energía (red y generador) que se encienden según el estado. Botón «Cortar la red y ver qué pasa»; tecla V lo oculta o muestra.
 - Probado forzando cada estado del simulador; la secuencia completa en tiempo real no se alcanzó a observar en el entorno de pruebas (muy lento).
+
+## v11 · Portada industrial, calidad alta y operarios
+- Nuevo fragmento `src/60-portada_industrial.js`: estilo negro + amarillo de seguridad, portada con tres niveles numerados (Despiece, Misión, Mantenimiento), flechas/Enter y cruceta/A del control, avisos de teclas.
+- Selector de calidad: nueva opción «Calidad alta» (resolución mayor y 12 luces). Por defecto sigue «Automática».
+- Operarios: colisión (ya no se atraviesan, radio 0.5 m, plano y patio) y cabeza que mira alrededor con respiración suave. Los brazos y piernas siguen en pose fija (el modelo no tiene esqueleto).
+- Aviso de Three.js `sigmaRadians` del despiece corregido (0.08 → 0.035).
+- Pendiente: colisión general con otros objetos que el usuario sienta que atraviesa.
