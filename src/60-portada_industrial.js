@@ -57,7 +57,10 @@ body.game-ui #gameDock button:hover,body.game-ui #viewbar button:hover{border-co
 /* Menos ruido en pantalla */
 body.game-ui #opNarrator .on-m,body.game-ui #opNarrator .on-r{display:none!important}
 body.game-ui .view-title{display:none!important}
-body.game-ui #gameObjective{display:none!important}
+body.game-ui:not(.mission-on) #gameObjective{display:none!important}
+body.game-ui.mission-on #gameObjective .g-object-head,body.game-ui.mission-on #gameObjective #gameMissionDescription,body.game-ui.mission-on:not(.mission-done) #gameObjective .g-small-actions,body.game-ui.mission-on #gameObjective #gameControlsHelp{display:none!important}
+body.game-ui.mission-on #gameObjective{top:150px!important;border-radius:0!important;border:2px solid var(--ind-y)!important;border-left-width:8px!important;background:#0b0b0af2!important}
+body.game-ui.mission-on.mission-done #gameObjective{box-shadow:0 0 0 3px #ffc40055}
 body.game-ui:not(.show-extra) #viewbar #toggleRail,body.game-ui:not(.show-extra) #viewbar #proFull,body.game-ui:not(.show-extra) #viewbar #dayNightToggle,body.game-ui:not(.show-extra) #viewbar #toggleObjectives,body.game-ui:not(.show-extra) #viewbar #showSingle,body.game-ui:not(.show-extra) #viewbar #cutGeneralButton,body.game-ui:not(.show-extra) #viewbar [data-extra="1"]{display:none!important}
 body.game-ui #gameTelemetry .metric:first-child,body.game-ui #gameTelemetry .metric:last-child{display:none!important}
 #extraBtn{font-weight:700}
@@ -195,6 +198,9 @@ document.head.append(st);
  setInterval(loop,100);
  window.AmbientSound={state:()=>({on:!!ac,gain:engG?engG.gain.value:0})};
 })();
+
+// El panel de misión solo aparece mientras hay una misión en curso, y al terminar muestra el resultado y «Elegir misión»
+setInterval(()=>{try{const t=typeof eduTest!=='undefined'&&eduTest;document.body.classList.toggle('mission-on',!!t);document.body.classList.toggle('mission-done',!!(t&&t.done));}catch(e){}},300);
 const menu=$$('gameLaunch');
 if(!menu)return;
 // Aviso de teclas bajo los botones
