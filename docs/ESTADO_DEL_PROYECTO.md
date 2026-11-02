@@ -147,3 +147,4 @@ Cambios:
 - Arranca sola al elegir «Mantenimiento» en el menú; el motor anterior sigue corriendo oculto debajo.
 - Ayuda de puntería también en el motor anterior (cono de ~16°), por el problema del candado.
 - Probado de punta a punta con un script que recorre los 37 pasos. Pendiente: probar en laptop real (ritmo, textos, posiciones de los puntos de fuga, combustible y bandas, que son aproximadas).
+- v12.1: la rutina se siente en primera persona. Manos con guantes naranja (con la herramienta elegida en la derecha), cinturón de herramientas con 9 bolsillos con icono (se levanta el elegido), libreta tipo tablilla con papel y nota adhesiva, y acciones que se hacen manteniendo E o el clic con un círculo de progreso (cepillar, aflojar, medir). Racha de aciertos. La herramienta correcta ya no se marca sola: solo después de dos errores en el mismo paso.
