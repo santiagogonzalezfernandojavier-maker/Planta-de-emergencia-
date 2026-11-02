@@ -134,3 +134,4 @@ Cambios:
 - Operarios: colisión (ya no se atraviesan, radio 0.5 m, plano y patio) y cabeza que mira alrededor con respiración suave. Los brazos y piernas siguen en pose fija (el modelo no tiene esqueleto).
 - Aviso de Three.js `sigmaRadians` del despiece corregido (0.08 → 0.035).
 - Pendiente: colisión general con otros objetos que el usuario sienta que atraviesa.
+- v11.1: pantalla de planta más limpia (sin panel de misión derecho, sin números ni cadena repetidos en el narrador, sin título tenue, botones poco usados bajo «Más opciones», telemetría de 3 tarjetas).

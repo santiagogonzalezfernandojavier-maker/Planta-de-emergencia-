@@ -54,6 +54,13 @@ body.game-ui #gameDock button:hover,body.game-ui #viewbar button:hover{border-co
 #fixCard,#walkWelcome .ww-card{border-radius:0!important;border:2px solid var(--ind-y)!important;background:#0b0b0af2!important;font-family:Bahnschrift,"Segoe UI",Arial,sans-serif}
 #walkWelcome .ww-it kbd{background:#f4f1e4!important;color:#000!important;border-bottom:4px solid #8d8a78!important;border-radius:4px!important}
 #walkWelcome h2{color:var(--ind-y)!important;font-family:Impact,Bahnschrift,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:1px}
+/* Menos ruido en pantalla */
+body.game-ui #opNarrator .on-m,body.game-ui #opNarrator .on-r{display:none!important}
+body.game-ui .view-title{display:none!important}
+body.game-ui #gameObjective{display:none!important}
+body.game-ui:not(.show-extra) #viewbar #toggleRail,body.game-ui:not(.show-extra) #viewbar #proFull,body.game-ui:not(.show-extra) #viewbar #dayNightToggle,body.game-ui:not(.show-extra) #viewbar #toggleObjectives,body.game-ui:not(.show-extra) #viewbar #showSingle,body.game-ui:not(.show-extra) #viewbar #cutGeneralButton,body.game-ui:not(.show-extra) #viewbar [data-extra="1"]{display:none!important}
+body.game-ui #gameTelemetry .metric:first-child,body.game-ui #gameTelemetry .metric:last-child{display:none!important}
+#extraBtn{font-weight:700}
 @media(prefers-reduced-motion:reduce){dialog#gameLaunch .g-entry-actions button{transition:none}}
 `;
 document.head.append(st);
@@ -96,6 +103,14 @@ document.head.append(st);
  requestAnimationFrame(tick);
  window.PersonnelLife={rig};
 })();
+
+// Botón «Más» para las opciones que casi no se usan
+{const tools=document.querySelector('#viewbar .nav-tools');
+ if(tools&&!$$('extraBtn')){
+  [...tools.children].forEach(b=>{if(b.tagName==='BUTTON'&&/^Circuito$/i.test(b.textContent.trim()))b.dataset.extra='1';});
+  const m=document.createElement('button');m.id='extraBtn';m.type='button';m.textContent='Más opciones';m.setAttribute('aria-pressed','false');
+  m.onclick=()=>{const on=document.body.classList.toggle('show-extra');m.setAttribute('aria-pressed',String(on));m.textContent=on?'Menos opciones':'Más opciones';};
+  tools.append(m);}}
 const menu=$$('gameLaunch');
 if(!menu)return;
 // Aviso de teclas bajo los botones
