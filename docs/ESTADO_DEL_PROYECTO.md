@@ -200,3 +200,10 @@ Cambios:
 - Postura de reposo como en un juego en primera persona: manos abajo y a los lados, palmas hacia dentro con el pulgar arriba (giro de ∓1.0 rad sobre el eje del dedo), cabeceo suave de 0.55 rad.
 - El antebrazo (puño, manga y franja) ya no cuelga de la mano: cuelga del grupo `hands` y se recoloca cada fotograma (`placeArm`) en la muñeca, con dirección fija desde abajo hacia fuera. Así sale natural sin importar cómo gire la mano.
 - Posiciones HPR/HPL a (±0.24, -0.17, -0.5), escala del guante 1.25, la mano derecha sube 0.08 al llevar herramienta.
+
+## v12.14 · Antebrazos alineados y agarre del lápiz
+- El antebrazo ya no sale con un ángulo fijo: continúa el eje de la muñeca (con un leve quiebre hacia abajo y afuera), así no queda escalón entre guante y manga. Puño del guante naranja que tapa el borde abierto de la malla.
+- Cada dedo se curva por separado (pulgar, índice, medio, anular, meñique) y los dedos se juntan un poco. Mano libre relajada, agarre de herramienta cerrado y agarre fino para lápiz y sonda.
+- El lápiz y la sonda se apoyan en el hueco entre pulgar e índice y se sujetan con las yemas (`fitPen`, calculado con la posición real de los huesos).
+- Palma del guante en marrón anaranjado en lugar de casi negro, para que los pliegues no parezcan marcas.
+- `window.__manos` expone las manos para pruebas.

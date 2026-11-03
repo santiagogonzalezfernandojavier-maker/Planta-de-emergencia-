@@ -58123,7 +58123,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.13 · posición natural de las manos</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.14 · antebrazos alineados y agarre del lápiz</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58838,7 +58838,7 @@ function handData(){if(HDATA)return HDATA;const bin=atob(window.__HAND_GLB),u=ne
  const P=acc(0),N=acc(1),Jn=acc(3),Wt=acc(4),Ix=acc(5),IB=acc(6),nv=P.length/3;
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(P,3));geo.setAttribute('normal',new T.BufferAttribute(N,3));
  geo.setAttribute('skinIndex',new T.Uint16BufferAttribute(Uint16Array.from(Jn),4));geo.setAttribute('skinWeight',new T.BufferAttribute(Wt,4));geo.setIndex(new T.BufferAttribute(Ix,1));
- const col=new Float32Array(nv*3),o=new T.Color('#f0a41e'),dk=new T.Color('#2d3034'),tc=new T.Color();
+ const col=new Float32Array(nv*3),o=new T.Color('#f0a41e'),dk=new T.Color('#8a5410'),tc=new T.Color();
  for(let i=0;i<nv;i++){const nx=N[i*3];const k=Math.max(0,Math.min(1,(-nx-.1)/.45));tc.copy(o).lerp(dk,k);col[i*3]=tc.r;col[i*3+1]=tc.g;col[i*3+2]=tc.b;}
  geo.setAttribute('color',new T.BufferAttribute(col,3));
  const nodes=json.nodes.slice(0,25),Wb=nodes.map(n=>new T.Matrix4().compose(new T.Vector3(...n.translation),new T.Quaternion(...n.rotation),new T.Vector3(...(n.scale||[1,1,1]))));
@@ -58857,18 +58857,27 @@ function glove(side){const D=handData(),g=new T.Group(),
  // antebrazo (puño del guante + manga con franja): cuelga de «hands», no de la mano, para que siempre salga natural desde abajo
  const arm2=new T.Group(),up=(geo,len)=>{geo.translate(0,len/2,0);return geo;};
  const AM=(geo,mat)=>{const m=new T.Mesh(geo,mat);m.renderOrder=999;m.frustumCulled=false;m.castShadow=false;arm2.add(m);return m;};
- AM(up(new T.CylinderGeometry(.033,.0345,.07,20,1,true),.07),mm('#4a4f56',.85)).position.y=-.012;
- AM(up(new T.CylinderGeometry(.0585,.041,1.1,20,1,true),1.1),mm('#2f5886',.9)).position.y=.05;
+ {const cf=AM(up(new T.CylinderGeometry(.033,.035,.065,24,1,true),.065),mm('#e39a1a',.8));cf.position.y=-.028;cf.renderOrder=1000.5;}
+ AM(up(new T.CylinderGeometry(.0585,.038,1.1,20,1,true),1.1),mm('#2f5886',.9)).position.y=.03;
  AM(up(new T.CylinderGeometry(.0465,.0465,.016,20,1,true),.016),mm('#d6dcdf',.3,.5)).position.y=.2;
  g.userData.arm=arm2;g.userData.side=side;
- // cinemática: cada dedo es una cadena; al curvar se recalcula la pose de cada hueso
- const ang=c=>[[.18,.4,.55,0],[0,.9,1.1,.75,0],[0,.95,1.15,.8,0],[0,.95,1.12,.78,0],[0,.9,1.05,.72,0]].map(a=>a.map(x=>x*c));
- const R=new T.Matrix4(),ax=new T.Vector3(),Wp=[];
- let last=-9;
- g.userData.setCurl=c=>{if(Math.abs(c-last)<.004)return;last=c;const A=ang(c);
-  D.chains.forEach((ch,f)=>{for(let k=0;k<ch.length;k++){const i=ch[k];let M=k===0?D.Wb[i].clone():Wp[ch[k-1]].clone().multiply(D.rel[i]);const a=window.__HAND_AX[i],th=A[f][k]||0;if(th){ax.set(a[0],a[1],a[2]);R.makeRotationAxis(ax,th);M.multiply(R);}Wp[i]=M;M.decompose(bones[i].position,bones[i].quaternion,bones[i].scale);}});};
+ // cinemática: cada dedo es una cadena; al curvar se recalcula la pose de cada hueso.
+ // mul = cuánto se curva cada dedo (pulgar, índice, medio, anular, meñique); cierre = cuánto se juntan los dedos entre sí
+ const ang=(c,mu)=>[[.18,.4,.55,0],[0,.9,1.1,.75,0],[0,.95,1.15,.8,0],[0,.95,1.12,.78,0],[0,.9,1.05,.72,0]].map((a,f)=>a.map(x=>x*c*mu[f]));
+ const R=new T.Matrix4(),R2=new T.Matrix4(),ax=new T.Vector3(),Wp=[],PN=new T.Vector3(-1,0,0),QI=new T.Quaternion();
+ // eje de «juntar dedos» de cada nudillo: la normal de la palma vista desde el hueso, con el signo que acerca el dedo al medio
+ const sepAx=[];for(let f=1;f<5;f++){const i=D.chains[f][1],n=PN.clone().applyQuaternion(QI.setFromRotationMatrix(new T.Matrix4().extractRotation(D.Wb[i])).invert());
+  const pos=j=>new T.Vector3().setFromMatrixPosition(D.Wb[j]),d=pos(D.chains[f][2]).sub(pos(i)).normalize(),to=pos(D.chains[2][1]).sub(pos(i));
+  sepAx[f]={a:n,s:f===2?0:Math.sign(new T.Vector3().crossVectors(PN,d).dot(to))||1};}
+ let last='';
+ g.userData.setCurl=(c,mu=[1,1,1,1,1],cl=0)=>{const key=c.toFixed(3)+mu.join()+cl.toFixed(3);if(key===last)return;last=key;const A=ang(c,mu);
+  D.chains.forEach((ch,f)=>{for(let k=0;k<ch.length;k++){const i=ch[k];let M=k===0?D.Wb[i].clone():Wp[ch[k-1]].clone().multiply(D.rel[i]);
+   if(f>0&&k===1&&cl){const sa=sepAx[f];R2.makeRotationAxis(sa.a,sa.s*cl*(f===4?1.3:1));M.multiply(R2);}
+   const a=window.__HAND_AX[i],th=A[f][k]||0;if(th){ax.set(a[0],a[1],a[2]);R.makeRotationAxis(ax,th);M.multiply(R);}Wp[i]=M;M.decompose(bones[i].position,bones[i].quaternion,bones[i].scale);}});};
+ // posición de un hueso en el marco de la mano (el mismo en que se colocan las herramientas)
+ g.userData.bone=(i,out)=>{const e=Wp[i].elements;return out.set(side*(e[14]-.0057),e[12]-.0331,e[13]-.0267);};
  g.userData.setCurl(.3);g.scale.setScalar(1.25);g.userData.fingers=[];g.userData.th=new T.Group();return g;}
-function pose(g,curl){if(g.userData.setCurl)g.userData.setCurl(Math.max(0,Math.min(1.1,curl)));}
+function pose(g,curl,mu,cl){if(g.userData.setCurl)g.userData.setCurl(Math.max(0,Math.min(1.1,curl)),mu,cl||0);}
 
 function prop(k){const g=new T.Group(),m=(c,r=.55,me=.1)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:me,depthTest:false}),
  add=(geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0)=>{const o=new T.Mesh(geo,mat);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.renderOrder=1001;o.frustumCulled=false;g.add(o);return o;},
@@ -58958,9 +58967,16 @@ function pickTick(){if(!pk)return;let w=null;try{w=Walk31.state();}catch(e){}if(
 function pickTake(){if(!pk)return;if(pkAim<0){say('Apunta a una herramienta.','bad');return;}const k=PKI[pkAim].k;closePick(k);}
 function pickStep(d){if(!pk)return;const n=PKI.length;pk.kb=pk.kb==null?(pkAim>=0?pkAim:0):pk.kb;pk.kb=(pk.kb+d+n)%n;}
 const AUP=new T.Vector3(0,1,0),AWP=new T.Vector3(),ADIR=new T.Vector3();
-function placeArm(h){const a=h.userData.arm;if(!a)return;h.updateMatrix();AWP.set(0,0,.07).applyMatrix4(h.matrix);a.position.copy(AWP);ADIR.set(h.userData.side*.34,-.84,.42).normalize();a.quaternion.setFromUnitVectors(AUP,ADIR);}
+function placeArm(h){const a=h.userData.arm;if(!a)return;h.updateMatrix();AWP.set(h.userData.side*.003,.006,.04).applyMatrix4(h.matrix);a.position.copy(AWP);
+ // el antebrazo continúa el eje de la muñeca (con un leve quiebre hacia abajo y afuera), así nunca queda un escalón entre guante y manga
+ ADIR.set(0,0,1).applyQuaternion(h.quaternion);ADIR.x+=h.userData.side*.1;ADIR.y-=.2;ADIR.normalize();a.quaternion.setFromUnitVectors(AUP,ADIR);}
+// agarre de lápiz/sonda: se apoya en el hueco entre pulgar e índice y se sostiene con las yemas de ambos
+const FP_P=new T.Vector3(),FP_Q=new T.Vector3(),FP_W=new T.Vector3(),FP_U=new T.Vector3(),FP_Z=new T.Vector3(0,0,-1);
+function fitPen(g,pg,hold,tipOff){const bn=g.userData.bone;if(!bn||!pg)return;bn(4,FP_P);bn(9,FP_Q);FP_P.add(FP_Q).multiplyScalar(.5);bn(2,FP_Q);bn(6,FP_W);FP_W.add(FP_Q).multiplyScalar(.5);
+ FP_U.copy(FP_P).sub(FP_W).normalize();pg.quaternion.setFromUnitVectors(FP_Z,FP_U);pg.position.copy(FP_P).addScaledVector(FP_U,-hold*pg.scale.x).add(tipOff);}
 function buildHands(){if(hands)return;hands=new T.Group();hands.name='Manos del técnico';HR=glove(1);HL=glove(-1);hands.add(HR,HL,HR.userData.arm,HL.userData.arm);camera.add(hands);
  heldG=camera.children.find(c=>c.name==='Herramienta del jugador');if(heldG){heldBase={p:new T.Vector3(.29,-.08,-.62),r:heldG.rotation.clone()};heldG.scale.setScalar(.0001);}}
+const MU_REL=[.7,.8,1,1.12,1.25],MU_ALL=[1,1,1,1,1],MU_PEN=[.8,.55,.9,1.1,1.15],PEN_OFF=new T.Vector3(0,0,0);
 const HPR=new T.Vector3(.24,-.17,-.5),HPL=new T.Vector3(-.24,-.18,-.5);
 function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-tt)/1000||0);tt=now;
  if(on&&window.__bag32)window.__bag32.visible=false;
@@ -58992,8 +59008,9 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-
  const sl=Math.min(1,dt*8);SL.x+=((leftK?.1:0)-SL.x)*sl;SL.y+=((leftK?.12:0)-SL.y)*sl;SL.z+=((leftK?.05:0)-SL.z)*sl;
  HR.position.set(HPR.x+sway+hx+shake,HPR.y+bob+idle-dip+hy+(hasModel?.08:0),HPR.z+hz-push);HR.rotation.set(.55,-.14,-1.0+hr);
  HL.position.set(HPL.x-sway+SL.x,HPL.y+bob*.8-idle-dip*.7+SL.y,HPL.z+SL.z);HL.rotation.set(.55+(leftK?.5:0),.14+(leftK?.2:0),leftK?.45:1.0);
- pose(HR,hasModel?(tool==='cuaderno'||tool==='multi'?.85:tool==='pano'?.6:1.0):.3+(hold?.35:0)+(kick.ok?.3:0));pose(HL,leftK?.7:.3);
- setProp(rightK);setLeft(leftK);placeArm(HR);placeArm(HL);
+ if(!hasModel)pose(HR,.32+(hold?.35:0)+(kick.ok?.3:0),MU_REL,.05);else if(rightK==='lapiz'||rightK==='sonda')pose(HR,1,MU_PEN,.12);else pose(HR,tool==='pano'?.6:1.0,MU_ALL,.04);
+ pose(HL,leftK?.75:.32,leftK?MU_ALL:MU_REL,leftK?.04:.05);
+ setProp(rightK);setLeft(leftK);if(propG&&(rightK==='lapiz'||rightK==='sonda'))fitPen(HR,propG,rightK==='lapiz'?.092:.07,PEN_OFF);placeArm(HR);placeArm(HL);
  if(LP){LP.position.set(HL.position.x+(LPK==='cuaderno'?.012:.0),HL.position.y+(LPK==='cuaderno'?.06:.05),HL.position.z-.01);const ln=LP.userData.lines;if(ln){if(hold&&tool==='cuaderno'){lastLines=Math.max(lastLines,pg);}const n=lastLines*6;ln.forEach((l,i)=>{const f=Math.max(0,Math.min(1,n-i));l.visible=f>0;l.scale.x=Math.max(.02,f);l.position.x=.003-.031*(1-f);});}}
  if(heldG&&heldBase){heldG.scale.setScalar(.0001);}
  if(false&&heldG&&heldBase){heldG.position.set(heldBase.p.x+sway+hx+shake,heldBase.p.y+bob+idle-dip+hy,heldBase.p.z+hz-push);heldG.rotation.set(heldBase.r.x,heldBase.r.y,heldBase.r.z+hr);}
@@ -59022,6 +59039,7 @@ let pv={a:0,l:0,r:0};setInterval(()=>{if(!on)return;let g=null;try{const l=navig
  if(a&&!pv.a&&beltWant){beltRelease();}else if(a&&!pv.a&&pk){pickTake();}else if(a&&!pv.a){if(choice){const b=document.activeElement;b&&b.click&&b.click();}else begin();}if(!a&&pv.a&&hold)cancel();
  if(l&&!pv.l){if(beltWant)beltRelease();else beltOpenNow();}if(beltWant&&r&&!pv.r)beltStep(1);pv={a,l,r};},90);
 // La rutina empieza sola cuando el recorrido en planta arranca desde el menú (a menos que se haya elegido la práctica clásica).
+window.__manos={get HR(){return HR},get HL(){return HL},get hands(){return hands},PEN_OFF,MU_PEN,MU_REL,MU_ALL,pose,fitPen,get propG(){return propG}};
 window.RutinaMantenimiento={start,leave,begin,state:()=>({on,tarea:ti,paso:si,errores:errs,estrellas:tscore.slice()}),skip:()=>{if(!on)return;si=TASKS[ti].steps.length;finishTask();}};
 setInterval(()=>{if(on||window.__rutinaClasica)return;let w=null,m=null;try{w=Walk31.state();m=Maintenance.state();}catch(e){}
  if(w&&w.active&&w.zone==='plant'&&m&&m.active&&!m.finished&&!document.querySelector('dialog[open]')&&!window.gameMenuActive&&!window.__rutinaDone){window.__rutinaDone=true;start();}
