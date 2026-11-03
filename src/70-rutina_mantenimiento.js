@@ -393,11 +393,11 @@ body.func-mode #funcPanel{display:block}
 #funcPanel .on{color:#7ee081!important}#funcPanel .off{color:#ff8a7a!important}
 #funcPanel .fb{display:flex;gap:6px;margin-top:8px}#funcPanel button{flex:1;background:#ffc400;color:#000;border:0;font:800 12px Bahnschrift,Arial,sans-serif;padding:7px 4px;cursor:pointer}
 #funcPanel button.ghost{background:#2a2a24;color:#f4f1e4;border:1px solid #5a5638}
-body.func-mode #gameTelemetry{display:none!important}
+body.func-mode #gameTelemetry,body.func-mode #viewbar,body.func-mode .view-options-menu,body.func-mode #nav33,body.func-mode #gameEmergency,body.func-mode #gameToast,body.func-mode #gameDock [data-act="pause"]{display:none!important}
+body.func-mode #funcPanel{top:72px}
 `;document.head.appendChild(st);}
 function panel(){css();let p=$$('funcPanel');if(p)return p;p=document.createElement('section');p.id='funcPanel';p.setAttribute('aria-label','Funcionamiento de la planta');
- p.innerHTML='<h3>FUNCIONAMIENTO DE LA PLANTA</h3><div id="fRows"></div><div class="fb"><button id="fTests">Pruebas guiadas</button><button class="ghost" id="fExit">Salir</button></div>';document.body.appendChild(p);
- $$('fTests').onclick=()=>{try{$$('gameChooseMission').click();}catch(e){}};
+ p.innerHTML='<h3>CARGA DE LA FÁBRICA</h3><div id="fRows"></div><div class="fb"><button class="ghost" id="fExit">Volver al menú</button></div>';document.body.appendChild(p);
  $$('fExit').onclick=()=>{document.body.classList.remove('func-mode');try{GameInterface.openMenu(true);}catch(e){try{$$('gameMenuButton').click();}catch(x){}}};return p;}
 const STG={0:'Reposo',1:'Arranque',2:'En marcha',3:'Transferido'};
 function rows(){let r=[];try{const sv=window.__simState&&window.__simState();if(sv){return sv;}}catch(e){}
@@ -407,7 +407,7 @@ function tick(){if(!document.body.classList.contains('func-mode'))return;const q
  const live=q('gameLive'),route=q('gameRouteState');
  const rowsEl=$$('fRows');if(!rowsEl)return;
  const t=[...document.querySelectorAll('#gameTelemetry .metric')].map(m=>{const l=m.querySelector('small,span,label'),v=m.querySelector('strong,b,output');return [ (l?l.textContent:'').trim(), (v?v.textContent:m.textContent).trim()];});
- const html=['<div class="fr"><span>Simulación</span><b class="'+(/PAUSA/.test(live)?'off':'on')+'">'+live+'</b></div>','<div class="fr"><span>Estado</span><b>'+route+'</b></div>'].concat(t.filter(x=>x[0]).map(x=>'<div class="fr"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>')).join('');
+ const html=t.filter(x=>/fuente|potencia/i.test(x[0])).map(x=>'<div class="fr"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')||'<div class="fr"><span>Carga</span><b>'+route+'</b></div>';
  if(rowsEl.dataset.h!==html){rowsEl.dataset.h=html;rowsEl.innerHTML=html;}}
 setInterval(tick,400);
 function enter(){panel();try{window.__menuChoiceMade&&window.__menuChoiceMade();}catch(e){}const dlg=$$('gameLaunch');try{if(dlg&&dlg.open)dlg.close();}catch(e){}

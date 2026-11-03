@@ -212,3 +212,7 @@ Cambios:
 - La señal amarilla flota sobre el objetivo, pero el juego medía el ángulo hacia el punto de abajo y con margen fijo; en objetivos bajos y cercanos («Bajo el motor») no dejaba pulsar aunque la señal estuviera en el centro.
 - Ahora se acepta apuntar al punto o a la señal, y el margen crece cuando estás cerca (`aimTol`).
 - El aviso dice hacia dónde mirar: «Baja la mirada…», «Sube la mirada…» o «Gira hacia…».
+
+## v12.16 · Funcionamiento de la planta más simple
+- En ese modo se ocultan la barra de vistas, el botón de zonas, pausa, el paro de emergencia y los avisos flotantes.
+- Queda el panel «Carga de la fábrica» (fuente de la carga y potencia, sin repetir lo que ya muestra la tarjeta de la izquierda), los botones Arrancar, Detener, Restaurar red y Reiniciar, y «Volver al menú».
