@@ -907,7 +907,9 @@ function proPlate(parent,text,pos,w=1.2,color='#214657',height=.26){
  c.fillStyle=color;c.fillRect(0,0,cv.width,cv.height);c.fillStyle='#f5f8f9';c.textAlign='center';c.textBaseline='middle';c.font=`600 ${Math.min(cv.height*.50,80)}px Arial`;c.fillText(text,512,cv.height/2,970);
  const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;
  box(parent,[w+.06,height+.06,.055],[pos[0],pos[1],pos[2]-.04],mat('#596c73',.4));
- return mesh(parent,new T.PlaneGeometry(w,height),new T.MeshBasicMaterial({map:tx}),pos);
+ const pl=mesh(parent,new T.PlaneGeometry(w,height),new T.MeshBasicMaterial({map:tx}),pos);
+ if(w>=3)(window.__bigSigns=window.__bigSigns||[]).push(pl); // letreros grandes: se ocultan en «Funcionamiento de la planta» para no tapar la vista
+ return pl;
 }
 
 function proSign(parent,kind,text,pos,w=.7){

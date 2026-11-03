@@ -395,14 +395,29 @@ body.func-mode #funcPanel{display:block}
 #funcPanel button.ghost{background:#2a2a24;color:#f4f1e4;border:1px solid #5a5638}
 body.func-mode #gameTelemetry,body.func-mode #viewbar,body.func-mode .view-options-menu,body.func-mode #nav33,body.func-mode #gameEmergency,body.func-mode #gameToast,body.func-mode #gameDock [data-act="pause"]{display:none!important}
 body.func-mode #funcPanel{top:72px}
+#funcViews{position:fixed;left:50%;transform:translateX(-50%);top:66px;z-index:35;display:none;gap:4px;max-width:calc(100vw - 700px);min-width:360px;flex-wrap:wrap;justify-content:center}
+body.func-mode #funcViews{display:flex}
+#funcViews button{background:#0b0b0aeb;color:#f4f1e4;border:1px solid #5a5638;font:700 12px Bahnschrift,'Segoe UI',Arial,sans-serif;padding:7px 11px;cursor:pointer}
+#funcViews button.on{background:#ffc400;color:#000;border-color:#ffc400}
 `;document.head.appendChild(st);}
 function panel(){css();let p=$$('funcPanel');if(p)return p;p=document.createElement('section');p.id='funcPanel';p.setAttribute('aria-label','Funcionamiento de la planta');
  p.innerHTML='<h3>CARGA DE LA FÁBRICA</h3><div id="fRows"></div><div class="fb"><button class="ghost" id="fExit">Volver al menú</button></div>';document.body.appendChild(p);
+ // vistas para recorrer y analizar la instalación (usan los mismos botones de vista del simulador)
+ const vb=document.createElement('nav');vb.id='funcViews';vb.setAttribute('aria-label','Vistas de la instalación');
+ vb.innerHTML=[['general','Vista general'],['emergency','Planta'],['yard','Subestación'],['factory','Fábrica'],['ccm','CCM'],['rail','Equipos']].map(v=>'<button data-v="'+v[0]+'">'+v[1]+'</button>').join('');document.body.appendChild(vb);
+ vb.onclick=e=>{const k=e.target.dataset&&e.target.dataset.v;if(!k)return;if(k!=='rail')window.__funcView=k;
+  if(k==='rail'){const r=$$('toggleRail');if(r)r.click();return;}
+  const n=document.querySelector('#viewbar [data-nav="'+k+'"]');if(n)n.click();};
  $$('fExit').onclick=()=>{document.body.classList.remove('func-mode');try{GameInterface.openMenu(true);}catch(e){try{$$('gameMenuButton').click();}catch(x){}}};return p;}
 const STG={0:'Reposo',1:'Arranque',2:'En marcha',3:'Transferido'};
 function rows(){let r=[];try{const sv=window.__simState&&window.__simState();if(sv){return sv;}}catch(e){}
  return r;}
-function tick(){if(!document.body.classList.contains('func-mode'))return;const q=n=>{const e=$$(n);return e?e.textContent.trim():'—';};
+let signsHidden=null;
+function tick(){const fm=document.body.classList.contains('func-mode');
+ if(signsHidden!==fm){signsHidden=fm;(window.__bigSigns||[]).forEach(o=>{o.visible=!fm;});}
+ if(!fm)return;
+ const vb=$$('funcViews');if(vb){const m=window.__funcView||'emergency';vb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===m));}
+ const q=n=>{const e=$$(n);return e?e.textContent.trim():'—';};
  // lee los valores que la interfaz ya muestra (telemetría y estado de la fuente)
  const live=q('gameLive'),route=q('gameRouteState');
  const rowsEl=$$('fRows');if(!rowsEl)return;
@@ -411,7 +426,7 @@ function tick(){if(!document.body.classList.contains('func-mode'))return;const q
  if(rowsEl.dataset.h!==html){rowsEl.dataset.h=html;rowsEl.innerHTML=html;}}
 setInterval(tick,400);
 function enter(){panel();try{window.__menuChoiceMade&&window.__menuChoiceMade();}catch(e){}const dlg=$$('gameLaunch');try{if(dlg&&dlg.open)dlg.close();}catch(e){}
- document.body.classList.add('func-mode');document.body.classList.remove('mission-on');
+ window.__funcView='emergency';document.body.classList.add('func-mode');document.body.classList.remove('mission-on');
  const nav=document.querySelector('#viewbar [data-nav="emergency"]');if(nav)nav.click();
  setTimeout(()=>{const pb=document.querySelector('#gameDock [data-act="pause"]');const live=$$('gameLive');if(live&&/PAUSA/.test(live.textContent)&&pb)pb.click();},350);
 }

@@ -216,3 +216,7 @@ Cambios:
 ## v12.16 · Funcionamiento de la planta más simple
 - En ese modo se ocultan la barra de vistas, el botón de zonas, pausa, el paro de emergencia y los avisos flotantes.
 - Queda el panel «Carga de la fábrica» (fuente de la carga y potencia, sin repetir lo que ya muestra la tarjeta de la izquierda), los botones Arrancar, Detener, Restaurar red y Reiniciar, y «Volver al menú».
+
+## v12.17 · Vistas para explorar y letreros grandes fuera
+- En «Funcionamiento de la planta» vuelve una barra pequeña de vistas: Vista general, Planta, Subestación, Fábrica, CCM y Equipos (abre el panel de exploración y análisis). Marca la vista actual.
+- Los letreros de 3 m o más (cartel de la planta, etc.) se ocultan solo en este modo (`window.__bigSigns`, registrados en `proPlate`) y reaparecen al salir.
