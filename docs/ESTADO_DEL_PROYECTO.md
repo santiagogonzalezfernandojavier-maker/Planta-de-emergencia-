@@ -207,3 +207,8 @@ Cambios:
 - El lápiz y la sonda se apoyan en el hueco entre pulgar e índice y se sujetan con las yemas (`fitPen`, calculado con la posición real de los huesos).
 - Palma del guante en marrón anaranjado en lugar de casi negro, para que los pliegues no parezcan marcas.
 - `window.__manos` expone las manos para pruebas.
+
+## v12.15 · Puntería en objetivos bajos
+- La señal amarilla flota sobre el objetivo, pero el juego medía el ángulo hacia el punto de abajo y con margen fijo; en objetivos bajos y cercanos («Bajo el motor») no dejaba pulsar aunque la señal estuviera en el centro.
+- Ahora se acepta apuntar al punto o a la señal, y el margen crece cuando estás cerca (`aimTol`).
+- El aviso dice hacia dónde mirar: «Baja la mirada…», «Sube la mirada…» o «Gira hacia…».

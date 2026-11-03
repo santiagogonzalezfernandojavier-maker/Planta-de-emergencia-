@@ -125,12 +125,16 @@ function stars(e){return e===0?3:e<=1?2:1;}
 function finishTask(){stepErrs=0;const sc=stars(errs);tscore.push(sc);try{HUD.award(20*sc,'tarea '+(ti+1));}catch(e){}errs=0;ti++;si=0;
  if(ti>=TASKS.length){showEnd();return;}paintPanel();}
 const DUR={mano:.45,linterna:.9,pano:1.1,llave:1.4,cepillo:1.7,multi:1.1,candado:.8,repuesto:1.0,cuaderno:.8};
-function stepNear(){const s=step();if(!s)return false;const {d,a}=aimInfo(s);return d<2.6&&a<.45;}
-function aimInfo(s){const wp=new T.Vector3(s.p[0],s.p[1],s.p[2]),to=wp.clone().sub(camera.position),d=to.length(),fwd=new T.Vector3();camera.getWorldDirection(fwd);return{d,a:to.normalize().angleTo(fwd)};}
+function stepNear(){const s=step();if(!s)return false;const {d,a}=aimInfo(s);return d<2.6&&a<Math.max(.45,aimTol(d)+.1);}
+// la señal flota sobre el objetivo, así que se acepta apuntar al punto o a la marca; y de cerca el margen es mayor (un objeto a 1 m queda lejos del centro con un giro pequeño)
+function aimTol(d){return Math.min(.9,Math.max(.34,Math.atan2(.7,Math.max(.4,d))));}
+function aimInfo(s){const wp=new T.Vector3(s.p[0],s.p[1],s.p[2]),mk=wp.clone();mk.y+=.3;const fwd=new T.Vector3();camera.getWorldDirection(fwd);
+ const t1=wp.clone().sub(camera.position),t2=mk.sub(camera.position),d=t1.length();t1.normalize();t2.normalize();
+ const a1=t1.angleTo(fwd),a2=t2.angleTo(fwd);return{d,a:Math.min(a1,a2),dy:t1.y-fwd.y};}
 function wrong(msg){errs++;stepErrs++;streak=0;sfx('err');say(msg,'bad');kick.err=1;paintBar();paintPanel();}
-function begin(){if(!on||choice||hold||beltWant)return;const s=step();if(!s)return;const {d,a}=aimInfo(s);
+function begin(){if(!on||choice||hold||beltWant)return;const s=step();if(!s)return;const {d,a,dy}=aimInfo(s);
  if(d>2.6){say('Acércate más: estás a '+d.toFixed(1)+' m.','bad');return;}
- if(a>.32){say('Mira hacia la señal amarilla y vuelve a pulsar.','bad');return;}
+ if(a>aimTol(d)){say(dy<-.12?'Baja la mirada hacia la señal amarilla y vuelve a pulsar.':dy>.12?'Sube la mirada hacia la señal amarilla y vuelve a pulsar.':'Gira hacia la señal amarilla y vuelve a pulsar.','bad');return;}
  if(tool!==s.tool){wrong(s.tool==='mano'?'Aquí necesitas las manos libres: pulsa Q para guardar lo que llevas.':'Con eso no. Aquí necesitas: '+TL[s.tool]+'. Mantén Q para sacarla de tu porta herramientas.');return;}
  hold={s,t:0,dur:DUR[tool]||.6,tick:0};if(tool==='cuaderno')lastLines=0;el.ring.style.display='block';el.cross.style.display='none';}
 function cancel(msg){if(!hold)return;hold=null;el.ring.style.display='none';if(msg)say(msg,'bad');}
