@@ -220,3 +220,13 @@ Cambios:
 ## v12.17 · Vistas para explorar y letreros grandes fuera
 - En «Funcionamiento de la planta» vuelve una barra pequeña de vistas: Vista general, Planta, Subestación, Fábrica, CCM y Equipos (abre el panel de exploración y análisis). Marca la vista actual.
 - Los letreros de 3 m o más (cartel de la planta, etc.) se ocultan solo en este modo (`window.__bigSigns`, registrados en `proPlate`) y reaparecen al salir.
+
+## v12.18 · Operarios con esqueleto
+
+- Los cuatro operarios ya tienen esqueleto de 17 huesos (caderas, cintura, pecho, cuello, cabeza, piernas, brazos) y mallas con pesos de piel. Los datos nuevos están en `assets/personnel/scene-data.json.gz` (formato versión 2).
+- Se bajaron los triángulos de unos 780 000 a unos 196 000 para los cuatro (reducción por colapso de aristas, `tools/qem.py`, y preparación completa en `tools/preparar_operarios.py`; `tools/suavizar_normales.py` recalcula normales). Los originales siguen en `assets/blender/`.
+- La animación es por código (`src/10-personnel.js`, `window.OperariosFrame(dt)`, llamada desde `frame()`): respiran, miran alrededor, caminan recorridos cortos de menos de 1.7 m, se agachan y revisan, miran la tablet o señalan con el brazo. Los de tablet conservan la tablet en las manos al caminar.
+- Antes de caminar, cada operario lanza rayos para confirmar que el destino está libre y a la misma altura de piso; si no, se queda en su sitio.
+- Sin sombra dinámica: usan una sombra de mancha para no regenerar el mapa de sombras. Solo se animan si están a menos de 70 m, y solo se calculan los huesos si están en pantalla.
+- Se quitó el bloque "Operarios con vida" de `60-portada_industrial.js`, porque ahora lo hace el esqueleto.
+- Pendiente: probarlo en la laptop real (F3 para ver fps) y ajustar velocidades o zonas si alguien camina por donde no debe.

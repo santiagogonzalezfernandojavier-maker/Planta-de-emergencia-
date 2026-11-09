@@ -96,34 +96,6 @@ document.head.append(st);
  };
 }}
 
-// Operarios con vida: cabeza que mira (equipo, tablet, alrededor) y respiración. Las poses de brazos y piernas son fijas.
-(function(){
- if(typeof Personnel==='undefined')return;
- const looks=[[0.0,.0],[.5,-.05],[-.55,.0],[.25,.28],[-.2,.3],[.7,.05]];
- const rig=[];
- Personnel.ready.then(()=>{
-  Personnel.group.children.forEach((g,i)=>{
-   const pivot=new T.Group();pivot.position.set(0,1.46,.0);g.add(pivot);
-   [...g.children].forEach(m=>{if(!m.isMesh)return;m.geometry.computeBoundingBox();if(m.geometry.boundingBox.min.y>1.38){pivot.add(m);m.position.y=-1.46;m.castShadow=false;}});
-   rig.push({g,pivot,base:g.rotation.y,t:i*2.3,next:0,from:[0,0],to:[0,0],k:1,hold:1+i*.7,phase:i*1.7});
-  });
- });
- let last=performance.now(),acc=0;
- function tick(now){
-  requestAnimationFrame(tick);
-  const dt=Math.max(0,Math.min(.1,(now-last)/1000));last=now;acc+=dt;if(acc<1/24)return;const d=acc;acc=0;
-  if(window.gameMenuActive||window.plantPresentationActive||document.hidden||!Personnel.group.visible)return;
-  for(const r of rig){
-   r.t+=d;r.hold-=d;
-   if(r.hold<=0){r.from=[r.pivot.rotation.y,r.pivot.rotation.x];const L=looks[Math.floor(Math.random()*looks.length)];r.to=[L[0],L[1]];r.k=0;r.hold=1.6+Math.random()*2.8;}
-   if(r.k<1){r.k=Math.min(1,r.k+d/.7);const e=r.k*r.k*(3-2*r.k);r.pivot.rotation.y=r.from[0]+(r.to[0]-r.from[0])*e;r.pivot.rotation.x=r.from[1]+(r.to[1]-r.from[1])*e;}
-   r.g.scale.y=(r.g.userData.sy||(r.g.userData.sy=r.g.scale.y))*(1+Math.sin(r.t*1.6+r.phase)*.004);
-  }
- }
- requestAnimationFrame(tick);
- window.PersonnelLife={rig};
-})();
-
 // Botón «Más» para las opciones que casi no se usan
 {const tools=document.querySelector('#viewbar .nav-tools');
  if(tools&&!$$('extraBtn')){
