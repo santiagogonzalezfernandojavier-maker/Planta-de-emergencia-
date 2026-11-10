@@ -230,3 +230,8 @@ Cambios:
 - Sin sombra dinámica: usan una sombra de mancha para no regenerar el mapa de sombras. Solo se animan si están a menos de 70 m, y solo se calculan los huesos si están en pantalla.
 - Se quitó el bloque "Operarios con vida" de `60-portada_industrial.js`, porque ahora lo hace el esqueleto.
 - Pendiente: probarlo en la laptop real (F3 para ver fps) y ajustar velocidades o zonas si alguien camina por donde no debe.
+
+## v12.19 · Operarios sin postura sentada
+
+- El agachado era una sentadilla profunda y parecía que se sentaban en el aire. Ahora es una flexión ligera de rodillas con el tronco inclinado hacia adelante.
+- Las pausas son más cortas y durante ellas siguen en movimiento: se mecen, giran el tronco, mueven los brazos y miran alrededor. Los gestos de brazo cambian de forma suave cada pocos segundos.
