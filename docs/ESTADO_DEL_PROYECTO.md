@@ -235,3 +235,7 @@ Cambios:
 
 - El agachado era una sentadilla profunda y parecía que se sentaban en el aire. Ahora es una flexión ligera de rodillas con el tronco inclinado hacia adelante.
 - Las pausas son más cortas y durante ellas siguen en movimiento: se mecen, giran el tronco, mueven los brazos y miran alrededor. Los gestos de brazo cambian de forma suave cada pocos segundos.
+
+## v12.20 · Menú con un solo nivel resaltado
+
+- Con el ratón en un nivel y el foco del teclado en otro, se veían dos tarjetas resaltadas y desplazadas a la vez. Ahora el ratón mueve el foco al nivel sobre el que pasa y solo ese nivel se resalta.

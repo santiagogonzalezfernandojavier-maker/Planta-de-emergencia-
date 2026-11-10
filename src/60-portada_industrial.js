@@ -29,8 +29,9 @@ dialog#gameLaunch .g-entry-actions button span{display:none}
 dialog#gameLaunch #gameAnatomy{display:none!important}
 dialog#gameLaunch .g-launch-right{border-radius:0!important}
 dialog#gameLaunch .g-entry-actions button small.g-desc{margin-top:3px!important;font:500 clamp(13px,1vw,15px)/1.3 Bahnschrift,"Segoe UI",Arial,sans-serif!important;letter-spacing:.2px!important;text-transform:none;color:var(--ind-mut)!important}
-dialog#gameLaunch .g-entry-actions button:hover,dialog#gameLaunch .g-entry-actions button:focus-visible{transform:translateX(14px)!important;background:linear-gradient(90deg,#4a4210,#17160e)!important;border-color:var(--ind-y)!important;outline:none}
-dialog#gameLaunch .g-entry-actions button:focus-visible::after{content:"▶";position:absolute;left:-26px;top:50%;transform:translateY(-50%);color:var(--ind-y);font-size:20px}
+dialog#gameLaunch .g-entry-actions button:hover:not(:focus){transform:none!important;background:linear-gradient(90deg,#1b1a12,#0f0f0d)!important;border-color:var(--ind-line)!important;border-left-color:var(--ind-y)!important}
+dialog#gameLaunch .g-entry-actions button:focus{transform:translateX(14px)!important;background:linear-gradient(90deg,#4a4210,#17160e)!important;border-color:var(--ind-y)!important;outline:none}
+dialog#gameLaunch .g-entry-actions button:focus::after{content:"▶";position:absolute;left:-26px;top:50%;transform:translateY(-50%);color:var(--ind-y);font-size:20px}
 dialog#gameLaunch .g-order{color:var(--ind-y2)!important;font:700 14px Bahnschrift,Arial,sans-serif!important}
 dialog#gameLaunch .g-launch-right{background:#12120f;border:2px solid var(--ind-line);padding:18px;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%)}
 dialog#gameLaunch .g-launch-right-head strong{font:400 26px Impact,Bahnschrift,sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--ind-y)}
@@ -222,6 +223,8 @@ if(box&&!$$('gameKeys')){
 // Quita los números viejos del texto («01 Elegir una misión»): ahora el número es el nivel
 [...menu.querySelectorAll('.g-entry-actions button')].forEach(b=>{const tn=[...b.childNodes].find(x=>x.nodeType===3&&/\S/.test(x.textContent));if(tn)tn.textContent=tn.textContent.replace(/^[\s\u00a0]*\d{2}[\s\u00a0]+/,'').trim();});
 const btns=()=>[...menu.querySelectorAll('.g-entry-actions button')].filter(b=>!b.hidden&&b.style.display!=='none'&&b.offsetParent!==null);
+// Un solo nivel resaltado: el ratón y el teclado usan el mismo foco
+menu.addEventListener('mouseover',e=>{const b=e.target.closest&&e.target.closest('.g-entry-actions button');if(b&&document.activeElement!==b)b.focus({preventScroll:true});});
 // Teclado: flechas mueven entre niveles
 menu.addEventListener('keydown',e=>{
  if(!menu.open)return;
