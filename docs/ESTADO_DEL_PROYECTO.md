@@ -239,3 +239,10 @@ Cambios:
 ## v12.20 · Menú con un solo nivel resaltado
 
 - Con el ratón en un nivel y el foco del teclado en otro, se veían dos tarjetas resaltadas y desplazadas a la vez. Ahora el ratón mueve el foco al nivel sobre el que pasa y solo ese nivel se resalta.
+
+## v12.21 · Fluidez: nivel de detalle por distancia
+
+- Nuevo `src/45-lod_distancia.js`. Cada 130 ms oculta (sacándolo de la capa 0 de la cámara, sin tocar `visible`) todo lo que ocupa menos de unos 2 px en pantalla, y los grupos de "Detalle estático agrupado" que ocupan menos de unos 9 px. Vuelven con histéresis al acercarse.
+- Los operarios se ocultan a más de 110 m y pierden las partes pequeñas (ojos) a más de 30 m.
+- Medido en el navegador de prueba (sin tarjeta gráfica): vista general de 2 996 a 974 llamadas de dibujo y de 2.58 M a 1.74 M triángulos; vista de fábrica de 1 727 a 754 llamadas y de 1.22 M a 1.02 M. El tiempo de envío de dibujo por cuadro bajó de unos 29 a 13 ms (general) y de 24 a 10 ms (fábrica). La imagen cambia menos del 0.1 % de los píxeles.
+- `LodDistancia.setEnabled(false)` lo apaga para comparar; `LodDistancia.stats()` muestra cuántos objetos hay ocultos.

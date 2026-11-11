@@ -57241,7 +57241,7 @@ const Personnel=(()=>{
   g.updateMatrixWorld(true);
   const skeleton=bones.length?new T.Skeleton(bones):null;
   for(const [gi,mi]of p.meshes){const skinned=skeleton&&geos[gi].getAttribute('skinIndex');const o=skinned?new T.SkinnedMesh(geos[gi],mats[mi]):new T.Mesh(geos[gi],mats[mi]);if(geos[gi].getAttribute('color'))o.material.vertexColors=true;o.castShadow=!skinned;o.receiveShadow=true;g.add(o);if(skinned)o.bind(skeleton);}
-  if(skeleton){const blob=new T.Mesh(new T.PlaneGeometry(1.15,1.15),blobMat);blob.rotation.x=-Math.PI/2;blob.position.y=.025;blob.renderOrder=-1;g.add(blob);
+  if(skeleton){const blob=new T.Mesh(new T.PlaneGeometry(1.15,1.15),blobMat);blob.rotation.x=-Math.PI/2;blob.position.y=.025;blob.renderOrder=-1;blob.userData.blob=true;g.add(blob);
    actors.push({g,i,role:p.role,pose:p.pose,B:byName,home:new T.Vector3(...positions[i]),base:angles[i],yaw:angles[i]});}
   group.add(g);});
  status='ready';renderer.shadowMap.needsUpdate=true;return true;
@@ -58237,7 +58237,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.20 · menú con un solo nivel resaltado</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.21 · más fluidez: nivel de detalle por distancia</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58263,6 +58263,47 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
  else if(GameInterface.state().hasEntered)startWalk();
  else{GameInterface.openMenu();installGuards();}
  }catch(e){document.documentElement.classList.add('ready32');document.body.classList.add('ready32');const ebox=document.createElement('div');ebox.textContent='No fue posible iniciar el recorrido. Abre este HTML extraído del ZIP con Edge o Chrome.';ebox.style='position:fixed;inset:20px;z-index:100000;background:#11252c;color:white;padding:30px';document.body.append(ebox);console.error(e);}})();
+
+
+// SOURCE: src/45-lod_distancia.js
+// v12.21 · Nivel de detalle por distancia
+// Oculta lo que ocupa menos de unos pocos píxeles en pantalla (tornillos, detalles lejanos) para bajar llamadas de dibujo y triángulos.
+// Se usa la capa 0 de la cámara (no `visible`), así no pisa lo que otros módulos muestran u ocultan.
+(function(){
+ const K=()=>renderer.domElement.clientHeight/2/Math.tan(camera.fov*Math.PI/360);
+ let list=[],built=0,last=0,off=false,scale=1;const cp=new T.Vector3(),sp=new T.Sphere();
+ const under=(o,g)=>{while(o){if(o===g)return true;o=o.parent;}return false;};
+ const fixedToCamera=o=>{while(o){if(o===camera)return true;o=o.parent;}return false;};
+ function build(){
+  for(const e of list)e.o.layers.enable(0);
+  list=[];scene.updateMatrixWorld(true);
+  scene.traverse(o=>{
+   if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||o.userData.noLod||o.userData.workTarget||o.frustumCulled===false)return;
+   if(Personnel&&under(o,Personnel.group)||fixedToCamera(o))return;
+   const g=o.geometry;if(!g.boundingSphere)g.computeBoundingSphere();if(!g.boundingSphere)return;
+   sp.copy(g.boundingSphere).applyMatrix4(o.matrixWorld);
+   const detail=o.name==='Detalle estático agrupado';
+   list.push({o,x:sp.center.x,y:sp.center.y,z:sp.center.z,r:sp.radius,hide:detail?9:2.2,show:detail?12:3.2,culled:false});
+  });
+  built=performance.now();
+ }
+ function step(){
+  const now=performance.now();if(now-last<130)return;last=now;
+  if(!list.length||now-built>6000)build();
+  if(off)return;
+  const k=K()*scale;camera.getWorldPosition(cp);
+  for(const e of list){
+   const dx=e.x-cp.x,dy=e.y-cp.y,dz=e.z-cp.z,d=Math.sqrt(dx*dx+dy*dy+dz*dz)||.01,pr=e.r/d*k;
+   if(e.culled){if(pr>e.show){e.o.layers.enable(0);e.culled=false;}}
+   else if(pr<e.hide){e.o.layers.disable(0);e.culled=true;}
+  }
+  // Operarios: partes pequeñas (ojos) solo de cerca
+  if(Personnel.actors)for(const a of Personnel.actors){a.g.getWorldPosition(cp);const dist=cp.distanceTo(camera.position),far=dist>30;a.g.visible=dist<110;a.g.traverse(m=>{if(m.isMesh&&m.geometry.index&&m.geometry.index.count<=1500&&!m.userData.blob)m.visible=!far;});}
+ }
+ window.LodDistancia={setEnabled(v){off=!v;if(off)for(const e of list){e.o.layers.enable(0);e.culled=false;}},scale:v=>{scale=v;},stats:()=>({total:list.length,ocultos:list.filter(e=>e.culled).length}),rebuild:build};
+ const old=window.Performance33&&Performance33.frame;
+ if(old)Performance33.frame=function(){old.apply(this,arguments);step();};
+})();
 
 
 // SOURCE: src/50-ayudas_novato.js

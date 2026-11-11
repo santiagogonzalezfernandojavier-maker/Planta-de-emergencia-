@@ -14,7 +14,7 @@ const Personnel=(()=>{
   g.updateMatrixWorld(true);
   const skeleton=bones.length?new T.Skeleton(bones):null;
   for(const [gi,mi]of p.meshes){const skinned=skeleton&&geos[gi].getAttribute('skinIndex');const o=skinned?new T.SkinnedMesh(geos[gi],mats[mi]):new T.Mesh(geos[gi],mats[mi]);if(geos[gi].getAttribute('color'))o.material.vertexColors=true;o.castShadow=!skinned;o.receiveShadow=true;g.add(o);if(skinned)o.bind(skeleton);}
-  if(skeleton){const blob=new T.Mesh(new T.PlaneGeometry(1.15,1.15),blobMat);blob.rotation.x=-Math.PI/2;blob.position.y=.025;blob.renderOrder=-1;g.add(blob);
+  if(skeleton){const blob=new T.Mesh(new T.PlaneGeometry(1.15,1.15),blobMat);blob.rotation.x=-Math.PI/2;blob.position.y=.025;blob.renderOrder=-1;blob.userData.blob=true;g.add(blob);
    actors.push({g,i,role:p.role,pose:p.pose,B:byName,home:new T.Vector3(...positions[i]),base:angles[i],yaw:angles[i]});}
   group.add(g);});
  status='ready';renderer.shadowMap.needsUpdate=true;return true;
