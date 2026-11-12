@@ -34,85 +34,119 @@ const Personnel=(()=>{
  function hit(from,dir,far){ray.set(from,dir);ray.far=far;ray.camera=camera;return ray.intersectObjects(obstacles,false).length>0;}
  function groundY(x,y,z,s){v1.set(x,y,z);s.localToWorld(v1);v1.y+=1.2;ray.set(v1,dn);ray.far=3;ray.camera=camera;const h=ray.intersectObjects(obstacles,false);return h.length?h[0].point.y:null;}
  function floorOf(a){if(a.floor===undefined){a.floor=groundY(a.home.x,a.home.y,a.home.z,a.g.parent);}return a.floor;}
- // devuelve un destino libre a menos de 1.7 m de su zona, o null
- function pickTarget(a){
-  if(!obstacles)buildObstacles();
+ function near(from,dir,far){ray.set(from,dir);ray.far=far;ray.camera=camera;const h=ray.intersectObjects(obstacles,false);return h.length?h[0].distance:Infinity;}
+ // ¿se puede ir en línea recta de (x0,z0) a (x,z), con piso al mismo nivel y sitio libre alrededor?
+ function freePath(a,x0,z0,x,z){
   const site=a.g.parent,fl=floorOf(a);
-  for(let k=0;k<3;k++){
-   const r=rnd(.7,1.6),t=Math.random()*6.283,x=a.home.x+Math.cos(t)*r,z=a.home.z+Math.sin(t)*r;
-   const gy=groundY(x,a.home.y,z,site);if(gy===null||(fl!==null&&Math.abs(gy-fl)>.07))continue;
-   v1.set(a.g.position.x,a.home.y,a.g.position.z);site.localToWorld(v1);v2.set(x,a.home.y,z);site.localToWorld(v2);
-   const d=v2.clone().sub(v1);d.y=0;const L=d.length();if(L<.3)continue;d.normalize();
-   let blocked=false;for(const h of [.35,1.1]){const o=v1.clone();o.y+=h+.09;if(hit(o,d,L+.45)){blocked=true;break;}}
-   if(blocked)continue;
-   for(let q=0;q<4&&!blocked;q++){const o=v2.clone();o.y+=.8;const dd=new T.Vector3(Math.cos(q*1.571),0,Math.sin(q*1.571));if(hit(o,dd,.42))blocked=true;}
-   if(!blocked)return new T.Vector3(x,a.home.y,z);
+  const gy=groundY(x,a.home.y,z,site);if(gy===null||(fl!==null&&Math.abs(gy-fl)>.07))return false;
+  const gm=groundY((x+x0)/2,a.home.y,(z+z0)/2,site);if(gm===null||(fl!==null&&Math.abs(gm-fl)>.07))return false;
+  v1.set(x0,a.home.y,z0);site.localToWorld(v1);v2.set(x,a.home.y,z);site.localToWorld(v2);
+  const d=v2.clone().sub(v1);d.y=0;const L=d.length();if(L<.3)return false;d.normalize();
+  const sd=new T.Vector3(-d.z,0,d.x);
+  for(const h of [.35,1.1])for(const off of [-.28,0,.28]){const o=v1.clone().addScaledVector(sd,off);o.y+=h+.09;if(hit(o,d,L+.45))return false;}
+  for(let q=0;q<8;q++){const o=v2.clone();o.y+=.8;if(hit(o,new T.Vector3(Math.cos(q*.7854),0,Math.sin(q*.7854)),.5))return false;}
+  return true;
+ }
+ // hacia dónde hay equipo cerca: devuelve [giro local, distancia]
+ function faceNearest(a,x,z){
+  const site=a.g.parent;v1.set(x,a.home.y,z);site.localToWorld(v1);v1.y+=1.15;let best=Infinity,by=a.base;
+  for(let q=0;q<12;q++){const th=q*.5236,dir=new T.Vector3(Math.sin(th),0,Math.cos(th)).transformDirection(site.matrixWorld);const d=near(v1,dir,2.4);if(d<best){best=d;by=th;}}
+  return [by,best];
+ }
+ // puestos de trabajo: el propio y hasta dos más, verificados una sola vez
+ function findSpots(a){
+  if(!obstacles)buildObstacles();
+  a.spots=[{x:a.home.x,z:a.home.z,yaw:a.base,near:faceNearest(a,a.home.x,a.home.z)[1]}];
+  for(let k=0;k<26&&a.spots.length<3;k++){
+   const r=rnd(1.3,2.7),t=Math.random()*6.283,x=a.home.x+Math.cos(t)*r,z=a.home.z+Math.sin(t)*r;
+   if(P.actors.some(o=>o!==a&&Math.hypot(o.home.x-x,o.home.z-z)<1.8&&Math.abs(o.home.y-a.home.y)<1))continue;
+   if(a.spots.some(q=>Math.hypot(q.x-x,q.z-z)<1.1))continue;
+   if(!freePath(a,a.home.x,a.home.z,x,z))continue;
+   const f=faceNearest(a,x,z);if(k<20&&f[1]>1.5)continue; /* primero, sitios junto a un equipo */
+   a.spots.push({x,z,yaw:f[1]<2.4?f[0]:a.base,near:f[1]});
   }
-  return null;
  }
- function enter(a,s){a.state=s;a.st=0;
-  if(s==='idle'){a.dur=rnd(.5,1.4);a.want=0;a.crouchT=0;a.gestT=0;}
-  else if(s==='work'){a.dur=rnd(3.5,6.5);a.workYaw=a.base+rnd(-.5,.5);a.crouchT=a.role==='tablet'?(Math.random()<.4?.6:0):(Math.random()<.5?1:.3);a.gestT=1;}
- }
- function setup(a){a.state='idle';a.dur=a.i*.9+.5;a.st=0;a.w=0;a.c=0;a.gs=0;a.ph=0;a.t=a.i*3.1;a.look=[0,0];a.lookTo=[0,0];a.lookK=1;a.lookHold=1;a.down=0;a.downT=0;a.sp=0;a.crouchT=0;a.gestT=0;a.target=null;a.wait=0;a.ready=true;}
+ function startWork(a,first){a.state='work';a.st=0;a.dur=first?rnd(5,12)+a.i*4:rnd(14,30);a.evT=rnd(3,6);a.armW=0;a.crouchT=0;a.down=a.role==='tablet'?1:0;}
+ function setup(a){a.w=0;a.c=0;a.gs=0;a.ph=0;a.t=a.i*3.1;a.look=[0,0];a.goal=[0,0];a.glance=2;a.down=0;a.dn=0;a.sp=0;a.crouchT=0;a.armW=0;a.aw=0;a.at=0;a.target=null;a.seen=0;a.bored=0;a.ready=true;startWork(a,true);}
  const L1=.43;
- function pose(a,dt){
-  const B=a.B,W=a.w,C=a.c,G=a.gs,s=Math.sin(a.ph),co=Math.cos(a.ph),tp=a.role==='tablet',al=C*.5,t=a.t,idle=1-W,k=a.i*1.7;
+ function pose(a){
+  const B=a.B,W=a.w,C=a.c,s=Math.sin(a.ph),tp=a.role==='tablet',al=C*.5,t=a.t,idle=1-W,k=a.i*1.7,up=a.aw||0;
   const set=(n,x,y,z)=>B[n].rotation.set(x,y||0,z||0);
   const cad=B.caderas,r=cad.userData.rest;
-  cad.position.set(r.x,r.y+W*.018*Math.cos(2*a.ph)-L1*(1-Math.cos(al)),r.z-L1*Math.sin(al));
-  set('caderas',0,W*.1*s+idle*.05*Math.sin(t*.45+k),W*.03*s+idle*.035*Math.sin(t*.8+k));
-  set('cintura',C*.3,-W*.07*s+idle*.1*Math.sin(t*.5+k+1));
-  const br=.012*Math.sin(t*1.7);
-  set('pecho',C*.5+W*.04+br+(tp?G*.05:0),-W*.05*s+(a.torsoTurn||0)*G+idle*.08*Math.sin(t*.37+k),idle*.025*Math.sin(t*.8+k+.5));
-  for(const k of [['a',0],['b',Math.PI]]){const side=k[0],pp=a.ph+k[1],sn=Math.sin(pp),cs=Math.cos(pp);
-   const hw=-W*.42*sn,kw=W*(.06+.62*Math.max(0,cs));
+  cad.position.set(r.x,r.y+W*.016*Math.cos(2*a.ph)-L1*(1-Math.cos(al)),r.z-L1*Math.sin(al));
+  // de pie: solo respiración y un cambio de peso lento, casi imperceptible
+  set('caderas',0,W*.08*s,W*.025*s+idle*.018*Math.sin(t*.33+k));
+  set('cintura',C*.3,-W*.06*s+idle*.02*Math.sin(t*.27+k+1));
+  set('pecho',C*.5+W*.035+.01*Math.sin(t*1.5+k)+(tp?a.dn*.04:0)+up*.06,-W*.04*s);
+  for(const q of [['a',0],['b',Math.PI]]){const side=q[0],pp=a.ph+q[1],sn=Math.sin(pp),cs=Math.cos(pp);
+   const hw=-W*.36*sn,kw=W*(.05+.55*Math.max(0,cs));
    set('muslo_'+side,hw-al,0,0);set('rodilla_'+side,kw+al,0,0);set('pie_'+side,-(hw+kw)*.8,0,0);
-   if(!tp){const sw=side==='a'?1:-1;let sx=W*.4*sn*-1,ex=-.2-W*.22*(1+sn*-1*.5);
-    if(side==='b'&&a.armUp){}
-    B['hombro_'+side].rotation.set(sx*-1,0,0);B['codo_'+side].rotation.set(ex,0,0);}
+   if(!tp){B['hombro_'+side].rotation.set(W*.3*sn+idle*.015*Math.sin(t*.5+k+q[1]),0,0);B['codo_'+side].rotation.set(-.16-W*.18*(1-sn*.5),0,0);}
   }
-  if(!tp){ // brazo b se levanta a señalar/operar, brazo a se apoya al costado
-   const up=G*a.armW,wob=Math.sin(t*2.1)*.12;
-   const hb=B.hombro_b.rotation,cb=B.codo_b.rotation;
-   hb.x=hb.x*(1-up)+(-1.25+wob*.3)*up;hb.z=.12*up;cb.x=cb.x*(1-up)+(-.75+wob)*up;
-   B.hombro_a.rotation.x+=idle*.09*Math.sin(t*1.1+k);B.hombro_b.rotation.x+=idle*.07*Math.sin(t*.9+k+2);B.codo_a.rotation.x-=idle*.06*(1+Math.sin(t*1.3));
-   const ha=B.hombro_a.rotation,ca=B.codo_a.rotation;const up2=G*(a.aw2||0);ha.x=ha.x*(1-up2)+(-.55)*up2;ca.x=ca.x*(1-up2)+(-1.1+Math.sin(t*1.3)*.1)*up2;
+  if(!tp){ // la mano derecha sube a operar el tablero que tiene enfrente
+   const hb=B.hombro_b.rotation,cb=B.codo_b.rotation,tap=Math.sin(t*3.1)*.035;
+   hb.x=hb.x*(1-up)+(-1.02+tap)*up;hb.z=.1*up;cb.x=cb.x*(1-up)+(-.6+tap*2)*up;
   } else {
-   const bw=Math.sin(t*2.3)*.04*G+idle*.03*Math.sin(t*1.2+k);B.hombro_a.rotation.set(W*.03*s+bw,0,0);B.hombro_b.rotation.set(-W*.03*s,0,0);B.codo_a.rotation.set(0,0,0);B.codo_b.rotation.set(0,0,0);
+   const tap=a.dn*.02*Math.sin(t*2.6+k);B.hombro_a.rotation.set(W*.025*s,0,0);B.hombro_b.rotation.set(-W*.025*s+tap,0,0);B.codo_a.rotation.set(0,0,0);B.codo_b.rotation.set(0,0,0);
   }
-  const hx=a.look[1]+a.down*.5+C*-.3,hy=a.look[0];
+  const hx=a.look[1]+a.dn*.42-C*.25,hy=a.look[0];
   set('cuello',hx*.4,hy*.4);set('cabeza',hx*.6,hy*.6);
  }
+ const cl=new T.Vector3();
  function update(a,dt,visible){
   if(!a.ready)setup(a);
   a.t+=dt;a.st+=dt;
-  // mirada
-  a.lookHold-=dt;if(a.lookHold<=0){const Ls=a.state==='walk'?[[0,0],[.3,0],[-.3,0]]:[[0,0],[.55,-.05],[-.6,0],[.3,.2],[-.25,.25],[.7,.05]],q=Ls[Math.floor(Math.random()*Ls.length)];a.lookFrom=a.look.slice();a.lookTo=q;a.lookK=0;a.lookHold=rnd(1.6,4.4);}
-  if(a.lookK<1){a.lookK=Math.min(1,a.lookK+dt/.7);const e=ez(a.lookK);a.look=[a.lookFrom[0]+(a.lookTo[0]-a.lookFrom[0])*e,a.lookFrom[1]+(a.lookTo[1]-a.lookFrom[1])*e];}
-  let walking=false,desired=a.yaw;
-  if(a.state==='idle'){if(a.st>a.dur){const tg=pickTarget(a);if(tg){a.target=tg;a.state='walk';a.st=0;}else{enter(a,'work');}}}
+  // ¿hay alguien (la cámara) cerca? lo miran un momento y siguen con lo suyo
+  cl.copy(camera.position);a.g.worldToLocal(cl);
+  const pd=Math.hypot(cl.x,cl.z),pyaw=Math.atan2(cl.x,cl.z),close=pd<2.6&&cl.y>.6&&cl.y<2.6;
+  let watching=false;
+  if(close&&Math.abs(pyaw)<1.25){if(a.bored<=0){a.seen+=dt;watching=true;if(a.seen>(pd<1.3?9:4.5)){a.bored=rnd(7,12);a.seen=0;}}}else a.seen=0;
+  if(a.bored>0&&!watching)a.bored-=dt;
+  // mirada: vistazos poco frecuentes y cortos
+  if(watching){a.goal=[Math.max(-1,Math.min(1,pyaw)),Math.max(-.3,Math.min(.3,-(cl.y-1.6)/Math.max(.6,pd)))];}
+  else{a.glance-=dt;if(a.glance<=0){const L=a.state==='walk'?[[0,0],[0,0],[.25,0],[-.25,0]]:[[0,0],[0,0],[0,0],[.35,0],[-.35,0],[.2,-.08],[-.15,.1]];a.goal=L[Math.floor(Math.random()*L.length)];a.glance=rnd(3,7);}}
+  const lk=Math.min(1,dt*(watching?4:2.5));a.look[0]+=(a.goal[0]-a.look[0])*lk;a.look[1]+=(a.goal[1]-a.look[1])*lk;
+  let walking=0;
+  if(a.state==='work'){
+   const sp=a.spots?a.spots[a.at]:null,wy=sp?sp.yaw:a.base,df=ang(wy-a.yaw);
+   if(Math.abs(df)>.02){a.yaw+=Math.min(Math.abs(df),dt*1.7)*Math.sign(df);if(Math.abs(df)>.3){walking=.55;a.ph+=dt*5;}}
+   // pequeñas tareas dentro del puesto
+   a.evT-=dt;if(a.evT<=0){
+    a.evT=rnd(4,8);const r=Math.random();
+    if(a.role==='tablet'){a.down=a.down>.5&&r<.4?0:1;a.crouchT=0;if(a.down<.5)a.evT=rnd(2,3.5);}
+    else if(a.armW>0||a.crouchT>0){a.armW=0;a.crouchT=0;}
+    else if(r<.3&&sp&&sp.near<1.25){a.armW=1;a.evT=rnd(2.5,4.5);}
+    else if(r<.4&&sp&&sp.near<1.6){a.crouchT=.8;a.evT=rnd(3,5);}
+   }
+   if(a.st>a.dur&&!watching){
+    if(!a.spots)findSpots(a);
+    const to=a.at===0?(a.spots.length>1?1+Math.floor(Math.random()*(a.spots.length-1)):0):0,q=a.spots[to];
+    const busy=P.actors.some(o=>o!==a&&o.g.visible&&Math.abs(o.home.y-a.home.y)<1&&(Math.hypot(o.g.position.x-q.x,o.g.position.z-q.z)<1.3||(o.target&&Math.hypot(o.target.x-q.x,o.target.z-q.z)<1.3)));
+    v1.set(q.x,a.home.y+1.5,q.z);a.g.parent.localToWorld(v1);
+    if(to===a.at||busy||v1.distanceTo(camera.position)<1.6){a.st=0;a.dur=rnd(6,12);}
+    else{a.next=to;a.target=q;a.state='walk';a.st=0;a.armW=0;a.crouchT=0;a.down=0;}
+   }
+  }
   else if(a.state==='walk'){
    const dx=a.target.x-a.g.position.x,dz=a.target.z-a.g.position.z,d=Math.hypot(dx,dz);
-   if(d<.06){enter(a,'work');}
-   else{desired=Math.atan2(dx,dz);walking=true;const df=ang(desired-a.yaw),turn=Math.min(Math.abs(df),dt*3.2)*Math.sign(df);a.yaw+=turn;
-    const sp=Math.abs(df)<.5?Math.min(1.15,d*2.5+.25):0;a.sp+=(sp-a.sp)*Math.min(1,dt*5);const step=Math.min(d,a.sp*dt);a.g.position.x+=dx/d*step;a.g.position.z+=dz/d*step;a.ph+=dt*6.283*a.sp/1.45;
-    if(a.st>14){enter(a,'work');}}
+   if(d<.07||a.st>20){a.g.position.x=d<.3?a.target.x:a.g.position.x;a.g.position.z=d<.3?a.target.z:a.g.position.z;a.at=d<.3?a.next:a.at;a.target=null;startWork(a);}
+   else{
+    const df=ang(Math.atan2(dx,dz)-a.yaw);a.yaw+=Math.min(Math.abs(df),dt*2.6)*Math.sign(df);
+    const blocked=close&&pd<1.2&&Math.abs(pyaw)<.9; // no atropellan a quien tienen enfrente
+    const want=blocked||Math.abs(df)>.7?0:Math.min(.95,d*1.6+.2)*Math.cos(df);
+    a.sp+=(want-a.sp)*Math.min(1,dt*3);
+    const st=Math.min(d,a.sp*dt);
+    if(d<.4||Math.abs(df)<.15){a.g.position.x+=dx/d*st;a.g.position.z+=dz/d*st;}else{a.g.position.x+=Math.sin(a.yaw)*st;a.g.position.z+=Math.cos(a.yaw)*st;}
+    a.ph+=dt*6.283*Math.max(a.sp,Math.abs(df)>.7?.45:0)/1.4;walking=blocked?0:Math.max(.5,Math.min(1,a.sp/.8));
+   }
   }
-  else if(a.state==='work'){
-   const df=ang(a.workYaw-a.yaw);a.yaw+=Math.min(Math.abs(df),dt*1.6)*Math.sign(df);walking=Math.abs(df)>.35;if(walking)a.ph+=dt*4;
-   if(a.st>a.dur){a.armW=0;enter(a,'idle');}
-   a.gestRoll=(a.gestRoll||0)-dt;if(a.gestRoll<=0){a.gestRoll=rnd(2,4);a.armW=Math.random()<.6?1:0;a.armW2=Math.random()<.25?1:0;}a.downT-=dt;if(a.downT<=0){a.down=a.role==='tablet'&&a.down<.5?1:0;a.downT=rnd(2,4.5);}
-   if(a.armW===undefined||a.st<.05){a.armW=Math.random()<.6?1:0;a.armW2=Math.random()<.25?1:0;a.torsoTurn=rnd(-.15,.15);}
-  }
-  if(a.state!=='work'){a.down=0;}
+  if(a.state!=='walk')a.sp+=(0-a.sp)*Math.min(1,dt*5);
   a.g.rotation.y=a.yaw;
-  const wT=walking?1:0;a.w+=(wT-a.w)*Math.min(1,dt*6);if(!walking&&a.state!=='walk'){a.sp+=(0-a.sp)*Math.min(1,dt*6);}
-  a.c+=((a.state==='work'?a.crouchT:0)-a.c)*Math.min(1,dt*2.2);
-  a.gs+=((a.state==='work'?a.gestT:0)-a.gs)*Math.min(1,dt*2.5);
-  if(a.armW===undefined){a.armW=0;a.armW2=0;}
-  const kk=Math.min(1,dt*2);a.aw=(a.aw||0)+((a.armW||0)-(a.aw||0))*kk;a.aw2=(a.aw2||0)+((a.armW2||0)-(a.aw2||0))*kk;
-  if(visible)pose(a,dt);
+  a.w+=(walking-a.w)*Math.min(1,dt*5);
+  a.c+=((a.state==='work'?a.crouchT:0)-a.c)*Math.min(1,dt*1.8);
+  a.aw+=((a.state==='work'?a.armW:0)-a.aw)*Math.min(1,dt*2.2);
+  a.dn+=((a.state==='work'&&!watching?a.down:0)-a.dn)*Math.min(1,dt*2.2);
+  if(visible)pose(a);
  }
  window.OperariosFrame=function(dt){
   if(!P.actors.length||!P.group.visible||window.gameMenuActive)return;
@@ -120,7 +154,7 @@ const Personnel=(()=>{
   camera.updateMatrixWorld();pm.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);fr.setFromProjectionMatrix(pm);
   for(const a of P.actors){a.g.getWorldPosition(v1);v1.y+=.9;sph.set(v1,1.4);const near=v1.distanceTo(camera.position)<70;if(!near)continue;update(a,dt,fr.intersectsSphere(sph));}
  };
- window.PersonnelLife={actors:P.actors,pose};
+ window.PersonnelLife={actors:P.actors,pose,step(dt){for(const a of P.actors)update(a,dt,true);}};
 })();
 
 // D24: reusable, physically scaled surface maps. No extra render loop or light.

@@ -246,3 +246,12 @@ Cambios:
 - Los operarios se ocultan a más de 110 m y pierden las partes pequeñas (ojos) a más de 30 m.
 - Medido en el navegador de prueba (sin tarjeta gráfica): vista general de 2 996 a 974 llamadas de dibujo y de 2.58 M a 1.74 M triángulos; vista de fábrica de 1 727 a 754 llamadas y de 1.22 M a 1.02 M. El tiempo de envío de dibujo por cuadro bajó de unos 29 a 13 ms (general) y de 24 a 10 ms (fábrica). La imagen cambia menos del 0.1 % de los píxeles.
 - `LodDistancia.setEnabled(false)` lo apaga para comparar; `LodDistancia.stats()` muestra cuántos objetos hay ocultos.
+
+## v12.22 · Operarios con comportamiento normal
+
+- Antes cambiaban de sitio cada 5 s, se mecían todo el tiempo, levantaban el brazo al aire y se agachaban sin nada enfrente.
+- Ahora cada operario tiene su puesto y hasta dos puestos más junto a un equipo (verificados con rayos una sola vez). Trabaja de 14 a 30 s en un puesto, camina al otro a paso tranquilo (0.95 m/s) y vuelve. En una simulación de 5 minutos pasan cerca del 90 % del tiempo trabajando.
+- En el puesto miran hacia el equipo más cercano. Los de tablet leen la tablet y levantan la vista de vez en cuando. Los otros solo operan con la mano o se inclinan a revisar si tienen un equipo cerca.
+- De pie casi no se mueven: respiración y un cambio de peso lento. Los vistazos son cortos y cada 3 a 7 s.
+- Si la cámara (el visitante) se acerca a menos de 2.6 m, voltean a verlo unos segundos y siguen trabajando. No caminan hacia quien tienen enfrente, ni a un puesto ocupado por otro operario.
+- `PersonnelLife.step(dt)` permite simular el comportamiento en pruebas.
