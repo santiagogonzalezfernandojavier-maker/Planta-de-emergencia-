@@ -271,3 +271,12 @@ Cambios:
 - La búsqueda de puestos de los operarios (v12.22) congelaba hasta 1 s por operario la primera vez que caminaba. Ahora se hace por trozos durante el menú inicial (queda lista en unos 6 s).
 - Resolución automática: ya no sube por encima de la resolución nativa (antes hasta 1.25×), puede bajar hasta 0.7, y cambiarla ya no regenera el mapa de sombras.
 - La lista del nivel de detalle se reconstruye cada 20 s en vez de cada 6 s.
+
+## v12.25 · Entorno más real
+
+- Nuevo `src/80-entorno_realista.js` (último en el orden).
+- Cielo: el material anterior salía de un azul plano y saturado (faltaba la conversión de color). Ahora tiene bruma en el horizonte, sol con resplandor, nubes procedurales y, de noche, estrellas. Sigue usando los colores `top`/`bottom` que cambia el botón día/noche.
+- Pasto: manchas grandes de verde, seco y tierra calculadas con la posición en el mundo, para que no se note la repetición de la textura.
+- Arbolado: 158 árboles cercanos en grupos y 300 lejanos como línea de fondo, con `InstancedMesh` por sectores (se descartan los que no están en cámara) y una sombra suave bajo cada uno. No se colocan sobre la subestación, la fábrica, el estacionamiento ni la calle (se usan las cajas de los grupos de la escena). Se ocultan bajo techo.
+- Coste medido: vista general de 930 a 950 llamadas y de 1.56 M a 1.67 M triángulos.
+- Pendiente de realismo (visto en la revisión): fachada de la fábrica plana, autos sencillos, calle sin banquetas ni desgaste.
