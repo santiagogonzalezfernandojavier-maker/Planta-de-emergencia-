@@ -58271,7 +58271,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.22 · operarios con comportamiento normal de trabajo</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.23 · menús más simples</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58993,7 +58993,7 @@ function showEnd(){window.__rutinaTarget=null;const tot=tscore.reduce((a,b)=>a+b
 function leave(menu){on=false;try{window.__bag32&&(window.__bag32.visible=true);}catch(e){}hold=null;if(hands)hands.visible=false;choice=null;window.__rutinaTarget=null;document.body.classList.remove('rutina-on');el.panel.style.display=el.bar.style.display=el.msg.style.display=el.choice.style.display=el.intro.style.display='none';
  try{Maintenance.close();}catch(e){}if(menu){try{GameInterface.openMenu(true);}catch(e){}}}
 function start(){ui();on=true;try{window.__bag32&&(window.__bag32.visible=false);}catch(e){}ti=0;si=0;errs=0;stepErrs=0;streak=0;hold=null;tscore=[];tool='mano';choice=null;document.body.classList.add('rutina-on');paintPanel();el.panel.style.display='block';el.bar.style.display='flex';setTool('mano');
- el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Vas a hacer, en orden, el mantenimiento preventivo del grupo electrógeno. Sigue la señal amarilla.</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> caminar · <b>Ratón</b> mirar · <kbd>E</kbd> o clic: usar lo que llevas en la mano · <kbd>Q</kbd> mantenida: tu porta herramientas (rueda o flechas para cambiar, suelta para sacarla) · <kbd>G</kbd> guardar · <kbd>Esc</kbd> soltar el ratón</p><p class="rt-why">Cada paso pide una herramienta distinta: las herramientas están en tu porta herramientas, en la cadera. Empiezas con las manos vacías. Si te equivocas dos veces, se marca la correcta. Si te equivocas pierdes estrellas, pero siempre puedes seguir.</p><button class="rt-go" id="rtGo">Empezar</button></div>';
+ el.intro.innerHTML='<div class="rt-card"><h2>Rutina de mantenimiento</h2><p>Eres el técnico. Haz el mantenimiento del grupo paso a paso, siguiendo la señal amarilla.</p><ul class="rt-keys"><li><span class="k"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>caminar, y el ratón para mirar</li><li><span class="k"><kbd>E</kbd></span>usar lo que llevas en la mano</li><li><span class="k"><kbd>Q</kbd></span>mantenla para sacar una herramienta</li><li><span class="k"><kbd>Esc</kbd></span>soltar el ratón</li></ul><button class="rt-go" id="rtGo">Empezar</button></div>';
  el.intro.style.display='grid';$$('rtGo').focus();$$('rtGo').onclick=()=>{el.intro.style.display='none';};}
 
 // ---- Manos en primera persona (guantes naranja) que sostienen la herramienta elegida ----
@@ -59269,5 +59269,36 @@ function wire(){const b=$$('gameTraining');if(!b||b.dataset.func)return;b.datase
  b.onclick=e=>{e.preventDefault();enter();};}
 setInterval(wire,500);
 window.FuncionamientoPlanta={enter};
+})();
+
+
+// SOURCE: src/75-menus_simples.js
+// v12.23 · Menús más simples: en cada pantalla solo queda lo que se usa.
+(function(){
+ const $=id=>document.getElementById(id);
+ const st=document.createElement('style');st.textContent=`
+/* Barra superior: fuera los datos que no se usan al presentar (nivel/XP, "simulación local", grupo, reloj) */
+body.game-ui header small,body.game-ui .sim-tag,body.game-ui .hmi-config,body.game-ui .hmi-meta>span:not(.sim-tag):not(.hmi-config),
+body.game-ui #hudXP .hx-lv,body.game-ui #hudXP .hx-main{display:none!important}
+body.game-ui #hudXP{background:none!important;border:0!important;clip-path:none!important;padding:0!important}
+/* Menú inicial */
+dialog#gameLaunch .g-launch-meta{display:none!important}
+/* Rutina de mantenimiento: solo la tarjeta de la tarea y la señal */
+body.rutina-on #nav33,body.rutina-on #turnPad34,body.rutina-on #sceneFooter,body.rutina-on #edu{display:none!important}
+/* Despiece: las etiquetas alrededor del modelo ya son la lista */
+#ppPartList,.pp-note,#ppRotation,.pp-kicker{display:none!important}
+#rtIntro .rt-keys{list-style:none;margin:10px 0 16px;padding:0;display:grid;gap:9px}
+#rtIntro .rt-keys li{display:flex;align-items:center;gap:10px}
+#rtIntro .rt-keys span.k{min-width:128px;display:inline-flex;gap:3px}
+`;document.head.appendChild(st);
+ // Título de la barra según el modo
+ const h1=document.querySelector('header h1'),name=()=>document.body.classList.contains('func-mode')?'Funcionamiento de la planta':document.body.classList.contains('rutina-on')?'Mantenimiento práctico':'Planta de emergencia';
+ const sync=()=>{if(h1&&h1.textContent!==name())h1.textContent=name();};
+ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']});sync();
+ // Despiece: salir vuelve al menú y el botón principal lleva al nivel 2
+ const c=$('ppClose'),e=$('ppEnter');
+ if(c&&e){const leave=c.onclick;
+  c.textContent='Volver al menú';c.onclick=ev=>{leave&&leave.call(c,ev);try{GameInterface.openMenu(true);}catch(x){}};
+  e.textContent='Ver funcionamiento →';e.onclick=ev=>{leave&&leave.call(e,ev);const t=$('gameTraining');if(t)t.click();};}
 })();
 </script></body></html>

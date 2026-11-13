@@ -255,3 +255,12 @@ Cambios:
 - De pie casi no se mueven: respiración y un cambio de peso lento. Los vistazos son cortos y cada 3 a 7 s.
 - Si la cámara (el visitante) se acerca a menos de 2.6 m, voltean a verlo unos segundos y siguen trabajando. No caminan hacia quien tienen enfrente, ni a un puesto ocupado por otro operario.
 - `PersonnelLife.step(dt)` permite simular el comportamiento en pruebas.
+
+## v12.23 · Menús más simples
+
+- Nuevo `src/75-menus_simples.js` (va al final del orden de construcción).
+- Barra superior: se quitan nivel/XP, "Simulación local", "Grupo G-01" y el reloj. Queda el nombre del modo, el sonido y, en Funcionamiento, "Etiquetas".
+- Menú inicial: se quita el código "Centro de entrenamiento / D24".
+- Despiece: se quita la lista duplicada de sistemas del panel derecho (ya están las etiquetas alrededor del modelo), la nota del pie y "Pausar rotación". "Cerrar" ahora es "Volver al menú" y el botón principal es "Ver funcionamiento →", que abre el nivel 2. Ya no se cae al simulador antiguo con todos sus botones.
+- Rutina de mantenimiento: se ocultan "Zonas", las flechas de giro, el pie y "Etiquetas". La pantalla de inicio de la rutina queda con cuatro teclas en lista.
+- Nota para pruebas: los botones del menú inicial solo responden bien a clics reales del ratón, no a `.click()` desde consola.
