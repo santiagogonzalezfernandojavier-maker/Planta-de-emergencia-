@@ -8,7 +8,7 @@
  const fixedToCamera=o=>{while(o){if(o===camera)return true;o=o.parent;}return false;};
  function build(){
   for(const e of list)e.o.layers.enable(0);
-  list=[];scene.updateMatrixWorld(true);
+  const first=!built;list=[];if(first)scene.updateMatrixWorld(true);
   scene.traverse(o=>{
    if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||o.userData.noLod||o.userData.workTarget||o.frustumCulled===false)return;
    if(Personnel&&under(o,Personnel.group)||fixedToCamera(o))return;
@@ -21,7 +21,7 @@
  }
  function step(){
   const now=performance.now();if(now-last<130)return;last=now;
-  if(!list.length||now-built>6000)build();
+  if(!list.length||now-built>20000)build();
   if(off)return;
   const k=K()*scale;camera.getWorldPosition(cp);
   for(const e of list){

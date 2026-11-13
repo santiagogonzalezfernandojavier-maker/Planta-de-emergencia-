@@ -137,22 +137,26 @@ function fixLoop(){requestAnimationFrame(fixLoop);let st=null,ms=null;try{st=Wal
 requestAnimationFrame(fixLoop);
 
 // ===== Quitar el protector (ducto/difusor del radiador) que tapaba la vista =====
+const guardSeen=new WeakSet(),guardBox=new T.Box3(new T.Vector3(-3.52,.40,-.86),new T.Vector3(-2.28,2.2,.86)),guardTmp=new T.Box3();
 function removeRadiatorGuard(){
- let removedNow=0;try{
+ let removedNow=0;const t0=performance.now();try{
   const v=new T.Vector3();
   scene.traverse(o=>{
    if(!o.isMesh||o.name!=='Geometría estática combinada'||o.geometry.index)return;
+   /* cada geometría se revisa una sola vez, y solo si toca la zona del radiador: antes se recorrían todos los triángulos de la escena cada 1.5 s */
+   if(guardSeen.has(o.geometry))return;guardSeen.add(o.geometry);
    const g=o.geometry,pos=g.attributes.position,n=pos.count/3;o.updateWorldMatrix(true,false);
+   if(!g.boundingBox)g.computeBoundingBox();if(!guardTmp.copy(g.boundingBox).applyMatrix4(o.matrixWorld).intersectsBox(guardBox))return;
    const kill=new Uint8Array(n);let count=0,xmin=1e9;
    for(let t=0;t<n;t++){let ins=true,tx=1e9;for(let k=0;k<3;k++){v.set(pos.getX(t*3+k),pos.getY(t*3+k),pos.getZ(t*3+k)).applyMatrix4(o.matrixWorld);tx=Math.min(tx,v.x);if(v.x<-3.52||v.x>-2.28||v.y<.40||v.y>2.2||v.z<-.86||v.z>.86)ins=false;}
     if(ins){kill[t]=1;count++;xmin=Math.min(xmin,tx);}}
    if(count<100||xmin>-3.4)return;
    const keep=n-count,ng=new T.BufferGeometry();
    for(const name of Object.keys(g.attributes)){const a=g.attributes[name],sz=a.itemSize,arr=new a.array.constructor(keep*3*sz);let w=0;for(let t=0;t<n;t++){if(kill[t])continue;arr.set(a.array.subarray(t*3*sz,(t+1)*3*sz),w);w+=3*sz;}ng.setAttribute(name,new T.BufferAttribute(arr,sz,a.normalized));}
-   ng.computeBoundingSphere();ng.computeBoundingBox();o.geometry=ng;g.dispose();window.__guardRemoved=(window.__guardRemoved||0)+count;removedNow+=count;
+   ng.computeBoundingSphere();ng.computeBoundingBox();guardSeen.add(ng);o.geometry=ng;g.dispose();window.__guardRemoved=(window.__guardRemoved||0)+count;removedNow+=count;
   });
-  renderer.shadowMap.needsUpdate=true;
- }catch(e){console.warn('protector',e);}return removedNow;
+  if(removedNow)renderer.shadowMap.needsUpdate=true;
+ }catch(e){console.warn('protector',e);}(window.__guardMs=window.__guardMs||[]).push(+(performance.now()-t0).toFixed(1));return removedNow;
 }
 let guardTries=0;const guardTimer=setInterval(()=>{removeRadiatorGuard();if(++guardTries>=60)clearInterval(guardTimer);},1500);
 removeRadiatorGuard();

@@ -50,8 +50,8 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
  const lights=[];scene.traverse(o=>{if(o.isPointLight)lights.push(o);});let lastLights=-Infinity,mode='fluid';const pos=new T.Vector3();const visible=o=>{while(o){if(!o.visible)return false;o=o.parent;}return true;};
  const oldPro=updateProScene;let accumulated=0;updateProScene=function(dt){accumulated+=dt;if(accumulated<.16)return;oldPro(accumulated);accumulated=0;};
  /* Calidad automática: mide los cuadros por segundo reales y ajusta la resolución (y, en el peor caso, el tope de cuadros) para mantener la fluidez en equipos modestos. F3 muestra un contador. */
- const A={on:false,scale:1,max:Math.min(Math.max(devicePixelRatio||1,1)*1.25,1.5),min:.8,acc:0,n:0,good:0,warm:0,upTries:0,target:60,fps:0,lastT:0,meter:null,show:false};
- const applyScale=()=>{renderer.setPixelRatio(A.scale);renderer.shadowMap.needsUpdate=true;};
+ const A={on:false,scale:1,max:Math.min(Math.max(devicePixelRatio||1,1),1.25),min:.7,acc:0,n:0,good:0,warm:0,upTries:0,target:60,fps:0,lastT:0,meter:null,show:false};
+ const applyScale=()=>{renderer.setPixelRatio(A.scale);};/* el mapa de sombras no depende de la resolución: no se regenera */
  const setCap=fps=>{A.target=fps;window.frameCapMs=1000/(fps+2);};
  const showMeter=()=>{if(!A.meter){const m=document.createElement('div');m.id='fpsMeter';m.style.cssText='position:fixed;right:10px;top:10px;z-index:99999;background:#000a;color:#8fe;font:12px/1.4 ui-monospace,monospace;padding:4px 8px;border-radius:6px;pointer-events:none';document.body.append(m);A.meter=m;}A.meter.hidden=!A.show;A.meter.textContent=Math.round(A.fps)+' fps · resolución '+Math.round(A.scale*100)+' % · tope '+A.target+(A.on?' · auto':'');};
  const adapt=()=>{const t=performance.now(),d=t-A.lastT;A.lastT=t;if(d<=0||d>5000){A.slow=false;return;}/* un hueco aislado de >0.5 s es una pausa (menú, otra pestaña); varios seguidos son lentitud real y sí cuentan */if(d>500&&!A.slow){A.slow=true;return;}A.slow=d>300;A.acc+=d;A.n++;if(A.acc<1000)return;const fps=A.n*1000/A.acc;A.acc=0;A.n=0;A.fps=fps;A.warm++;if(A.show)showMeter();
@@ -70,7 +70,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.23 · menús más simples</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.24 · fluidez: sin tirones periódicos</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).

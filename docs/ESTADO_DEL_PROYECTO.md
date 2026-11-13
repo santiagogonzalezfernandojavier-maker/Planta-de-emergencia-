@@ -264,3 +264,10 @@ Cambios:
 - Despiece: se quita la lista duplicada de sistemas del panel derecho (ya están las etiquetas alrededor del modelo), la nota del pie y "Pausar rotación". "Cerrar" ahora es "Volver al menú" y el botón principal es "Ver funcionamiento →", que abre el nivel 2. Ya no se cae al simulador antiguo con todos sus botones.
 - Rutina de mantenimiento: se ocultan "Zonas", las flechas de giro, el pie y "Etiquetas". La pantalla de inicio de la rutina queda con cuatro teclas en lista.
 - Nota para pruebas: los botones del menú inicial solo responden bien a clics reales del ratón, no a `.click()` desde consola.
+
+## v12.24 · Fluidez: sin tirones periódicos
+
+- `removeRadiatorGuard` (50) recorría todos los triángulos de la escena cada 1.5 s durante los primeros 90 s y además regeneraba el mapa de sombras cada vez. Ahora revisa cada geometría una sola vez y solo si toca la zona del radiador: de 30–60 ms por pasada a 1 ms (medido aquí), y sin regenerar sombras.
+- La búsqueda de puestos de los operarios (v12.22) congelaba hasta 1 s por operario la primera vez que caminaba. Ahora se hace por trozos durante el menú inicial (queda lista en unos 6 s).
+- Resolución automática: ya no sube por encima de la resolución nativa (antes hasta 1.25×), puede bajar hasta 0.7, y cambiarla ya no regenera el mapa de sombras.
+- La lista del nivel de detalle se reconstruye cada 20 s en vez de cada 6 s.

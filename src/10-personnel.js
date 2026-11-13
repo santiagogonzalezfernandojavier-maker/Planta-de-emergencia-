@@ -54,18 +54,23 @@ const Personnel=(()=>{
   return [by,best];
  }
  // puestos de trabajo: el propio y hasta dos más, verificados una sola vez
- function findSpots(a){
+ function* spotGen(a){
   if(!obstacles)buildObstacles();
-  a.spots=[{x:a.home.x,z:a.home.z,yaw:a.base,near:faceNearest(a,a.home.x,a.home.z)[1]}];
-  for(let k=0;k<26&&a.spots.length<3;k++){
+  const spots=[{x:a.home.x,z:a.home.z,yaw:a.base,near:faceNearest(a,a.home.x,a.home.z)[1]}];yield;
+  for(let k=0;k<26&&spots.length<3;k++){
    const r=rnd(1.3,2.7),t=Math.random()*6.283,x=a.home.x+Math.cos(t)*r,z=a.home.z+Math.sin(t)*r;
    if(P.actors.some(o=>o!==a&&Math.hypot(o.home.x-x,o.home.z-z)<1.8&&Math.abs(o.home.y-a.home.y)<1))continue;
-   if(a.spots.some(q=>Math.hypot(q.x-x,q.z-z)<1.1))continue;
-   if(!freePath(a,a.home.x,a.home.z,x,z))continue;
+   if(spots.some(q=>Math.hypot(q.x-x,q.z-z)<1.1))continue;
+   const ok=freePath(a,a.home.x,a.home.z,x,z);yield;if(!ok)continue;
    const f=faceNearest(a,x,z);if(k<20&&f[1]>1.5)continue; /* primero, sitios junto a un equipo */
-   a.spots.push({x,z,yaw:f[1]<2.4?f[0]:a.base,near:f[1]});
+   spots.push({x,z,yaw:f[1]<2.4?f[0]:a.base,near:f[1]});yield;
   }
+  a.spots=spots;
  }
+ // La búsqueda de puestos lanza muchos rayos (hasta 1 s por operario). Se hace por trozos mientras está el menú inicial, para que no se note.
+ function findSpots(a){if(!a.gen)a.gen=spotGen(a);while(!a.gen.next().done);}
+ P.ready.then(()=>{let i=0;const tick=()=>{const a=P.actors[i];if(!a)return;if(a.spots){i++;return setTimeout(tick,30);}
+   try{if(!a.gen){scene.updateMatrixWorld();a.gen=spotGen(a);}if(a.gen.next().done)i++;}catch(e){i++;}setTimeout(tick,45);};setTimeout(tick,1800);});
  function startWork(a,first){a.state='work';a.st=0;a.dur=first?rnd(5,12)+a.i*4:rnd(14,30);a.evT=rnd(3,6);a.armW=0;a.crouchT=0;a.down=a.role==='tablet'?1:0;}
  function setup(a){a.w=0;a.c=0;a.gs=0;a.ph=0;a.t=a.i*3.1;a.look=[0,0];a.goal=[0,0];a.glance=2;a.down=0;a.dn=0;a.sp=0;a.crouchT=0;a.armW=0;a.aw=0;a.at=0;a.target=null;a.seen=0;a.bored=0;a.ready=true;startWork(a,true);}
  const L1=.43;
