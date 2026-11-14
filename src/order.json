@@ -10,5 +10,6 @@
   "65-manos_datos.js",
   "70-rutina_mantenimiento.js",
   "75-menus_simples.js",
-  "80-entorno_realista.js"
+  "80-entorno_realista.js",
+  "85-flujo_puntos.js"
 ]

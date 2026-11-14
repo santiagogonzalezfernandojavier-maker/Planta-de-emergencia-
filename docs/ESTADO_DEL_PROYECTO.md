@@ -280,3 +280,8 @@ Cambios:
 - Arbolado: 158 árboles cercanos en grupos y 300 lejanos como línea de fondo, con `InstancedMesh` por sectores (se descartan los que no están en cámara) y una sombra suave bajo cada uno. No se colocan sobre la subestación, la fábrica, el estacionamiento ni la calle (se usan las cajas de los grupos de la escena). Se ocultan bajo techo.
 - Coste medido: vista general de 930 a 950 llamadas y de 1.56 M a 1.67 M triángulos.
 - Pendiente de realismo (visto en la revisión): fachada de la fábrica plana, autos sencillos, calle sin banquetas ni desgaste.
+
+## v12.26 · Rutina sin preguntas y flujo en puntos
+
+- Rutina de mantenimiento: al terminar una tarea ya no aparece la «Pregunta rápida»; se pasa directo a la siguiente (`70-rutina_mantenimiento.js`, la función `askQ` queda sin uso).
+- Flujo de corriente: los 274 marcadores que eran conos/flechas ahora son esferas pequeñas que avanzan (`85-flujo_puntos.js`). Los flujos de aire y escape del generador conservan su flecha.

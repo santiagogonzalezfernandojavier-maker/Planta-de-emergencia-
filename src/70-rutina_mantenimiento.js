@@ -141,7 +141,7 @@ function cancel(msg){if(!hold)return;hold=null;el.ring.style.display='none';if(m
 function complete(s){hold=null;el.ring.style.display='none';streak++;stepErrs=0;sfx('ok');say('✔ '+s.ok,'ok');kick.ok=1;
  try{if(streak>=3)HUD.float('🔥 Racha ×'+streak);else HUD.float('+5');}catch(e){}
  const after=()=>{si++;if(si>=TASKS[ti].steps.length)finishTask();else paintPanel();};
- if(s.ask)askQ(s.ask,after);else after();}
+ after();} /* v12.26: sin preguntas entre tareas */
 function holdTick(dt){if(!hold)return;const {d,a}=aimInfo(hold.s);if(d>2.8||a>.5){cancel('Te moviste: vuelve a intentarlo.');return;}
  hold.t+=dt;hold.tick+=dt;if(hold.tick>(tool==='cepillo'?.13:.28)){hold.tick=0;sfx('click');}
  el.ring.style.setProperty('--p',Math.min(100,hold.t/hold.dur*100));if(hold.t>=hold.dur)complete(hold.s);}

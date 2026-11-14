@@ -56183,7 +56183,7 @@ const transformerCut=document.createElement('label');transformerCut.innerHTML='<
 $('transformerCut').onchange=()=>{for(const key of ['TE','TP']){const g=substation.subParts[key];g.userData.tankShell.visible=!$('transformerCut').checked;g.userData.core.visible=$('transformerCut').checked;}renderer.shadowMap.needsUpdate=true;};
 const overlayOption=document.createElement('label');overlayOption.innerHTML='<input id="flowOverlay" type="checkbox" checked> Ver flujo a través de canalizaciones';$('viewOptions').append(overlayOption);
 $('flowOverlay').onchange=()=>{for(const f of substation.flowItems)if(!['air','exhaust'].includes(f.kind)){for(const m of [f.conduit,...f.dots]){m.material.depthTest=!$('flowOverlay').checked;m.material.needsUpdate=true;}}};
-const hint=document.createElement('p');hint.className='mini-note';hint.textContent='Las flechas indican transferencia de energía activa. Su animación y colores son didácticos; el PE no conduce potencia en operación normal.';$('viewOptions').append(hint);
+const hint=document.createElement('p');hint.className='mini-note';hint.textContent='Los puntos indican transferencia de energía activa. Su animación y colores son didácticos; el PE no conduce potencia en operación normal.';$('viewOptions').append(hint);
 const energyStrip=document.createElement('div');energyStrip.id='energyStrip';energyStrip.innerHTML='<span class="energy-label">RUTA ACTIVA</span><b id="energyPath"></b><span id="energyPower"></span><div class="energy-track"><i id="energyLevel"></i></div>';$('viewer').append(energyStrip);
 const viewShortcuts=document.createElement('div');viewShortcuts.id='detailShortcuts';viewShortcuts.innerHTML='<span>INSPECCIONAR</span><button id="quickTE">TE</button><button id="quickTP">TP</button><button id="quickBus">Barras</button><button id="quickPlant">Motor</button>';$('viewer').append(viewShortcuts);
 $('quickTE').onclick=()=>$('focusTE').click();$('quickTP').onclick=()=>$('focusTP').click();$('quickBus').onclick=()=>setProView('bus');$('quickPlant').onclick=()=>plantDetailButton.click();
@@ -56634,7 +56634,7 @@ for(const x of [49,55,61,67])for(const z of [-8,-1]){const dx=x+1.65+16,tz=z===-
 // Keep the incoming flow above the visible cable jacket; previous arrows were occluded by it.
 for(const m of [factoryLine,...factoryArrows]){m.material.depthTest=false;m.material.depthWrite=false;m.renderOrder=42;}
 const factoryFlowOption=document.createElement('label');factoryFlowOption.innerHTML='<input id="factoryFlowVisible" type="checkbox" checked> Flujo de energía hacia la fábrica';connectionPanel.append(factoryFlowOption);
-const factoryEnergyNote=document.createElement('p');factoryEnergyNote.className='mini-note';factoryEnergyNote.textContent='Las flechas recorren AF-01, el TGBT, las charolas y las bajadas a CNC. Representan la carga agregada del escenario; no calculan consumo individual por máquina.';connectionPanel.append(factoryEnergyNote);
+const factoryEnergyNote=document.createElement('p');factoryEnergyNote.className='mini-note';factoryEnergyNote.textContent='Los puntos recorren AF-01, el TGBT, las charolas y las bajadas a CNC. Representan la carga agregada del escenario; no calculan consumo individual por máquina.';connectionPanel.append(factoryEnergyNote);
 const beforeFactoryEnergyUpdate=substation.update;substation.update=function(...args){beforeFactoryEnergyUpdate(...args);const enabled=$('factoryFlowVisible').checked&&!window.Walk31?.state().active;factoryEnergy.visible=enabled&&!isolated;const q=circuitState(),color=q.qg?'#31dfb0':'#ffc461';for(const it of factoryEnergyItems){it.conduit.material.color.set(color);it.dots[0].material.color.set(color);}if(!enabled){factoryLine.visible=false;factoryArrows.forEach(d=>d.visible=false);}else{factoryLine.material.color.set(color);factoryArrowMaterial.color.set(color);}};
 const factoryEnergyButton=document.createElement('button');factoryEnergyButton.textContent='Seguir energía dentro de fábrica';factoryEnergyButton.onclick=()=>{inspectFactoryInterior();$('flows').checked=true;$('factoryFlowVisible').checked=true;substation.update();};connectionPanel.append(factoryEnergyButton);
 substation.update();
@@ -58276,7 +58276,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.25 · entorno más real: cielo, pasto y árboles</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.26 · rutina sin preguntas y flujo en puntos</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -58983,7 +58983,7 @@ function cancel(msg){if(!hold)return;hold=null;el.ring.style.display='none';if(m
 function complete(s){hold=null;el.ring.style.display='none';streak++;stepErrs=0;sfx('ok');say('✔ '+s.ok,'ok');kick.ok=1;
  try{if(streak>=3)HUD.float('🔥 Racha ×'+streak);else HUD.float('+5');}catch(e){}
  const after=()=>{si++;if(si>=TASKS[ti].steps.length)finishTask();else paintPanel();};
- if(s.ask)askQ(s.ask,after);else after();}
+ after();} /* v12.26: sin preguntas entre tareas */
 function holdTick(dt){if(!hold)return;const {d,a}=aimInfo(hold.s);if(d>2.8||a>.5){cancel('Te moviste: vuelve a intentarlo.');return;}
  hold.t+=dt;hold.tick+=dt;if(hold.tick>(tool==='cepillo'?.13:.28)){hold.tick=0;sfx('click');}
  el.ring.style.setProperty('--p',Math.min(100,hold.t/hold.dur*100));if(hold.t>=hold.dur)complete(hold.s);}
@@ -59384,5 +59384,18 @@ float n80(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(h8
  const fBox=new T.Box3().setFromObject(factory),cw=new T.Vector3();setInterval(()=>{camera.getWorldPosition(cw);g.visible=!(fBox.containsPoint(cw)||cw.y<GY-.5);},400);
  window.Entorno80={arboles:nearCount,lejanos:far.length};
  }catch(err){console.warn('Entorno realista:',err);}
+})();
+
+
+// SOURCE: src/85-flujo_puntos.js
+// v12.26 · El flujo de corriente se ve como puntos que avanzan (antes eran flechas/conos).
+(function(){
+ try{
+  const skip=new Set();for(const it of (substation.flowItems||[]))if(it.kind==='air'||it.kind==='exhaust')for(const d of it.dots)skip.add(d); // aire y escape conservan su flecha
+  const cache=new Map();let n=0;
+  scene.traverse(o=>{if(!o.isMesh||skip.has(o)||o.geometry.type!=='ConeGeometry'||!o.material||!o.material.isMeshBasicMaterial)return;
+   const r=+(o.geometry.parameters.radius*1.2).toFixed(3);if(!cache.has(r))cache.set(r,new T.SphereGeometry(r,12,8));o.geometry=cache.get(r);n++;});
+  window.__flujoPuntos=n;
+ }catch(e){console.warn('flujo en puntos',e);}
 })();
 </script></body></html>
