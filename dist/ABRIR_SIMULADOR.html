@@ -54891,7 +54891,7 @@ function gridToggle(){s.grid=!s.grid;s.returnTime=0;if(!s.grid&&s.stage==='off')
 function stop(){if(['off','fault'].includes(s.stage)){log('Motor ya detenido','No es necesario iniciar un enfriamiento.');return}if(['starting','crankpause','warm'].includes(s.stage)){s.rpm=0;s.target=null;transition('off','El operador canceló el arranque.');return}if(s.source==='gen')s.source='none';s.target=null;transition('cool','La carga se desconecta y el motor funciona brevemente sin carga antes de parar.')}
 function tick(dt){if(paused)return;s.t+=dt;s.timer+=dt;if(s.grid)s.returnTime+=dt;else s.returnTime=0;
 if(cfg.mode==='auto'&&!s.grid&&!s.fault&&s.stage==='off'&&s.timer>eduConfig.tdes)start();
-const nominal=cfg.freq*30;if(s.stage==='starting'){s.rpm=Math.min(320,s.timer*120);if(s.timer>=3){s.attempts++;if(s.failure==='starter'){if(s.attempts>=3)trip('Falla de arranque: tres intentos sin encendido');else transition('crankpause','Se pausa el arrancador antes de un nuevo intento.');}else transition('warm','La combustión sostiene el giro; se eleva la velocidad hacia el régimen nominal.')}}else if(s.stage==='crankpause'){s.rpm=0;if(s.timer>=2)transition('starting','Nuevo intento de arranque.');}else if(s.stage==='warm'){s.rpm=320+(nominal-320)*Math.min(1,s.timer/4);if(s.timer>=4)transition('ready','Se alcanzaron velocidad y tensión nominales; el grupo puede alimentar la carga.')}else if(['ready','cool'].includes(s.stage))s.rpm=nominal;else s.rpm=0;
+const nominal=cfg.freq*30;if(s.stage==='starting'){s.rpm=Math.min(320,s.timer*120);if(s.timer>=3){s.attempts++;if(s.failure==='starter'){if(s.attempts>=3)trip('Falla de arranque: tres intentos sin encendido');else transition('crankpause','Se pausa el arrancador antes de un nuevo intento.');}else transition('warm','La combustión sostiene el giro; se eleva la velocidad hacia el régimen nominal.')}}else if(s.stage==='crankpause'){s.rpm=0;if(s.timer>=2)transition('starting','Nuevo intento de arranque.');}else if(s.stage==='warm'){const wk=Math.min(1,s.timer/7);s.rpm=320+(nominal-320)*wk*wk*(3-2*wk);if(s.timer>=7)transition('ready','Se alcanzaron velocidad y tensión nominales; el grupo puede alimentar la carga.')}else if(['ready','cool'].includes(s.stage))s.rpm=nominal;else s.rpm=0;
 if(cfg.mode==='auto'&&!s.grid&&s.stage==='ready'&&s.generatorOK&&s.source!=='gen'&&!s.target)transfer('gen');
 if(cfg.mode==='auto'&&s.grid&&s.returnTime>eduConfig.tden&&s.source!=='grid'&&!s.target)transfer('grid');
 if(s.target){s.transfer-=dt;if(s.transfer<=0){const target=s.target;s.target=null;if((target==='grid'&&s.grid)||(target==='gen'&&s.stage==='ready')){s.source=target;log('Fuente conectada',target==='grid'?'La red vuelve a alimentar la carga.':'El alternador entrega energía a la carga.')}else{s.source='none';log('Conexión cancelada','La fuente dejó de estar disponible durante la transición.')}}}
@@ -57957,20 +57957,43 @@ if(k==='exhaust')extra('Cámaras y tubo perforado','Las cámaras y perforaciones
  const handLock=new T.Group();box(handLock,[.06,.075,.025],[0,0,0],mat('#bd4235'));mesh(handLock,new T.TorusGeometry(.022,.004,8,24,Math.PI),steel,[0,.038,0]);heldAdd('lock',handLock);
  const blockers=[[-2.55,2.10,-1.00,1.02],[2.13,2.85,.70,1.42],[-3.62,-2.80,-3.70,-.35],[-5.85,-3.85,-4.0,-2.20],[1.0,2.9,-4.12,-2.88],[4.05,5.35,.25,1.65],[-7.45,-6.35,-5.35,-4.25],[7.25,8.35,-5.35,-4.25],[-7.45,-6.35,4.25,5.35],[7.25,8.35,4.25,5.35]];
  // Recorrido a escala humana en planta, patio y CCM.
- function enterZone34(zone){walk.zone=zone;walk.on=true;walk.bag=false;walk.journal=false;walk.crouch=false;walk.keys.clear();walkInput.release();walk.inspection=false;walk.pitch=0;tool='hand';document.body.classList.add('walking31','practice26');document.body.classList.toggle('explore34',zone!=='plant');ui.hidden=false;if(zone==='ccm'){walk.pos.set(103.0,4.15,7.7);facePoint([103.0,3.82,4.85]);}else if(zone==='yard'){walk.pos.set(14.0,8.30,5.40);facePoint([11.6,7.95,3.9]);}else{walk.pos.set(1.8,1.58,4.1);facePoint([0,1.25,0]);}draw();if(zone!=='plant'){ui.querySelector('.w-top strong').textContent=zone==='ccm'?'CCM · recorrido de inspección':'Subestación · recorrido a pie';ui.querySelector('.w-top small').textContent='Arrastra para mirar · flechas para girar';}applyWalk(0);}
+ function enterZone34(zone){walk.zone=zone;walk.lvl='down';walk.on=true;walk.bag=false;walk.journal=false;walk.crouch=false;walk.keys.clear();walkInput.release();walk.inspection=false;walk.pitch=0;tool='hand';document.body.classList.add('walking31','practice26');document.body.classList.toggle('explore34',zone!=='plant');ui.hidden=false;if(zone==='ccm'){walk.pos.set(103.0,4.15,7.7);facePoint([103.0,3.82,4.85]);}else if(zone==='yard'){walk.pos.set(14.0,8.30,5.40);facePoint([11.6,7.95,3.9]);}else{walk.pos.set(1.8,1.58,4.1);facePoint([0,1.25,0]);}draw();if(zone!=='plant'){ui.querySelector('.w-top strong').textContent=zone==='ccm'?'CCM · recorrido de inspección':'Subestación · recorrido a pie';ui.querySelector('.w-top small').textContent='Arrastra para mirar · flechas para girar';}applyWalk(0);}
  function zoneStand34(x,z){const r=.18,zone=walk.zone||'plant';if(zone==='ccm'){if(x<96.35||x>113.65||z<2.35||z>13.65)return false;if(x>97.35&&x<109.65&&z>3.50&&z<5.05)return false;for(const b of window.CCM34?.bounds()||[]){const inside=walk.pos.x>b.min.x-r&&walk.pos.x<b.max.x+r&&walk.pos.z>b.min.z-r&&walk.pos.z<b.max.z+r;if(!inside&&x>b.min.x-r&&x<b.max.x+r&&z>b.min.z-r&&z<b.max.z+r)return false;}return true;}if(zone==='yard'){if(x<9.30||x>26.70||z< -8.10||z>5.75)return false;const b=[[10.0,13.2,2.45,5.15],[22.8,26.,-1.90,.90],[17.0,18.8,-2.45,-.75],[17.55,19.25,.45,2.15],[19.9,21.7,-1.75,-.05],[10.35,12.95,-2.95,-1.80],[23.6,25.2,-6.2,-4.6],[12.0,12.45,-5.1,-4.6],[15.9,16.35,-5.1,-4.6]];return !b.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}return null;}
  function turnButton34(code){const button=document.createElement('button');button.textContent=code==='ArrowLeft'?'↶':'↷';button.title=code==='ArrowLeft'?'Girar a la izquierda':'Girar a la derecha';button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);walk.keys.add(code);};button.onpointerup=button.onpointercancel=()=>walk.keys.delete(code);return button;}
  const turnPad34=document.createElement('div');turnPad34.id='turnPad34';turnPad34.append(turnButton34('ArrowLeft'),turnButton34('ArrowRight'));$('viewer').append(turnPad34);
  function crouch34(){if(!walk.on)return;walk.crouch=!walk.crouch;applyWalk(0);const b=$('fpCrouch');if(b)b.setAttribute('aria-pressed',String(walk.crouch));}
  function personBlocks(x,z){try{const g=Personnel.group.children,zone=walk.zone||'plant';if(!Personnel.group.visible)return false;for(let i=0;i<g.length;i++){const yardPerson=g[i].position.y>3;if(zone==='ccm'||(zone==='yard')!==yardPerson)continue;if(Math.hypot(x-g[i].position.x,z-g[i].position.z)<.5)return true;}}catch(e){}return false;}
- function canStand(x,z){if(personBlocks(x,z))return false;const zoneResult=zoneStand34(x,z);if(zoneResult!==null)return zoneResult;const r=.18;if(x>-.49&&x<.79&&z>2.57&&z<3.53&&!(window.__bag32&&window.__bag32.visible===false))return false;if(x< -7.5||x>8.45||z< -5.45||z>5.45)return false;return !blockers.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}
+ // v12.27 · Escalera del sótano al exterior: rampa de 36 escalones (x -6.48…-4.82, z 5.16 → -4.78) y losa de arriba a 6.5 m.
+ const ST={x0:-6.38,x1:-4.92,zBot:5.16,zTop:-5.25,run:.28,rise:6.5/36};
+ const rampY=z=>Math.max(0,Math.min(6.5,(ST.zBot-z)/ST.run*ST.rise));
+ const inBand=(x,z)=>x>ST.x0&&x<ST.x1&&z>ST.zTop-.05&&z<5.45;
+ const UP_OBS=[[-6.25,-5.75,-6.25,-5.75],[-6.04,-5.92,-5.66,-5.54],[-5.38,-5.26,-5.66,-5.54],[-7.7,-7.2,3.75,4.25],[1.75,2.25,-6.25,-5.75],[1.75,2.25,3.75,4.25],[-4.0,-2.4,-4.5,-2.9],[.35,1.25,-4.75,-3.85],[4.9,6.6,-6.2,-4.8],[6.15,7.85,1.9,3.5]];
+ function upStand(x,z){const r=.2;if(x< -8.05||x>8.6||z< -8.45||z>5.95)return false;if(x>-6.8&&x<-4.5&&z>-5.3&&z<5.45)return false;return !UP_OBS.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}
+ function stairStand(x,z){if((walk.zone||'plant')!=='plant')return null;const lv=walk.lvl||'down';
+  if(lv==='up'){if(inBand(x,z))return rampY(z)>6.1;return upStand(x,z);}
+  if(lv==='stair'){if(inBand(x,z))return true;const y=rampY(walk.pos.z);if(y>6.1)return upStand(x,z);if(y<.45)return null;return false;}
+  if(inBand(x,z))return rampY(z)<.45;return null;}
+ function plantFloor(){const p=walk.pos;let lv=walk.lvl||'down';
+  if(inBand(p.x,p.z)&&!(lv==='up'&&rampY(p.z)>6.4&&p.z<ST.zTop))lv=(lv==='up'&&rampY(p.z)>6.4)?'up':'stair';
+  else if(lv==='stair')lv=rampY(p.z)>3?'up':'down';
+  if(lv!==walk.lvl){walk.lvl=lv;if(lv==='up')say('Estás arriba, en el exterior. Para volver al sótano, regresa por la escalera.');}
+  return lv==='up'?6.5:lv==='stair'?Math.max(-.07,rampY(p.z)):-.07;}
+ // El letrero de SALIDA del poste quedaba a la altura de la cara justo al salir de la escalera: se sube 1.2 m.
+ setTimeout(()=>{try{const R=new T.Box3(new T.Vector3(-6.1,7.3,-5.8),new T.Vector3(-5.2,8.45,-5.4)),b=new T.Box3(),v=new T.Vector3(),inv=new T.Matrix4();let n=0;scene.updateMatrixWorld(true);
+  scene.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh)return;b.setFromObject(o);if(b.isEmpty()||!b.intersectsBox(R))return;
+   const pos=o.geometry.attributes.position;inv.copy(o.matrixWorld).invert();const up=new T.Vector3(0,1.2,0).transformDirection(inv).multiplyScalar(1.2/new T.Vector3(0,1.2,0).transformDirection(inv).length()*0+1.2);
+   let ch=0;for(let i=0;i<pos.count;i++){v.fromBufferAttribute(pos,i).applyMatrix4(o.matrixWorld);if(R.containsPoint(v)){v.y+=1.2;v.applyMatrix4(inv);pos.setXYZ(i,v.x,v.y,v.z);ch++;}}
+   if(ch){pos.needsUpdate=true;o.geometry.computeBoundingSphere();o.geometry.computeBoundingBox();n+=ch;}});
+  window.__salidaMovida=n;renderer.shadowMap.needsUpdate=true;}catch(e){console.warn('letrero salida',e);}},2500);
+ window.__escalera={rampY,inBand,upStand,level:()=>walk.lvl||'down',tp(x,z,yaw,lv){walk.pos.x=x;walk.pos.z=z;if(yaw!==undefined)walk.yaw=yaw;if(lv)walk.lvl=lv;walk.pitch=0;}};
+ function canStand(x,z){const st=stairStand(x,z);if(st!==null)return st;if(personBlocks(x,z))return false;const zoneResult=zoneStand34(x,z);if(zoneResult!==null)return zoneResult;const r=.18;if(x>-.49&&x<.79&&z>2.57&&z<3.53&&!(window.__bag32&&window.__bag32.visible===false))return false;if(x< -7.5||x>8.45||z< -5.45||z>5.45)return false;return !blockers.some(b=>x>b[0]-r&&x<b[1]+r&&z>b[2]-r&&z<b[3]+r);}
  window.__canStand=canStand;
  function reach(id){const o=targets.get(id);if(!o)return Infinity;return o.getWorldPosition(new T.Vector3()).distanceTo(walk.pos);}
  function centerPick(){if(walk.zone&&walk.zone!=='plant')return null;const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(0,0),camera);service.updateWorldMatrix(true,false);for(const o of targets.values())o.updateWorldMatrix(false,false);const direct=ray.intersectObjects(needed().map(id=>targets.get(id)),false)[0]?.object.userData.workTarget;if(direct)return direct;
  // Ayuda de puntería: si miras cerca de la pieza (cono de ~16°) y estás a su alcance, cuenta como apuntada.
  const fwd=new T.Vector3();camera.getWorldDirection(fwd);const wp=new T.Vector3();let best=null,bestA=.28;for(const id of needed()){const o=targets.get(id);if(!o)continue;o.getWorldPosition(wp);const to=wp.clone().sub(camera.position),dist=to.length();if(dist>2.3)continue;const a=to.normalize().angleTo(fwd);if(a<bestA){bestA=a;best=id;}}return best||undefined;}
  function facePoint(point){const d=new T.Vector3(...point).sub(walk.pos);walk.yaw=Math.atan2(-d.x,-d.z);walk.pitch=Math.max(-1.25,Math.min(1.25,Math.atan2(d.y,Math.hypot(d.x,d.z))));}
- function beginWalk(){walk.zone='plant';document.body.classList.remove('explore34');if(!walk.on)walk.oldFov=camera.fov;walk.on=true;walk.bag=false;walk.journal=true;walk.keys.clear();walkInput.release();walk.crouch=false;walk.pos.set(1.8,1.58,4.1);walk.inspection=false;walk.bagGoal=false;walk.journal=false;facePoint([0,1.25,0]);camera.fov=68;camera.near=.055;camera.updateProjectionMatrix();spinning=false;campusNav.tour=false;document.body.classList.add('walking31');brush.visible=false;applyWalk(0);}
+ function beginWalk(){walk.zone='plant';walk.lvl='down';document.body.classList.remove('explore34');if(!walk.on)walk.oldFov=camera.fov;walk.on=true;walk.bag=false;walk.journal=true;walk.keys.clear();walkInput.release();walk.crouch=false;walk.pos.set(1.8,1.58,4.1);walk.inspection=false;walk.bagGoal=false;walk.journal=false;facePoint([0,1.25,0]);camera.fov=68;camera.near=.055;camera.updateProjectionMatrix();spinning=false;campusNav.tour=false;document.body.classList.add('walking31');brush.visible=false;applyWalk(0);}
  function stopWalk(){if(!walk.on)return;walk.on=false;walk.keys.clear();held.visible=false;if(document.pointerLockElement===canvas)document.exitPointerLock();camera.fov=walk.oldFov;camera.updateProjectionMatrix();document.body.classList.remove('walking31','explore34');}
  function setBag(value){walk.bag=value;if(value)walk.journal=false;caseOpen=value;walk.keys.clear();if(value&&document.pointerLockElement===canvas)document.exitPointerLock();draw();}
  function lockLook(){if(!walk.on)return;setBag(false);walk.journal=false;draw();try{const p=canvas.requestPointerLock?.();p?.catch(()=>say('Puedes mirar manteniendo presionado el botón derecho y arrastrando.'));}catch(e){say('Mira con botón derecho + arrastrar.');}}
@@ -57983,7 +58006,7 @@ if(k==='exhaust')extra('Cámaras y tubo perforado','Las cámaras y perforaciones
   if(edge(0))useCenter();if(edge(1))crouch34();if(edge(3))setBag(!walk.bag);if(edge(2))$('fpJournal')?.click();if(edge(9))window.GameInterface?.openMenu(true);
   return{f:-dz(ax[1]||0),r:dz(ax[0]||0),yaw:-dz(ax[2]||0),pitch:-dz(ax[3]||0),sprint:b(10)||b(5)||b(7)};}
  function applyWalk(dt){if(!walk.on)return;const crouchButton=$('fpCrouch');if(crouchButton){const text=walk.crouch?'Levantarse · C':'Agacharse · C';if(crouchButton.textContent!==text)crouchButton.textContent=text;crouchButton.setAttribute('aria-pressed',String(walk.crouch));}$('fpJournal')?.setAttribute('aria-expanded',String(walk.journal));dt=Math.max(0,dt);if(dt>0){/* tiempo real: caminar y girar no dependen de los cuadros por segundo */const t=performance.now(),gap=(t-(walk.t0||t))/1000;walk.t0=t;dt=gap>2?Math.min(dt,.08):Math.min(.5,Math.max(dt,gap));}const gp=dt>0?pollPad():null;if(!walk.bag&&!walk.journal&&dt>0){const k=walk.keys,sprint=!walk.crouch&&(k.has('ShiftLeft')||k.has('ShiftRight')||!!(gp&&gp.sprint)),steps=Math.max(1,Math.ceil(dt/.04)),h=dt/steps;for(let i=0;i<steps;i++){walk.yaw+=((k.has('ArrowLeft')?1:0)-(k.has('ArrowRight')?1:0))*h*1.6+(gp?gp.yaw*h*2.6:0)+(walk.edge&&document.pointerLockElement!==canvas&&!walk.bag&&!walk.journal?-walk.edge*h*1.5:0);walk.pitch=Math.max(-1.25,Math.min(1.25,walk.pitch+((k.has('ArrowUp')?1:0)-(k.has('ArrowDown')?1:0))*h+(gp?gp.pitch*h*1.8:0)));let f=(k.has('KeyW')?1:0)-(k.has('KeyS')?1:0)+(gp?gp.f:0),r=(k.has('KeyD')?1:0)-(k.has('KeyA')?1:0)+(gp?gp.r:0);const hy=Math.hypot(f,r),n=hy||1,speed=(walk.crouch?.75:sprint?3.0:1.65)*h*Math.min(1,hy);f=f/n*speed;r=r/n*speed;const dx=-Math.sin(walk.yaw)*f+Math.cos(walk.yaw)*r,dz=-Math.cos(walk.yaw)*f-Math.sin(walk.yaw)*r;if(canStand(walk.pos.x+dx,walk.pos.z))walk.pos.x+=dx;if(canStand(walk.pos.x,walk.pos.z+dz))walk.pos.z+=dz;}if(k.has('KeyE')&&index===5&&step===0){const id=centerPick();if(id)act(id,dt*.9);}}
- walk.pos.y=(walk.zone==='ccm'?2.50:walk.zone==='yard'?6.65:-.07)+(walk.crouch?1.00:1.65);flap32.rotation.x=walk.bag?-2.0:0;contents32.visible=walk.bag;const nextFov=walk.bag?(camera.aspect<1?76:40):walk.inspection?32:68;if(camera.fov!==nextFov){camera.fov=nextFov;camera.updateProjectionMatrix();}camera.position.copy(walk.pos);camera.rotation.order='YXZ';camera.rotation.set(walk.pitch,walk.yaw,0,'YXZ');if(walk.bag)camera.lookAt(floorBagPoint);camera.updateMatrixWorld(true);held.visible=(!walk.zone||walk.zone==='plant')&&!walk.bag&&!walk.journal&&!!heldModels[tool];for(const [k,g]of Object.entries(heldModels))g.visible=k===tool;const id=centerPick(),d=id?reach(id):null;const status=$('fpTarget');const bagHit=walk.bag?(walk.hoverTool||bagPick32()):bagPick32();if(status)status.textContent=walk.bag?(bagHit?'Tomar: '+labels[bagHit.slice(4)]+' · clic / E':'Busca entre las herramientas · clic para tomar') :bagHit==='floorBag'?'Bolsa en el piso · B / clic para abrir':id?(d>2.15?'Acércate · '+d.toFixed(1)+' m':!qOK.pre?'Abre el cuaderno (Q) y revisa la actividad':'E / clic · '+(index===5&&step===0?'mantén E para girar':labels[tool])):'Camina hasta el componente de la actividad';if(walk.zone&&walk.zone!=='plant'&&status){const door=walk.zone==='ccm'?window.CCM34?.pick():null;status.textContent=door!==null&&door!==undefined?'E · abrir / cerrar '+CCM34.doors[door].name:'';}const ret=$('fpCross');if(ret)ret.dataset.ready=!!id&&d<=2.15;const nav=$('fpNavText');if(nav){const nx=!walk.bagGoal&&done&&index<11,gi=nx?index+1:index,v=(walk.bagGoal?floorBagPoint.clone():new T.Vector3(...defs[gi][3])).sub(walk.pos),a=Math.atan2(-v.x,-v.z)-walk.yaw;nav.textContent=(nx?'✔ Hecho · Siguiente: ':'Objetivo: ')+(walk.bagGoal?'Bolsa de herramientas':defs[gi][0])+' · '+Math.hypot(v.x,v.z).toFixed(1)+' m';const arrow=$('fpBearing');if(arrow)arrow.style.transform='rotate('+(-a)+'rad)';}updateDots();}
+ walk.pos.y=(walk.zone==='ccm'?2.50:walk.zone==='yard'?6.65:plantFloor())+(walk.crouch?1.00:1.65);flap32.rotation.x=walk.bag?-2.0:0;contents32.visible=walk.bag;const nextFov=walk.bag?(camera.aspect<1?76:40):walk.inspection?32:68;if(camera.fov!==nextFov){camera.fov=nextFov;camera.updateProjectionMatrix();}camera.position.copy(walk.pos);camera.rotation.order='YXZ';camera.rotation.set(walk.pitch,walk.yaw,0,'YXZ');if(walk.bag)camera.lookAt(floorBagPoint);camera.updateMatrixWorld(true);held.visible=(!walk.zone||walk.zone==='plant')&&!walk.bag&&!walk.journal&&!!heldModels[tool];for(const [k,g]of Object.entries(heldModels))g.visible=k===tool;const id=centerPick(),d=id?reach(id):null;const status=$('fpTarget');const bagHit=walk.bag?(walk.hoverTool||bagPick32()):bagPick32();if(status)status.textContent=walk.bag?(bagHit?'Tomar: '+labels[bagHit.slice(4)]+' · clic / E':'Busca entre las herramientas · clic para tomar') :bagHit==='floorBag'?'Bolsa en el piso · B / clic para abrir':id?(d>2.15?'Acércate · '+d.toFixed(1)+' m':!qOK.pre?'Abre el cuaderno (Q) y revisa la actividad':'E / clic · '+(index===5&&step===0?'mantén E para girar':labels[tool])):'Camina hasta el componente de la actividad';if(walk.zone&&walk.zone!=='plant'&&status){const door=walk.zone==='ccm'?window.CCM34?.pick():null;status.textContent=door!==null&&door!==undefined?'E · abrir / cerrar '+CCM34.doors[door].name:'';}const ret=$('fpCross');if(ret)ret.dataset.ready=!!id&&d<=2.15;const nav=$('fpNavText');if(nav){const nx=!walk.bagGoal&&done&&index<11,gi=nx?index+1:index,v=(walk.bagGoal?floorBagPoint.clone():new T.Vector3(...defs[gi][3])).sub(walk.pos),a=Math.atan2(-v.x,-v.z)-walk.yaw;nav.textContent=(nx?'✔ Hecho · Siguiente: ':'Objetivo: ')+(walk.bagGoal?'Bolsa de herramientas':defs[gi][0])+' · '+Math.hypot(v.x,v.z).toFixed(1)+' m';const arrow=$('fpBearing');if(arrow)arrow.style.transform='rotate('+(-a)+'rad)';}updateDots();}
  window.Walk31={setCrouch:v=>{walk.crouch=!!v;applyWalk(0);},frame:applyWalk,state:()=>({active:walk.on,position:walk.pos.toArray(),yaw:walk.yaw,pitch:walk.pitch,bag:walk.bag,journal:walk.journal,crouch:walk.crouch,zone:walk.zone||'plant'}),enterZone:enterZone34,canStand,reach,bag:setBag,look:lockLook};
  function walkHUD(){return '<div id="fpCross" aria-hidden="true">·</div><div id="fpTarget" role="status"></div><div id="fpNav"><i id="fpBearing">↑</i><span id="fpNavText"></span></div><div class="fp-hud"><div><b>EN MANO · '+(tool==='camera'?'MANOS LIBRES':labels[tool].toUpperCase())+'</b><small>WASD caminar · mueve el ratón para mirar (clic lo captura, Esc libera) · Shift correr · E usar · C agacharse</small></div><button id="fpCrouch" aria-pressed="false">Agacharse · C</button><button id="fpHands">Manos · H</button><button id="fpDetail">Inspección [Z]</button><button id="fpBag" aria-expanded="'+walk.bag+'">Bolsa del piso [B]</button><button id="fpJournal" aria-expanded="'+walk.journal+'">Cuaderno [Q]</button><button id="fpLook">Capturar ratón</button><button id="fpGloss">Glosario</button><button id="fpTags" aria-pressed="true">Nombres · N: sí</button></div><div class="fp-touch"><button data-walk="KeyW" aria-label="Avanzar">▲</button><div><button data-walk="KeyA" aria-label="Izquierda">◀</button><button data-walk="KeyS" aria-label="Retroceder">▼</button><button data-walk="KeyD" aria-label="Derecha">▶</button></div><button id="fpUse">Usar [E]</button></div>';}
  function bindWalk(){ui.classList.toggle('fp-journal',walk.journal);ui.classList.toggle('fp-bag',walk.bag);if($('fpCrouch'))$('fpCrouch').onclick=crouch34;if($('fpHands'))$('fpHands').onclick=()=>select('hand');if($('fpDetail'))$('fpDetail').onclick=inspect32;if($('fpBag'))$('fpBag').onclick=()=>setBag(!walk.bag);if($('fpJournal'))$('fpJournal').onclick=()=>{walk.journal=!walk.journal;walk.keys.clear();if(walk.journal&&document.pointerLockElement===canvas)document.exitPointerLock();draw();};if($('fpLook'))$('fpLook').onclick=lockLook;if($('fpGloss'))$('fpGloss').onclick=()=>window.openGlossary&&window.openGlossary();window.WalkTags&&window.WalkTags.bind();if($('fpUse'))$('fpUse').onclick=useCenter;ui.querySelectorAll('[data-walk]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);walk.journal=false;ui.classList.remove('fp-journal');walk.keys.add(b.dataset.walk);};b.onpointerup=b.onpointercancel=()=>walk.keys.delete(b.dataset.walk);});applyWalk(0);}
@@ -58276,7 +58299,7 @@ for(const key of ['TE','TP']){const cache=new Map();substation.subParts[key].tra
 (async()=>{try{
  /* Menú blindado: el foco ya no queda en «Explorar instalación» (un Enter o espacio accidental lo activaba) y la versión queda visible. */
  try{const m=$('gameLaunch');if(m&&m.open){m.tabIndex=-1;m.style.outline='none';m.focus({preventScroll:true});}
-  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.26 · rutina sin preguntas y flujo en puntos</small>');}catch(_){}
+  if(m&&!$('gameVersion'))m.insertAdjacentHTML('beforeend','<small id="gameVersion" style="position:fixed;left:50%;bottom:6px;transform:translateX(-50%);font:10px system-ui;letter-spacing:.6px;color:#9fb9b5;opacity:.75;pointer-events:none;z-index:5">v12.27 · arranque con medidores, ATS y escalera al exterior</small>');}catch(_){}
  await Personnel.ready;document.body.classList.add('ready32');document.documentElement.classList.add('ready32');
  /* El menú de inicio se respeta: ya no se pulsa «Explorar instalación» ni se arranca el recorrido solo.
     El recorrido guiado empieza cuando el usuario cierra el menú eligiendo una opción (explorar o misión).
@@ -59397,5 +59420,87 @@ float n80(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(h8
    const r=+(o.geometry.parameters.radius*1.2).toFixed(3);if(!cache.has(r))cache.set(r,new T.SphereGeometry(r,12,8));o.geometry=cache.get(r);n++;});
   window.__flujoPuntos=n;
  }catch(e){console.warn('flujo en puntos',e);}
+})();
+
+
+// SOURCE: src/90-arranque_ats.js
+// v12.27 · En «Funcionamiento de la planta»: tensión y frecuencia del generador subiendo de 0 a su valor nominal,
+// y el ATS (interruptor automático de transferencia) dibujado con su cuchilla moviéndose entre red y planta.
+(function(){
+ const $=id=>document.getElementById(id);
+ const css=document.createElement('style');css.textContent=`
+#genGauges{margin:2px 0 8px}
+#genGauges .gg{margin:7px 0}
+#genGauges .gg-top{display:flex;justify-content:space-between;align-items:baseline}
+#genGauges .gg-top span{color:#b7b49f;font-size:12px}
+#genGauges .gg-top b{font:800 20px Bahnschrift,'Segoe UI',sans-serif;color:#fff;font-variant-numeric:tabular-nums}
+#genGauges .gg-top b small{font-size:12px;color:#b7b49f;margin-left:3px}
+#genGauges .gg-bar{position:relative;height:9px;background:#24241e;border:1px solid #4a4734;margin-top:3px}
+#genGauges .gg-bar i{position:absolute;left:0;top:0;bottom:0;background:#ffc400;transition:background .3s}
+#genGauges .gg-bar em{position:absolute;top:-4px;bottom:-4px;width:2px;background:#7ee081}
+#genGauges .gg.ok .gg-bar i{background:#7ee081}
+#genGauges .gg-sub{display:flex;justify-content:space-between;color:#8f8c78;font-size:11px;margin-top:2px}
+#genStage{font-size:12px;color:#ffc400;margin:2px 0 4px;min-height:15px}
+#atsBox{border-top:1px solid #ffffff1c;margin-top:6px;padding-top:6px}
+#atsBox h4{margin:0;font:800 13px Bahnschrift,Arial,sans-serif;color:#ffc400}
+#atsBox p{margin:2px 0 0;font-size:12px;color:#d9d5c2;min-height:15px}
+#atsTag{position:fixed;z-index:30;pointer-events:none;transform:translate(-50%,-100%);background:#0b0b0ae6;border:2px solid #ffc400;color:#fff;font:700 12px Bahnschrift,Arial,sans-serif;padding:3px 8px;white-space:nowrap;display:none}
+#atsTag::after{content:'';position:absolute;left:50%;bottom:-9px;margin-left:-6px;border:6px solid transparent;border-top-color:#ffc400}
+#atsTag small{display:block;font-weight:600;color:#ffc400}
+`;document.head.appendChild(css);
+ const NV=480,NF=60;
+ function build(){
+  const p=$('funcPanel');if(!p||$('genGauges'))return !!p;
+  const box=document.createElement('div');box.id='genGauges';
+  box.innerHTML='<div id="genStage"></div>'
+   +'<div class="gg" id="ggV"><div class="gg-top"><span>Tensión del generador</span><b><output>0</output><small>V</small></b></div><div class="gg-bar"><i></i><em style="left:'+(NV/528*100)+'%"></em></div><div class="gg-sub"><span>0</span><span>nominal 480 V</span></div></div>'
+   +'<div class="gg" id="ggF"><div class="gg-top"><span>Frecuencia</span><b><output>0.0</output><small>Hz</small></b></div><div class="gg-bar"><i></i><em style="left:'+(NF/66*100)+'%"></em></div><div class="gg-sub"><span>0</span><span>nominal 60 Hz</span></div></div>'
+   +'<div class="gg" id="ggR"><div class="gg-top"><span>Velocidad del motor</span><b><output>0</output><small>rpm</small></b></div></div>'
+   +'<div id="atsBox"><h4>ATS · interruptor automático de transferencia</h4>'
+   +'<svg id="atsSvg" viewBox="0 0 270 118" width="100%" role="img" aria-label="Diagrama del ATS">'
+   +'<g font-family="Bahnschrift,Arial" font-size="11" font-weight="700" text-anchor="middle">'
+   +'<text x="45" y="12" fill="#d9d5c2">RED (CFE)</text><text x="225" y="12" fill="#d9d5c2">PLANTA</text><text x="135" y="114" fill="#d9d5c2">CARGA</text></g>'
+   +'<path id="atsLg" d="M45 18 V40 H105 V52" stroke="#5a5638" stroke-width="4" fill="none"/>'
+   +'<path id="atsLp" d="M225 18 V40 H165 V52" stroke="#5a5638" stroke-width="4" fill="none"/>'
+   +'<rect x="88" y="44" width="94" height="52" fill="none" stroke="#ffc400" stroke-width="1.5" stroke-dasharray="4 3"/>'
+   +'<circle cx="105" cy="54" r="4" fill="#f4f1e4"/><circle cx="165" cy="54" r="4" fill="#f4f1e4"/><circle cx="135" cy="88" r="5" fill="#f4f1e4"/>'
+   +'<line id="atsBlade" x1="135" y1="88" x2="105" y2="54" stroke="#f4f1e4" stroke-width="5" stroke-linecap="round"/>'
+   +'<path id="atsLl" d="M135 93 V102" stroke="#5a5638" stroke-width="4"/></svg><p id="atsTxt"></p></div>';
+  p.insertBefore(box,$('fRows'));const h=p.querySelector('h3');if(h)h.textContent='PLANTA Y TRANSFERENCIA';
+  if(!$('atsTag')){const t=document.createElement('div');t.id='atsTag';t.innerHTML='ATS<small></small>';document.body.appendChild(t);}
+  return true;
+ }
+ let v=0,f=0,r=0,ang=-1,last=performance.now();
+ const W=new T.Vector3();let atsPos=null;
+ function atsWorld(){if(atsPos)return atsPos;try{const pc=(typeof pieces!=='undefined'?pieces:[]).find(x=>x.userData.key==='ats');if(pc){const b=new T.Box3().setFromObject(pc);if(!b.isEmpty()){atsPos=b.getCenter(new T.Vector3());atsPos.y=b.max.y+.15;}}}catch(e){}return atsPos;}
+ function step(){
+  const fm=document.body.classList.contains('func-mode');const tag=$('atsTag');
+  if(!fm){if(tag)tag.style.display='none';return;}
+  if(!build())return;
+  const now=performance.now(),dt=Math.min(.3,(now-last)/1000);last=now;
+  let st={};try{st=UnidadVII.state();}catch(e){}
+  let sim=null;try{sim=s;}catch(e){}
+  const stage=st.stage||'off',rpm=sim?sim.rpm:(st.frequency||0)*30;
+  const tv=['starting','crankpause','off','fault'].includes(stage)?0:(st.genV||0),tf=rpm/30;
+  const k=Math.min(1,dt*9);v+=(tv-v)*k;f+=(tf-f)*k;r+=(rpm-r)*k;
+  const set=(id,val,max,nom,dec)=>{const g=$(id);g.querySelector('output').textContent=val.toFixed(dec);g.querySelector('i').style.width=Math.min(100,val/max*100)+'%';g.classList.toggle('ok',nom&&Math.abs(val-nom)<nom*.07);};
+  set('ggV',v,528,NV,0);set('ggF',f,66,NF,1);$('ggR').querySelector('output').textContent=Math.round(r);
+  const msg={off:'Motor detenido',crankpause:'Pausa entre intentos de arranque',starting:'Arrancando: la batería mueve el motor',warm:'Subiendo a velocidad nominal: la tensión y la frecuencia crecen',ready:'Tensión y frecuencia nominales',cool:'Enfriamiento sin carga',fault:'Detenido por protección'}[stage]||'';
+  const sg=$('genStage');if(sg.textContent!==msg)sg.textContent=msg;
+  // ATS
+  const src=st.source||'none',moving=!!(sim&&sim.target),grid=sim?!!sim.grid:true,genOK=v>NV*.9&&Math.abs(f-NF)<NF*.05;
+  const want=moving?0:src==='grid'?-1:src==='gen'?1:0;ang+=(want-ang)*Math.min(1,dt*5);
+  const tx=135+ang*30,ty=54+Math.abs(ang)*0+ (1-Math.abs(ang))*-10;$('atsBlade').setAttribute('x2',tx.toFixed(1));$('atsBlade').setAttribute('y2',ty.toFixed(1));
+  $('atsLg').setAttribute('stroke',grid?'#7ee081':'#5a5638');$('atsLp').setAttribute('stroke',genOK?'#ffb938':v>20?'#8a7330':'#5a5638');
+  $('atsLl').setAttribute('stroke',src==='grid'?'#7ee081':src==='gen'?'#ffb938':'#5a5638');
+  const txt=moving?'Transfiriendo: los contactos están abiertos un instante':src==='grid'?'Posición RED: la fábrica se alimenta de CFE':src==='gen'?'Posición PLANTA: la fábrica se alimenta del generador':grid?'Sin carga conectada':'Sin red: espera a que la planta tenga tensión y frecuencia nominales';
+  if($('atsTxt').textContent!==txt)$('atsTxt').textContent=txt;
+  // etiqueta sobre el gabinete en 3D
+  const w=atsWorld();
+  if(tag&&w){W.copy(w).project(camera);const dist=camera.position.distanceTo(w);const vis=W.z<1&&Math.abs(W.x)<1&&Math.abs(W.y)<1&&dist<28;
+   tag.style.display=vis?'block':'none';if(vis){const c=renderer.domElement.getBoundingClientRect();tag.style.left=(c.left+(W.x+1)/2*c.width)+'px';tag.style.top=(c.top+(1-W.y)/2*c.height-6)+'px';
+    const sm=tag.querySelector('small'),tt=moving?'transfiriendo':src==='grid'?'en RED':src==='gen'?'en PLANTA':'abierto';if(sm.textContent!==tt)sm.textContent=tt;}}
+ }
+ setInterval(step,60);
 })();
 </script></body></html>

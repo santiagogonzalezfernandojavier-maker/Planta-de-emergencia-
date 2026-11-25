@@ -285,3 +285,11 @@ Cambios:
 
 - Rutina de mantenimiento: al terminar una tarea ya no aparece la «Pregunta rápida»; se pasa directo a la siguiente (`70-rutina_mantenimiento.js`, la función `askQ` queda sin uso).
 - Flujo de corriente: los 274 marcadores que eran conos/flechas ahora son esferas pequeñas que avanzan (`85-flujo_puntos.js`). Los flujos de aire y escape del generador conservan su flecha.
+
+## v12.27 · Arranque con medidores, ATS visible y escalera al exterior
+
+- Nuevo `src/90-arranque_ats.js`. En «Funcionamiento de la planta» el panel derecho (ahora «Planta y transferencia») muestra tensión del generador, frecuencia y velocidad del motor subiendo de 0 a 480 V / 60 Hz / 1800 rpm, con barra y marca del valor nominal (verde a ±7 %). Durante el arranque con batería la tensión se muestra en 0.
+- La subida a velocidad nominal (`warm` en `00-core_scene.js`) pasó de 4 s lineales a 7 s con curva suave, para que se aprecie.
+- ATS: diagrama unifilar en el panel (RED (CFE) / PLANTA / CARGA) con la cuchilla que se mueve a cada posición y queda abierta durante la transferencia; líneas iluminadas según qué fuente hay. Además, etiqueta «ATS · en RED / en PLANTA / abierto / transfiriendo» sobre el gabinete de transferencia en 3D cuando está a menos de 28 m.
+- Escalera: en el recorrido a pie del mantenimiento ya se puede subir la escalera del sótano (36 escalones) hasta la losa exterior a 6.5 m y volver a bajar. La altura sigue la rampa; no se puede entrar a la escalera por los lados ni pasar por debajo. Arriba se camina por la losa (postes de luz, registros y la cerca de la subestación como límites). `window.__escalera` tiene funciones de prueba.
+- El letrero de SALIDA del poste al pie de la salida quedaba a la altura de la cara; se subió 1.2 m.
